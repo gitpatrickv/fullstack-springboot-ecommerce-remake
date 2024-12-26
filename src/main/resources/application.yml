@@ -6,7 +6,9 @@ spring:
     url: jdbc:mysql://localhost:3306/ecommerce
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
+  flyway:
+    enabled: true
 application:
   security:
     jwt:

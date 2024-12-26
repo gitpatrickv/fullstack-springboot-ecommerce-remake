@@ -1,6 +1,6 @@
 package com.ecommerce.ecommerce_remake.feature.user.repository;
 
-import com.ecommerce.ecommerce_remake.feature.user.entity.User;
+import com.ecommerce.ecommerce_remake.feature.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

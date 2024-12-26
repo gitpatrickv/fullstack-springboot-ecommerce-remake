@@ -3,7 +3,7 @@ package com.ecommerce.ecommerce_remake.feature.user.service;
 import com.ecommerce.ecommerce_remake.common.util.StrUtil;
 import com.ecommerce.ecommerce_remake.feature.user.utils.mapper.UserMapper;
 import com.ecommerce.ecommerce_remake.feature.user.model.UserModel;
-import com.ecommerce.ecommerce_remake.feature.user.entity.User;
+import com.ecommerce.ecommerce_remake.feature.user.model.User;
 import com.ecommerce.ecommerce_remake.feature.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;

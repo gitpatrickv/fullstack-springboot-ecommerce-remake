@@ -1,7 +1,7 @@
 package com.ecommerce.ecommerce_remake.feature.user.utils.mapper;
 
 import com.ecommerce.ecommerce_remake.feature.user.model.UserModel;
-import com.ecommerce.ecommerce_remake.feature.user.entity.User;
+import com.ecommerce.ecommerce_remake.feature.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,9 +16,7 @@ public class UserMapper {
     private final ModelMapper mapper = new ModelMapper();
 
     public UserModel mapEntityToModel(User user){
-        UserModel userModel = mapper.map(user, UserModel.class);
-        userModel.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userModel;
+        return mapper.map(user, UserModel.class);
     }
 
     public User mapModelToEntity(UserModel userModel){

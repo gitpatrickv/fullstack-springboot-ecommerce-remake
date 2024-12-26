@@ -1,6 +1,7 @@
-package com.ecommerce.ecommerce_remake.feature.user.entity;
+package com.ecommerce.ecommerce_remake.feature.user.model;
 
 import com.ecommerce.ecommerce_remake.common.dto.AuditEntity;
+import com.ecommerce.ecommerce_remake.feature.store.model.Store;
 import com.ecommerce.ecommerce_remake.feature.user.enums.Gender;
 import com.ecommerce.ecommerce_remake.feature.user.enums.Role;
 import jakarta.persistence.*;
@@ -32,6 +33,9 @@ public class User extends AuditEntity implements UserDetails {
     private Gender gender;
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @OneToOne(mappedBy = "user")
+    private Store store;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
