@@ -1,19 +1,20 @@
 package com.ecommerce.ecommerce_remake.security.service;
 
 import com.ecommerce.ecommerce_remake.common.dto.enums.Status;
+import com.ecommerce.ecommerce_remake.common.util.mapper.ModelToEntityMapper;
+import com.ecommerce.ecommerce_remake.feature.user.enums.Role;
+import com.ecommerce.ecommerce_remake.feature.user.model.User;
 import com.ecommerce.ecommerce_remake.feature.user.model.UserModel;
+import com.ecommerce.ecommerce_remake.feature.user.repository.UserRepository;
 import com.ecommerce.ecommerce_remake.security.dto.request.LoginRequest;
 import com.ecommerce.ecommerce_remake.security.dto.response.LoginResponse;
-import com.ecommerce.ecommerce_remake.feature.user.model.User;
-import com.ecommerce.ecommerce_remake.feature.user.enums.Role;
-import com.ecommerce.ecommerce_remake.feature.user.repository.UserRepository;
-import com.ecommerce.ecommerce_remake.feature.user.utils.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,11 +24,14 @@ public class AuthServiceImpl implements AuthService{
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final UserRepository userRepository;
-    private final UserMapper mapper;
+    private final PasswordEncoder passwordEncoder;
+
+    private ModelToEntityMapper<UserModel, User> modelToEntityMapper = new ModelToEntityMapper<>(User.class);
 
     @Override
     public LoginResponse registerUser(UserModel userModel) {
-        User user = mapper.mapModelToEntity(userModel);
+        User user = modelToEntityMapper.map(userModel);
+        user.setPassword(passwordEncoder.encode(userModel.getPassword()));
         user.setRole(Role.USER);
         user.setStatus(Status.ACTIVE);
         userRepository.save(user);

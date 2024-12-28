@@ -3,6 +3,7 @@ package com.ecommerce.ecommerce_remake.feature.product.model;
 
 import com.ecommerce.ecommerce_remake.common.dto.AuditEntity;
 import com.ecommerce.ecommerce_remake.feature.inventory.model.Inventory;
+import com.ecommerce.ecommerce_remake.feature.product.enums.Category;
 import com.ecommerce.ecommerce_remake.feature.product.enums.ProductStatus;
 import com.ecommerce.ecommerce_remake.feature.product_image.model.ProductImage;
 import com.ecommerce.ecommerce_remake.feature.store.model.Store;
@@ -32,6 +33,8 @@ public class Product extends AuditEntity {
     private Integer totalSold;
     @Enumerated(EnumType.STRING)
     private ProductStatus productStatus;
+    @Enumerated(EnumType.STRING)
+    private Category category;
 
     @ManyToOne
     @JoinColumn(name = "store_id")

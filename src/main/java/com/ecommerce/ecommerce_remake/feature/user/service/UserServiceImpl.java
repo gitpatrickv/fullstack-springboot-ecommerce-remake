@@ -1,9 +1,9 @@
 package com.ecommerce.ecommerce_remake.feature.user.service;
 
 import com.ecommerce.ecommerce_remake.common.util.StrUtil;
-import com.ecommerce.ecommerce_remake.feature.user.utils.mapper.UserMapper;
-import com.ecommerce.ecommerce_remake.feature.user.model.UserModel;
+import com.ecommerce.ecommerce_remake.common.util.mapper.EntityToModelMapper;
 import com.ecommerce.ecommerce_remake.feature.user.model.User;
+import com.ecommerce.ecommerce_remake.feature.user.model.UserModel;
 import com.ecommerce.ecommerce_remake.feature.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final UserMapper mapper;
+    private EntityToModelMapper<User, UserModel> entityToModelMapper = new EntityToModelMapper<>(UserModel.class);
 
     @Override
     public User getCurrentAuthenticatedUser() {
@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserModel getCurrentUserInfo() {
         User user = this.getCurrentAuthenticatedUser();
-        UserModel userModel = mapper.mapEntityToModel(user);
+        UserModel userModel = entityToModelMapper.map(user);
 
         if(user.getStore() != null) {
             userModel.setStoreName(user.getStore().getStoreName());
