@@ -9,6 +9,7 @@ import com.ecommerce.ecommerce_remake.feature.store.model.StoreModel;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,12 +26,16 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_DEFAULT;
 @NoArgsConstructor
 @JsonInclude(NON_DEFAULT)
 public class ProductModel extends Model {
+
     private Integer productId;
+    @NotNull(message = "{product.name.required}")
     private String productName;
+    @NotNull(message = "{product.description.required}")
     private String description;
     private Integer totalSold;
     @Enumerated(EnumType.STRING)
     private ProductStatus productStatus;
+    @NotNull(message = "{product.category.required}")
     @Enumerated(EnumType.STRING)
     private Category category;
 
