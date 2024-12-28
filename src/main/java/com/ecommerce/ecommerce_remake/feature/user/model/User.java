@@ -1,6 +1,7 @@
 package com.ecommerce.ecommerce_remake.feature.user.model;
 
 import com.ecommerce.ecommerce_remake.common.dto.AuditEntity;
+import com.ecommerce.ecommerce_remake.common.dto.enums.Status;
 import com.ecommerce.ecommerce_remake.feature.store.model.Store;
 import com.ecommerce.ecommerce_remake.feature.user.enums.Gender;
 import com.ecommerce.ecommerce_remake.feature.user.enums.Role;
@@ -23,16 +24,17 @@ public class User extends AuditEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    private Integer userId;
     private String email;
     private String password;
     private String name;
     private String picture;
-    private boolean isSeller;
     @Enumerated(EnumType.STRING)
     private Gender gender;
     @Enumerated(EnumType.STRING)
     private Role role;
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     @OneToOne(mappedBy = "user")
     private Store store;

@@ -1,12 +1,17 @@
 package com.ecommerce.ecommerce_remake.feature.store.model;
 
 import com.ecommerce.ecommerce_remake.common.dto.AuditEntity;
+import com.ecommerce.ecommerce_remake.common.dto.enums.Status;
+import com.ecommerce.ecommerce_remake.feature.product.model.Product;
 import com.ecommerce.ecommerce_remake.feature.user.model.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,13 +23,17 @@ public class Store extends AuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long storeId;
+    private Integer storeId;
     private String storeName;
     private String contactNumber;
     private String picture;
-    private boolean isActive;
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     @OneToOne
     @JoinColumn(name = "user_id", unique = true)
     private User user;
+
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+    private List<Product> product = new ArrayList<>();
 }

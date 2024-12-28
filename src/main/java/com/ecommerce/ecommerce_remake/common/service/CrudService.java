@@ -22,10 +22,10 @@ public abstract class CrudService {
 
     private static final Logger log = LoggerFactory.getLogger(CrudService.class);
     protected abstract <T extends Model> Model save(T model);
-    protected abstract String updateOne();
-    protected abstract String deleteOne();
     protected abstract <T extends Model> T getOne(String id);
     protected abstract <T extends Model> List<T> getAll();
+    protected abstract String updateOne();
+    protected abstract String deleteOne();
     protected abstract String moduleName();
     protected abstract Class modelClass();
     protected abstract Validator validator();

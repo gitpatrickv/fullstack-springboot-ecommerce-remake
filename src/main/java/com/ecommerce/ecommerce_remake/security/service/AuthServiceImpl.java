@@ -1,5 +1,6 @@
 package com.ecommerce.ecommerce_remake.security.service;
 
+import com.ecommerce.ecommerce_remake.common.dto.enums.Status;
 import com.ecommerce.ecommerce_remake.feature.user.model.UserModel;
 import com.ecommerce.ecommerce_remake.security.dto.request.LoginRequest;
 import com.ecommerce.ecommerce_remake.security.dto.response.LoginResponse;
@@ -28,6 +29,7 @@ public class AuthServiceImpl implements AuthService{
     public LoginResponse registerUser(UserModel userModel) {
         User user = mapper.mapModelToEntity(userModel);
         user.setRole(Role.USER);
+        user.setStatus(Status.ACTIVE);
         userRepository.save(user);
         return this.authenticate(userModel.getEmail(), userModel.getPassword());
     }
