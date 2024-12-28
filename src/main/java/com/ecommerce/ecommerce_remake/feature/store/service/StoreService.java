@@ -5,5 +5,5 @@ import com.ecommerce.ecommerce_remake.feature.store.model.Store;
 import java.util.Optional;
 
 public interface StoreService {
-    Optional<Store> getStoreById(String id);
+    Optional<Store> getStoreByName(String name);
 }

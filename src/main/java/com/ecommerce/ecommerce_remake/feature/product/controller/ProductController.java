@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,15 +21,20 @@ public class ProductController {
 
     @PostMapping(value = {"/save"},  consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
-    public void saveProduct(@RequestPart("product") @Valid ProductModel model,
-                            @RequestPart("file") MultipartFile[] files){
-
-        log.info("Received request to save product: {}", model);
+    public ResponseEntity<String> saveProduct(@RequestPart("product") @Valid ProductModel model,
+                                      @RequestPart("file") MultipartFile[] files){
+        log.info("Received request to save product");
         if (files != null) {
             log.info("Number of images to be saved: {}", files.length);
         }
-        productService.saveProduct(model, files);
-        log.info("Product save request processed successfully.");
-
+        try{
+            productService.saveProduct(model, files);
+            String message = String.format("Product '%s' saved successfully.", model.getProductName());
+            log.info("POST Response 201: {}", message);
+            return new ResponseEntity<>(message, HttpStatus.CREATED);
+        } catch (Exception e){
+            log.error("Unexpected error while saving product: {}", e.getMessage(), e);
+            return new ResponseEntity<>("An unexpected error occurred while processing the request.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

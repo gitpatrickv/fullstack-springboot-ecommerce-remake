@@ -1,6 +1,10 @@
 package com.ecommerce.ecommerce_remake.config;
 
 import com.ecommerce.ecommerce_remake.common.factory.CrudServiceFactory;
+import com.ecommerce.ecommerce_remake.feature.inventory.service.InventoryService;
+import com.ecommerce.ecommerce_remake.feature.product.repository.ProductRepository;
+import com.ecommerce.ecommerce_remake.feature.product.service.ProductServiceImpl;
+import com.ecommerce.ecommerce_remake.feature.product_image.service.ProductImageService;
 import com.ecommerce.ecommerce_remake.feature.store.repository.StoreRepository;
 import com.ecommerce.ecommerce_remake.feature.store.service.StoreServiceImpl;
 import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
@@ -28,6 +32,12 @@ public class ServiceConfiguration {
     public StoreServiceImpl getStoreService(StoreRepository repository, Validator validator, UserService userService){
         return new StoreServiceImpl(repository, validator, userService);
     }
+
+    @Bean (name = "productService")
+    public ProductServiceImpl getProductService(ProductRepository repository, Validator validator, UserService userService, InventoryService inventoryService, ProductImageService productImageService){
+        return new ProductServiceImpl(repository, validator, userService, inventoryService, productImageService);
+    }
+
 
 
 }

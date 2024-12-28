@@ -1,5 +1,8 @@
 package com.ecommerce.ecommerce_remake.feature.product.service;
 
+import com.ecommerce.ecommerce_remake.common.dto.Model;
+import com.ecommerce.ecommerce_remake.common.dto.enums.Module;
+import com.ecommerce.ecommerce_remake.common.service.CrudService;
 import com.ecommerce.ecommerce_remake.common.util.mapper.EntityToModelMapper;
 import com.ecommerce.ecommerce_remake.common.util.mapper.ModelToEntityMapper;
 import com.ecommerce.ecommerce_remake.feature.inventory.model.Inventory;
@@ -12,23 +15,70 @@ import com.ecommerce.ecommerce_remake.feature.product_image.service.ProductImage
 import com.ecommerce.ecommerce_remake.feature.store.model.Store;
 import com.ecommerce.ecommerce_remake.feature.user.model.User;
 import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
+import com.ecommerce.ecommerce_remake.web.exception.NotImplementedException;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
-@Service
-@RequiredArgsConstructor
-public class ProductServiceImpl implements ProductService {
 
-    private final InventoryService inventoryService;
+@RequiredArgsConstructor
+public class ProductServiceImpl extends CrudService implements ProductService {
+
     private final ProductRepository productRepository;
-    private final ProductImageService productImageService;
+    private final Validator validator;
     private final UserService userService;
+    private final InventoryService inventoryService;
+    private final ProductImageService productImageService;
 
     private ModelToEntityMapper<ProductModel, Product> modelToEntityMapper = new ModelToEntityMapper<>(Product.class);
     private EntityToModelMapper<Product, ProductModel> entityToModelMapper = new EntityToModelMapper<>(ProductModel.class);
+
+    @Override
+    protected <T extends Model> Model save(T model) {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    protected ProductModel getOne(String id) {      //TODO: Not yet implemented on the frontend
+        Optional<Product> optionalProduct = this.getProductByName(id);
+        return optionalProduct.map(entityToModelMapper::map)
+                .orElse(null);
+    }
+
+    @Override
+    protected <T extends Model> List<T> getAll() {
+        return null;
+    }
+
+    @Override
+    protected String updateOne() {
+        return null;
+    }
+
+    @Override
+    protected String deleteOne() {
+        return null;
+    }
+
+    @Override
+    protected String moduleName() {
+
+        return Module.product.getModuleName();
+    }
+
+    @Override
+    protected Class modelClass() {
+        return ProductModel.class;
+    }
+
+    @Override
+    protected Validator validator() {
+        return validator;
+    }
 
     @Transactional
     @Override
@@ -50,5 +100,10 @@ public class ProductServiceImpl implements ProductService {
         if(files != null) {
             productImageService.uploadProductImage(savedProduct, files);
         }
+    }
+
+    @Override
+    public Optional<Product> getProductByName(String name) {
+        return productRepository.findByProductName(name);
     }
 }

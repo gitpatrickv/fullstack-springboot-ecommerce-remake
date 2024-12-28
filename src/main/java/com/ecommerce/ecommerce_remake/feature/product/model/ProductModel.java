@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -38,7 +39,8 @@ public class ProductModel extends Model {
     @NotNull(message = "{product.category.required}")
     @Enumerated(EnumType.STRING)
     private Category category;
-
+    @NotNull
+    @Size(min = 1, message = "{inventory.list}")
     private Set<InventoryModel> inventories = new HashSet<>();
 
     private List<ProductImageModel> productImages = new ArrayList<>();

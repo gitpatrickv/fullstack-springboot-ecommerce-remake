@@ -2,7 +2,8 @@ package com.ecommerce.ecommerce_remake.common.dto.enums;
 
 public enum Module {
 //    user("userService", "user");
-    store("storeService", "store");
+    store("storeService", "store"),
+    product("productService", "product");
 
     private final String beanName;
     private final String moduleName;
