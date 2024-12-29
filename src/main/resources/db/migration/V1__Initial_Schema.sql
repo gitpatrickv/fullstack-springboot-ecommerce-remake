@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS stores (
 CREATE TABLE IF NOT EXISTS products (
     `product_id` INT AUTO_INCREMENT PRIMARY KEY,
     `store_id` INT NOT NULL,
-    `product_status` ENUM('LISTED', 'SUSPENDED', 'DELETED') NOT NULL,
+    `status` ENUM('ACTIVE', 'SUSPENDED', 'DELETED') NOT NULL,
     `product_name` VARCHAR(100) NOT NULL,
     `category` ENUM('Motors',
                         'Home_Appliances',

@@ -2,6 +2,7 @@ package com.ecommerce.ecommerce_remake.common.service;
 
 import com.ecommerce.ecommerce_remake.common.dto.Model;
 import com.ecommerce.ecommerce_remake.common.dto.enums.ResponseCode;
+import com.ecommerce.ecommerce_remake.common.dto.enums.Status;
 import com.ecommerce.ecommerce_remake.common.dto.response.GetAllResponse;
 import com.ecommerce.ecommerce_remake.common.dto.response.Response;
 import com.ecommerce.ecommerce_remake.common.marker.CreateInfo;
@@ -24,7 +25,7 @@ public abstract class CrudService {
     protected abstract <T extends Model> T getOne(String id);
     protected abstract GetAllResponse getAll(int pageNo, int pageSize, String sortBy);
     protected abstract String updateOne();
-    protected abstract String deleteOne();
+    protected abstract void changeOneState(String id, Status status);
     protected abstract String moduleName();
     protected abstract Class modelClass();
     protected abstract Validator validator();
@@ -65,9 +66,9 @@ public abstract class CrudService {
         return this.updateOne();
     }
 
-    public final String delete(){
-        log.info("Deleted {} ", this.moduleName());
-        return this.deleteOne();
+    public final Response changeState(String id, Status status) {
+        this.changeOneState(id, status);
+        return new Response(ResponseCode.RESP_SUCCESS, String.format("Successfully change status for %s ID %s", this.moduleName(), id));
     }
 
     private void validateFormat(Model obj, Class group) {

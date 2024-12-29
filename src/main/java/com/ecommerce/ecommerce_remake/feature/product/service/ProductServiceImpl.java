@@ -2,6 +2,7 @@ package com.ecommerce.ecommerce_remake.feature.product.service;
 
 import com.ecommerce.ecommerce_remake.common.dto.Model;
 import com.ecommerce.ecommerce_remake.common.dto.enums.Module;
+import com.ecommerce.ecommerce_remake.common.dto.enums.Status;
 import com.ecommerce.ecommerce_remake.common.dto.response.GetAllResponse;
 import com.ecommerce.ecommerce_remake.common.dto.response.PageResponse;
 import com.ecommerce.ecommerce_remake.common.service.CrudService;
@@ -10,7 +11,6 @@ import com.ecommerce.ecommerce_remake.common.util.mapper.EntityToModelMapper;
 import com.ecommerce.ecommerce_remake.common.util.mapper.ModelToEntityMapper;
 import com.ecommerce.ecommerce_remake.feature.inventory.model.Inventory;
 import com.ecommerce.ecommerce_remake.feature.inventory.service.InventoryService;
-import com.ecommerce.ecommerce_remake.feature.product.enums.ProductStatus;
 import com.ecommerce.ecommerce_remake.feature.product.model.Product;
 import com.ecommerce.ecommerce_remake.feature.product.model.ProductModel;
 import com.ecommerce.ecommerce_remake.feature.product.repository.ProductRepository;
@@ -52,7 +52,7 @@ public class ProductServiceImpl extends CrudService implements ProductService {
 
     @Override //TODO: Not yet implemented on the frontend
     protected ProductModel getOne(String id) {
-        Optional<Product> optionalProduct = this.getProductByName(id);
+        Optional<Product> optionalProduct = this.getProductById(id);
         return optionalProduct.map(entityToModelMapper::map)
                 .orElse(null);
     }
@@ -74,9 +74,12 @@ public class ProductServiceImpl extends CrudService implements ProductService {
         return null;
     }
 
-    @Override
-    protected String deleteOne() {
-        return null;
+    @Override   //TODO: Not yet implemented on the frontend
+    protected void changeOneState(String id, Status status) {
+        this.getProductById(id).ifPresent(product -> {
+            product.setStatus(status);
+            productRepository.save(product);
+        });
     }
 
     @Override
@@ -100,7 +103,7 @@ public class ProductServiceImpl extends CrudService implements ProductService {
         Store store = user.getStore();
 
         Product product = modelToEntityMapper.map(model);
-        product.setProductStatus(ProductStatus.LISTED);
+        product.setStatus(Status.ACTIVE);
         product.setStore(store);
 
         Set<Inventory> inventories = inventoryService.inventories(product, model.getInventories());
@@ -115,21 +118,21 @@ public class ProductServiceImpl extends CrudService implements ProductService {
     }
 
     @Override
-    public Optional<Product> getProductByName(String name) {
-        return productRepository.findByProductName(name);
-    }
-
-    @Override //TODO: Not yet implemented on the frontend
     public GetAllResponse getAllProducts(int pageNo, int pageSize, String sortBy) {
         Sort sort = Sort.by("createdDate").descending();
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-        Page<Product> products = productRepository.findAllByProductStatus(ProductStatus.LISTED, pageable);
+        Page<Product> products = productRepository.findAllByStatus(Status.ACTIVE, pageable);
         PageResponse pageResponse = pagination.getPagination(products);
         List<ProductModel> productModels = this.getProducts(products);
         return new GetAllResponse(productModels, pageResponse);
     }
+
     @Override
-    public List<ProductModel> getProducts(Page<Product> products) {
+    public Optional<Product> getProductById(String id) {
+        return productRepository.findById(Integer.parseInt(id));
+    }
+
+    private List<ProductModel> getProducts(Page<Product> products) {
         return products.stream()
                  .map(entityToModelMapper::map)
                  .toList();

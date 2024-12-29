@@ -74,9 +74,12 @@ public class StoreServiceImpl extends CrudService implements StoreService {
         return "Update One remake";
     }
 
-    @Override
-    protected String deleteOne() {
-        return "Delete One";
+    @Override //TODO: Not yet implemented on the frontend
+    protected void changeOneState(String id, Status status) {
+        this.getStoreById(id).ifPresent(store -> {
+            store.setStatus(status);
+            storeRepository.save(store);
+        });
     }
 
     @Override
@@ -97,5 +100,10 @@ public class StoreServiceImpl extends CrudService implements StoreService {
     @Override
     public Optional<Store> getStoreByName(String name) {
         return storeRepository.findByStoreNameIgnoreCase(name);
+    }
+
+    @Override
+    public Optional<Store> getStoreById(String id) {
+        return storeRepository.findById(Integer.parseInt(id));
     }
 }

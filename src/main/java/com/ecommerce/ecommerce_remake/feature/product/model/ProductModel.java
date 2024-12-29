@@ -1,9 +1,9 @@
 package com.ecommerce.ecommerce_remake.feature.product.model;
 
 import com.ecommerce.ecommerce_remake.common.dto.Model;
+import com.ecommerce.ecommerce_remake.common.dto.enums.Status;
 import com.ecommerce.ecommerce_remake.feature.inventory.model.InventoryModel;
 import com.ecommerce.ecommerce_remake.feature.product.enums.Category;
-import com.ecommerce.ecommerce_remake.feature.product.enums.ProductStatus;
 import com.ecommerce.ecommerce_remake.feature.product_image.model.ProductImageModel;
 import com.ecommerce.ecommerce_remake.feature.store.model.StoreModel;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -35,7 +35,7 @@ public class ProductModel extends Model {
     private String description;
     private Integer totalSold;
     @Enumerated(EnumType.STRING)
-    private ProductStatus productStatus;
+    private Status status;
     @NotNull(message = "{product.category.required}")
     @Enumerated(EnumType.STRING)
     private Category category;

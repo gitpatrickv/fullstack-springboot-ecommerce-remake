@@ -3,6 +3,7 @@ package com.ecommerce.ecommerce_remake.web.controller;
 import com.ecommerce.ecommerce_remake.common.dto.Model;
 import com.ecommerce.ecommerce_remake.common.dto.enums.Module;
 import com.ecommerce.ecommerce_remake.common.dto.enums.ResponseCode;
+import com.ecommerce.ecommerce_remake.common.dto.enums.Status;
 import com.ecommerce.ecommerce_remake.common.dto.response.GetAllResponse;
 import com.ecommerce.ecommerce_remake.common.dto.response.Response;
 import com.ecommerce.ecommerce_remake.common.factory.CrudServiceFactory;
@@ -12,8 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/factory")
@@ -94,11 +93,29 @@ public class CrudController {
         return new ResponseEntity<>(service.update(), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{module}")
-    public ResponseEntity<String> delete(@PathVariable Module module){
+    @PutMapping("/{module}/{id}/{status}")
+    public ResponseEntity<String> changeOneState(@PathVariable Module module,
+                                           @PathVariable String id,
+                                           @PathVariable Status status){
+        log.info("Request to update status for {} ID {}", module, id);
         CrudService service = getService(module);
-        return new ResponseEntity<>(service.delete(), HttpStatus.OK);
+        Response response = service.changeState(id,status);
+        log.info("CrudService.changeOneState() response code={}", response.getResponseCode());
+        if(response.getResponseCode().equals(ResponseCode.RESP_SUCCESS)){
+            log.info("PUT RESPONSE: 200 - {} ", response.getResponseDescription());
+            return new ResponseEntity<>(response.getResponseDescription(), HttpStatus.OK);
+        }  else {
+            log.error("PUT Response: 500 - Internal server error (failed to execute request)");
+            throw new RuntimeException("An unexpected error occurred while processing the request.");
+        }
     }
+
+//    @DeleteMapping("/{module}/{id}")
+//    public ResponseEntity<Response> delete(@PathVariable Module module,
+//                                           @PathVariable String id){
+//        CrudService service = getService(module);
+//        return new ResponseEntity<>(service.changeState(id, null), HttpStatus.OK);
+//    }
 
     private CrudService getService(Module module) {
         return serviceFactory.getService(module);

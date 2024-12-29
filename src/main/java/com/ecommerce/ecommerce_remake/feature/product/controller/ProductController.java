@@ -27,7 +27,7 @@ public class ProductController {
         }
         try{
             productService.saveProduct(model, files);
-            String message = String.format("Product '%s' saved successfully.", model.getProductName());
+            String message = String.format("Product '%s' was saved successfully.", model.getProductName());
             log.info("POST Response 201: {}", message);
             return new ResponseEntity<>(message, HttpStatus.CREATED);
         } catch (Exception e){
@@ -44,7 +44,7 @@ public class ProductController {
             log.warn("GET Response: 200 - {}", "No data found");
             return new ResponseEntity<>(null, HttpStatus.OK);
         } else if (getAllResponse.getModels().size() > 1){
-            log.info("GET Response: 200 - Returning {} records", getAllResponse.getModels().size());
+            log.info("GET Response: 200 - Returning {} product records", getAllResponse.getModels().size());
             return new ResponseEntity<>(getAllResponse, HttpStatus.OK);
         } else {
             log.error("GET Response: 500 - Internal server error (failed to execute request)");
