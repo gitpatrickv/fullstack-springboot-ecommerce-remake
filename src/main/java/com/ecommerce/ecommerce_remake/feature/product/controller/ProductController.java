@@ -1,5 +1,6 @@
 package com.ecommerce.ecommerce_remake.feature.product.controller;
 
+import com.ecommerce.ecommerce_remake.common.dto.response.GetAllResponse;
 import com.ecommerce.ecommerce_remake.feature.product.model.ProductModel;
 import com.ecommerce.ecommerce_remake.feature.product.service.ProductService;
 import jakarta.validation.Valid;
@@ -10,15 +11,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 @RestController
 @RequestMapping("/api/product")
 @RequiredArgsConstructor
 @Slf4j
 public class ProductController {
-
     private final ProductService productService;
-
     @PostMapping(value = {"/save"},  consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<String> saveProduct(@RequestPart("product") @Valid ProductModel model,
@@ -35,6 +33,22 @@ public class ProductController {
         } catch (Exception e){
             log.error("Unexpected error while saving product: {}", e.getMessage(), e);
             return new ResponseEntity<>("An unexpected error occurred while processing the request.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @GetMapping
+    public ResponseEntity<GetAllResponse> getAllProducts(@RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+                                                         @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
+                                                         @RequestParam(defaultValue = "createdDate", required = false) String sortBy){
+        GetAllResponse getAllResponse = productService.getAllProducts(pageNo,pageSize,sortBy);
+        if(getAllResponse.getModels().isEmpty()){
+            log.warn("GET Response: 200 - {}", "No data found");
+            return new ResponseEntity<>(null, HttpStatus.OK);
+        } else if (getAllResponse.getModels().size() > 1){
+            log.info("GET Response: 200 - Returning {} records", getAllResponse.getModels().size());
+            return new ResponseEntity<>(getAllResponse, HttpStatus.OK);
+        } else {
+            log.error("GET Response: 500 - Internal server error (failed to execute request)");
+            throw new RuntimeException("An unexpected error occurred while processing the request.");
         }
     }
 }

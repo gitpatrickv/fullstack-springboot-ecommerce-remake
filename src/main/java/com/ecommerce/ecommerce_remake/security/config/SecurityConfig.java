@@ -3,6 +3,7 @@ package com.ecommerce.ecommerce_remake.security.config;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -12,6 +13,8 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import static com.ecommerce.ecommerce_remake.feature.user.enums.Role.SELLER;
 
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -31,6 +34,7 @@ public class SecurityConfig {
                                 authorize
                                         .requestMatchers("/api/auth/**").permitAll()
                                         .requestMatchers("/api/image/**").permitAll()
+                                        .requestMatchers(HttpMethod.POST,"/api/product/save").hasAuthority(SELLER.name())
                                         .anyRequest()
                                         .authenticated())
         ;

@@ -2,7 +2,10 @@ package com.ecommerce.ecommerce_remake.feature.product.service;
 
 import com.ecommerce.ecommerce_remake.common.dto.Model;
 import com.ecommerce.ecommerce_remake.common.dto.enums.Module;
+import com.ecommerce.ecommerce_remake.common.dto.response.GetAllResponse;
+import com.ecommerce.ecommerce_remake.common.dto.response.PageResponse;
 import com.ecommerce.ecommerce_remake.common.service.CrudService;
+import com.ecommerce.ecommerce_remake.common.util.Pagination;
 import com.ecommerce.ecommerce_remake.common.util.mapper.EntityToModelMapper;
 import com.ecommerce.ecommerce_remake.common.util.mapper.ModelToEntityMapper;
 import com.ecommerce.ecommerce_remake.feature.inventory.model.Inventory;
@@ -18,6 +21,10 @@ import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import com.ecommerce.ecommerce_remake.web.exception.NotImplementedException;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,6 +40,7 @@ public class ProductServiceImpl extends CrudService implements ProductService {
     private final UserService userService;
     private final InventoryService inventoryService;
     private final ProductImageService productImageService;
+    private final Pagination pagination;
 
     private ModelToEntityMapper<ProductModel, Product> modelToEntityMapper = new ModelToEntityMapper<>(Product.class);
     private EntityToModelMapper<Product, ProductModel> entityToModelMapper = new EntityToModelMapper<>(ProductModel.class);
@@ -42,16 +50,23 @@ public class ProductServiceImpl extends CrudService implements ProductService {
         throw new NotImplementedException();
     }
 
-    @Override
-    protected ProductModel getOne(String id) {      //TODO: Not yet implemented on the frontend
+    @Override //TODO: Not yet implemented on the frontend
+    protected ProductModel getOne(String id) {
         Optional<Product> optionalProduct = this.getProductByName(id);
         return optionalProduct.map(entityToModelMapper::map)
                 .orElse(null);
     }
 
-    @Override
-    protected <T extends Model> List<T> getAll() {
-        return null;
+    @Override //TODO: Not yet implemented on the frontend //Get All Store Product
+    protected GetAllResponse getAll(int pageNo, int pageSize, String sortBy) {
+        Sort sort = Sort.by("createdDate").descending();
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        User user = userService.getCurrentAuthenticatedUser();
+        Store store = user.getStore();
+        Page<Product> products = productRepository.findByStore(store, pageable);
+        PageResponse pageResponse = pagination.getPagination(products);
+        List<ProductModel> productModels = this.getProducts(products);
+        return new GetAllResponse(productModels, pageResponse);
     }
 
     @Override
@@ -65,10 +80,7 @@ public class ProductServiceImpl extends CrudService implements ProductService {
     }
 
     @Override
-    protected String moduleName() {
-
-        return Module.product.getModuleName();
-    }
+    protected String moduleName() { return Module.product.getModuleName(); }
 
     @Override
     protected Class modelClass() {
@@ -81,7 +93,7 @@ public class ProductServiceImpl extends CrudService implements ProductService {
     }
 
     @Transactional
-    @Override
+    @Override //TODO: Not yet implemented on the frontend
     public void saveProduct(ProductModel model, MultipartFile[] files) {
 
         User user = userService.getCurrentAuthenticatedUser();
@@ -106,4 +118,22 @@ public class ProductServiceImpl extends CrudService implements ProductService {
     public Optional<Product> getProductByName(String name) {
         return productRepository.findByProductName(name);
     }
+
+    @Override //TODO: Not yet implemented on the frontend
+    public GetAllResponse getAllProducts(int pageNo, int pageSize, String sortBy) {
+        Sort sort = Sort.by("createdDate").descending();
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Page<Product> products = productRepository.findAllByProductStatus(ProductStatus.LISTED, pageable);
+        PageResponse pageResponse = pagination.getPagination(products);
+        List<ProductModel> productModels = this.getProducts(products);
+        return new GetAllResponse(productModels, pageResponse);
+    }
+    @Override
+    public List<ProductModel> getProducts(Page<Product> products) {
+        return products.stream()
+                 .map(entityToModelMapper::map)
+                 .toList();
+    }
+
+
 }

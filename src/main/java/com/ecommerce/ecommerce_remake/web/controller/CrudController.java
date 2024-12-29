@@ -3,6 +3,7 @@ package com.ecommerce.ecommerce_remake.web.controller;
 import com.ecommerce.ecommerce_remake.common.dto.Model;
 import com.ecommerce.ecommerce_remake.common.dto.enums.Module;
 import com.ecommerce.ecommerce_remake.common.dto.enums.ResponseCode;
+import com.ecommerce.ecommerce_remake.common.dto.response.GetAllResponse;
 import com.ecommerce.ecommerce_remake.common.dto.response.Response;
 import com.ecommerce.ecommerce_remake.common.factory.CrudServiceFactory;
 import com.ecommerce.ecommerce_remake.common.service.CrudService;
@@ -42,20 +43,23 @@ public class CrudController {
     }
 
     @GetMapping("/{module}")
-    public ResponseEntity<List> getAll(@PathVariable Module module){
+    public ResponseEntity<GetAllResponse> getAll(@PathVariable Module module,
+                                                 @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+                                                 @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
+                                                 @RequestParam(defaultValue = "createdDate", required = false) String sortBy){
         CrudService service = getService(module);
-        Response response = service.retrieveAll();
+        Response response = service.retrieveAll(pageNo, pageSize, sortBy);
         log.info("CrudService.retrieve() response code={}", response.getResponseCode());
         if (response.getResponseCode().equals(ResponseCode.RESP_SUCCESS)) {
-
-            List<Model> list;
+            GetAllResponse getAllResponse;
             try {
-                list = (List<Model>) response.getResponseObject();
+                getAllResponse = (GetAllResponse) response.getResponseObject();
             } catch (ClassCastException e) {
                 throw new RuntimeException(String.format("Failed to execute GET request, encountered exception with message: '%s'", e.getMessage()));
             }
-            log.info("GET Response: 200 - Returning {} records", list.size());
-            return new ResponseEntity<>(list, HttpStatus.OK);
+
+            log.info("GET Response: 200 - Returning {} records", getAllResponse.getModels().size());
+            return new ResponseEntity<>(getAllResponse, HttpStatus.OK);
 
         } else if (response.getResponseCode().equals(ResponseCode.RESP_NOT_FOUND)) {
             log.warn("GET Response: 200 - {}", "No data found");

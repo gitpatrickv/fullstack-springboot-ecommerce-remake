@@ -3,7 +3,10 @@ package com.ecommerce.ecommerce_remake.feature.store.service;
 import com.ecommerce.ecommerce_remake.common.dto.Model;
 import com.ecommerce.ecommerce_remake.common.dto.enums.Module;
 import com.ecommerce.ecommerce_remake.common.dto.enums.Status;
+import com.ecommerce.ecommerce_remake.common.dto.response.GetAllResponse;
+import com.ecommerce.ecommerce_remake.common.dto.response.PageResponse;
 import com.ecommerce.ecommerce_remake.common.service.CrudService;
+import com.ecommerce.ecommerce_remake.common.util.Pagination;
 import com.ecommerce.ecommerce_remake.common.util.mapper.EntityToModelMapper;
 import com.ecommerce.ecommerce_remake.common.util.mapper.ModelToEntityMapper;
 import com.ecommerce.ecommerce_remake.feature.store.model.Store;
@@ -14,6 +17,10 @@ import com.ecommerce.ecommerce_remake.feature.user.model.User;
 import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -25,6 +32,7 @@ public class StoreServiceImpl extends CrudService implements StoreService {
     private final StoreRepository storeRepository;
     private final Validator validator;
     private final UserService userService;
+    private final Pagination pagination;
 
     private ModelToEntityMapper<StoreModel, Store> modelToEntityMapper = new ModelToEntityMapper<>(Store.class);
     private EntityToModelMapper<Store, StoreModel> entityToModelMapper = new EntityToModelMapper<>(StoreModel.class);
@@ -49,12 +57,16 @@ public class StoreServiceImpl extends CrudService implements StoreService {
                 .orElse(null);
     }
 
-    @Override
-    protected List<StoreModel> getAll() {                   //TODO: Not yet implemented on the frontend
-        return storeRepository.findAll()
-                .stream()
+    @Override //TODO: Not yet implemented on the frontend //Get All Stores
+    protected GetAllResponse getAll(int pageNo, int pageSize, String sortBy) {
+        Sort sort = Sort.by("createdDate").descending();
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Page<Store> stores = storeRepository.findAll(pageable);
+        PageResponse pageResponse = pagination.getPagination(stores);
+        List<StoreModel> storeModels = stores.stream()
                 .map(entityToModelMapper::map)
                 .toList();
+        return new GetAllResponse(storeModels, pageResponse);
     }
 
     @Override

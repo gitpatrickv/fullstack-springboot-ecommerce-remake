@@ -1,11 +1,11 @@
 package com.ecommerce.ecommerce_remake.common.service;
 
 import com.ecommerce.ecommerce_remake.common.dto.Model;
+import com.ecommerce.ecommerce_remake.common.dto.enums.ResponseCode;
+import com.ecommerce.ecommerce_remake.common.dto.response.GetAllResponse;
 import com.ecommerce.ecommerce_remake.common.dto.response.Response;
-
 import com.ecommerce.ecommerce_remake.common.marker.CreateInfo;
 import com.ecommerce.ecommerce_remake.common.marker.DataValidation;
-import com.ecommerce.ecommerce_remake.common.dto.enums.ResponseCode;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -23,7 +22,7 @@ public abstract class CrudService {
     private static final Logger log = LoggerFactory.getLogger(CrudService.class);
     protected abstract <T extends Model> Model save(T model);
     protected abstract <T extends Model> T getOne(String id);
-    protected abstract <T extends Model> List<T> getAll();
+    protected abstract GetAllResponse getAll(int pageNo, int pageSize, String sortBy);
     protected abstract String updateOne();
     protected abstract String deleteOne();
     protected abstract String moduleName();
@@ -50,14 +49,14 @@ public abstract class CrudService {
         }
     }
 
-    public final Response retrieveAll(){
+    public final Response retrieveAll(int pageNo, int pageSize, String sortBy){
         log.info("retrieving all {}(s)", this.moduleName());
-        List<Model> found = this.getAll();
-        if (found.isEmpty()) {
+        GetAllResponse found = this.getAll(pageNo, pageSize, sortBy);
+        if (found.getModels().isEmpty()) {
             return new Response(ResponseCode.RESP_NOT_FOUND, "No {} record found", this.moduleName());
         } else {
-            log.info("Retrieved {} {} objects", found.size(), this.moduleName());
-            return new Response(ResponseCode.RESP_SUCCESS, String.format("Retrieved %s %s", found.size(), this.moduleName()) + " objects", found);
+            log.info("Retrieved {} {} objects", found.getModels().size(), this.moduleName());
+            return new Response(ResponseCode.RESP_SUCCESS, String.format("Retrieved %s %s", found.getModels().size(), this.moduleName()) + " objects", found);
         }
     }
 

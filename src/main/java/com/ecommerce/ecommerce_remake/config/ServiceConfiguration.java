@@ -1,6 +1,7 @@
 package com.ecommerce.ecommerce_remake.config;
 
 import com.ecommerce.ecommerce_remake.common.factory.CrudServiceFactory;
+import com.ecommerce.ecommerce_remake.common.util.Pagination;
 import com.ecommerce.ecommerce_remake.feature.inventory.service.InventoryService;
 import com.ecommerce.ecommerce_remake.feature.product.repository.ProductRepository;
 import com.ecommerce.ecommerce_remake.feature.product.service.ProductServiceImpl;
@@ -29,13 +30,21 @@ public class ServiceConfiguration {
     }
 
     @Bean (name = "storeService")
-    public StoreServiceImpl getStoreService(StoreRepository repository, Validator validator, UserService userService){
-        return new StoreServiceImpl(repository, validator, userService);
+    public StoreServiceImpl getStoreService(StoreRepository repository,
+                                            Validator validator,
+                                            UserService userService,
+                                            Pagination pagination){
+        return new StoreServiceImpl(repository, validator, userService, pagination);
     }
 
     @Bean (name = "productService")
-    public ProductServiceImpl getProductService(ProductRepository repository, Validator validator, UserService userService, InventoryService inventoryService, ProductImageService productImageService){
-        return new ProductServiceImpl(repository, validator, userService, inventoryService, productImageService);
+    public ProductServiceImpl getProductService(ProductRepository repository,
+                                                Validator validator,
+                                                UserService userService,
+                                                InventoryService inventoryService,
+                                                ProductImageService productImageService,
+                                                Pagination pagination){
+        return new ProductServiceImpl(repository, validator, userService, inventoryService, productImageService, pagination);
     }
 
 
