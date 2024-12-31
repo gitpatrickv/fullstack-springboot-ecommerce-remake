@@ -19,6 +19,7 @@ public class Inventory extends AuditEntity {
     private Integer inventoryId;
     private Integer quantity;
     private Integer price;
+    private Integer discountPercent;
     private String color;
     private String size;
 

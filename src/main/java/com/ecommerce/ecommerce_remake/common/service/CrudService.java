@@ -22,7 +22,7 @@ public abstract class CrudService {
 
     private static final Logger log = LoggerFactory.getLogger(CrudService.class);
     protected abstract <T extends Model> Model save(T model);
-    protected abstract <T extends Model> T getOne(String id);
+    protected abstract <T extends Model> Model getOne(String id);
     protected abstract GetAllResponse getAll(int pageNo, int pageSize, String sortBy);
     protected abstract String updateOne();
     protected abstract void changeOneState(String id, Status status);

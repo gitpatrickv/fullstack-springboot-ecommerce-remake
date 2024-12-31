@@ -2,6 +2,8 @@ package com.ecommerce.ecommerce_remake.feature.product.model;
 
 import com.ecommerce.ecommerce_remake.common.dto.Model;
 import com.ecommerce.ecommerce_remake.common.dto.enums.Status;
+import com.ecommerce.ecommerce_remake.common.marker.CreateInfo;
+import com.ecommerce.ecommerce_remake.common.marker.UpdateInfo;
 import com.ecommerce.ecommerce_remake.feature.inventory.model.InventoryModel;
 import com.ecommerce.ecommerce_remake.feature.product.enums.Category;
 import com.ecommerce.ecommerce_remake.feature.product_image.model.ProductImageModel;
@@ -10,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,16 +30,17 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_DEFAULT;
 @NoArgsConstructor
 @JsonInclude(NON_DEFAULT)
 public class ProductModel extends Model {
-
+    @Null(groups = CreateInfo.class)
+    @NotNull(groups = UpdateInfo.class)
     private Integer productId;
     @NotNull(message = "{product.name.required}")
     private String productName;
+    private String slug;
     @NotNull(message = "{product.description.required}")
     private String description;
     private Integer totalSold;
     @Enumerated(EnumType.STRING)
     private Status status;
-    @NotNull(message = "{product.category.required}")
     @Enumerated(EnumType.STRING)
     private Category category;
     @NotNull

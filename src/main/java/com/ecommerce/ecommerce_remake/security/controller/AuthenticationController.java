@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,13 +24,21 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest){
-        LoginResponse loginResponse = authService.login(loginRequest);
-        return new ResponseEntity<>(loginResponse, HttpStatus.OK);
+        try {
+            LoginResponse loginResponse = authService.login(loginRequest);
+            return new ResponseEntity<>(loginResponse, HttpStatus.OK);
+        } catch (AuthenticationException e) {
+            throw new BadCredentialsException("Invalid username or password! Please try again.");
+        }
     }
 
     @PostMapping("/register")
-    @ResponseStatus(HttpStatus.CREATED)
-    public LoginResponse registerUser(@RequestBody @Valid UserModel userModel){
-        return authService.registerUser(userModel);
+    public  ResponseEntity<LoginResponse> registerUser(@RequestBody @Valid UserModel userModel){
+        try {
+            LoginResponse loginResponse = authService.registerUser(userModel);
+            return new ResponseEntity<>(loginResponse, HttpStatus.CREATED);
+        } catch (AuthenticationException e) {
+            throw new BadCredentialsException("Invalid username or password! Please try again.");
+        }
     }
 }

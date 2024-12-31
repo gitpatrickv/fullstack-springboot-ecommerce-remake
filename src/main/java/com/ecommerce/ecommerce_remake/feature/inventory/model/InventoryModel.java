@@ -15,7 +15,8 @@ public class InventoryModel extends Model {
     private Integer quantity;
     @NotNull(message = "{price.required}")
     private Integer price;
+    private Integer discountPercent;
+    private Integer discountedPrice;
     private String color;
     private String size;
-
 }

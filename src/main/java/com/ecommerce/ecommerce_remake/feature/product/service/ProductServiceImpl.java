@@ -50,7 +50,7 @@ public class ProductServiceImpl extends CrudService implements ProductService {
         throw new NotImplementedException();
     }
 
-    @Override //TODO: Not yet implemented on the frontend
+    @Override
     protected ProductModel getOne(String id) {
         Optional<Product> optionalProduct = this.getProductById(id);
         return optionalProduct.map(entityToModelMapper::map)

@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
         UserModel userModel = entityToModelMapper.map(user);
 
         if(user.getStore() != null) {
-            userModel.setStoreName(user.getStore().getStoreName());
+            userModel.setStoreId(user.getStore().getStoreId());
         }
         return userModel;
     }

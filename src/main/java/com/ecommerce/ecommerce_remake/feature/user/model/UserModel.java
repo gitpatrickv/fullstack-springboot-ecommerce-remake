@@ -51,5 +51,5 @@ public class UserModel extends Model {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    private String storeName;
+    private Integer storeId;
 }

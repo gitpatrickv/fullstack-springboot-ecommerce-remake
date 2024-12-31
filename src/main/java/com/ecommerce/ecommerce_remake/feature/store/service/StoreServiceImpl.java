@@ -52,7 +52,7 @@ public class StoreServiceImpl extends CrudService implements StoreService {
 
     @Override
     protected StoreModel getOne(String id) {
-        Optional<Store> optionalStore = this.getStoreByName(id);
+        Optional<Store> optionalStore = this.getStoreById(id);
         return optionalStore.map(entityToModelMapper::map)
                 .orElse(null);
     }
@@ -95,11 +95,6 @@ public class StoreServiceImpl extends CrudService implements StoreService {
     @Override
     protected Validator validator() {
         return validator;
-    }
-
-    @Override
-    public Optional<Store> getStoreByName(String name) {
-        return storeRepository.findByStoreNameIgnoreCase(name);
     }
 
     @Override

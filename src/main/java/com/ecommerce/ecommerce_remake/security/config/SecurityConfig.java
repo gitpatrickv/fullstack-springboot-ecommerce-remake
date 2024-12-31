@@ -34,11 +34,11 @@ public class SecurityConfig {
                                 authorize
                                         .requestMatchers("/api/auth/**").permitAll()
                                         .requestMatchers("/api/image/**").permitAll()
+                                        .requestMatchers(HttpMethod.GET,"/api/product").permitAll()
+                                        .requestMatchers(HttpMethod.GET,"/api/factory/product/**").permitAll()
                                         .requestMatchers(HttpMethod.POST,"/api/product/save").hasAuthority(SELLER.name())
                                         .anyRequest()
-                                        .authenticated())
-        ;
-
+                                        .authenticated());
         httpSecurity.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         httpSecurity.authenticationProvider(authenticationProvider);
         httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
