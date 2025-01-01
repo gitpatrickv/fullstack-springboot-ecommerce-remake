@@ -27,11 +27,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserModel getCurrentUserInfo() {
         User user = this.getCurrentAuthenticatedUser();
-        UserModel userModel = entityToModelMapper.map(user);
-
-        if(user.getStore() != null) {
-            userModel.setStoreId(user.getStore().getStoreId());
-        }
-        return userModel;
+        return entityToModelMapper.map(user);
     }
 }

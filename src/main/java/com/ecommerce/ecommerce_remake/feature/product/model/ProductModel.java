@@ -43,8 +43,8 @@ public class ProductModel extends Model {
     private Status status;
     @Enumerated(EnumType.STRING)
     private Category category;
-    @NotNull
-    @Size(min = 1, message = "{inventory.list}")
+    @NotNull(groups = CreateInfo.class)
+    @Size(min = 1, message = "{inventory.list}",groups = CreateInfo.class)
     private Set<InventoryModel> inventories = new HashSet<>();
 
     private List<ProductImageModel> productImages = new ArrayList<>();

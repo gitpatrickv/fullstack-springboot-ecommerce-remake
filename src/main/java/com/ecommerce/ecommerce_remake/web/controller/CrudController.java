@@ -70,7 +70,7 @@ public class CrudController {
     }
 
     @GetMapping("/{module}/{id}")
-    public ResponseEntity<Model> getOne(@PathVariable Module module,@PathVariable String id){
+    public ResponseEntity<?> getOne(@PathVariable Module module,@PathVariable String id){
         CrudService service = getService(module);
         Response response = service.retrieve(id);
         log.info("CrudService.retrieve() response code={}", response.getResponseCode());
@@ -80,7 +80,7 @@ public class CrudController {
             return new ResponseEntity<>(responseObject, HttpStatus.OK);
         } else if (response.getResponseCode().equals(ResponseCode.RESP_NOT_FOUND)){
             log.warn("GET Response: {} - {}",response.getResponseCode().getValue(), response.getResponseDescription());
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(response.getResponseDescription(), HttpStatus.NOT_FOUND);
         }else {
             log.error("GET Response: 500 - Internal server error (failed to execute request)");
             throw new RuntimeException("An unexpected error occurred while processing the request.");
@@ -88,16 +88,27 @@ public class CrudController {
     }
 
     @PutMapping("/{module}")
-    public ResponseEntity<String> update(@PathVariable Module module){
+    public ResponseEntity<Model> update(@PathVariable Module module, @Valid @RequestBody String jsonRequest){
         CrudService service = getService(module);
-        return new ResponseEntity<>(service.update(), HttpStatus.OK);
+        Response response = service.update(jsonRequest);
+        if(response.getResponseCode().equals(ResponseCode.RESP_SUCCESS)){
+            Model responseObject = (Model) response.getResponseObject();
+            log.info("PUT RESPONSE: 200 - {} ", response.getResponseDescription());
+            return new ResponseEntity<>(responseObject, HttpStatus.OK);
+        } else if (response.getResponseCode().equals(ResponseCode.RESP_NOT_FOUND)) {
+            log.warn("GET Response: 404 - {}", response.getResponseDescription());
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        } else {
+            log.error("PUT Response: 500 - Internal server error (failed to execute request)");
+            throw new RuntimeException("An unexpected error occurred while processing the request.");
+        }
     }
 
     @PutMapping("/{module}/{id}/{status}")
     public ResponseEntity<String> changeOneState(@PathVariable Module module,
                                            @PathVariable String id,
                                            @PathVariable Status status){
-        log.info("Request to update status for {} ID {}", module, id);
+        log.info("Received request to update status for {} ID {}", module, id);
         CrudService service = getService(module);
         Response response = service.changeState(id,status);
         log.info("CrudService.changeOneState() response code={}", response.getResponseCode());

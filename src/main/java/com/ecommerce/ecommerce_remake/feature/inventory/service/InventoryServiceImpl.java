@@ -15,7 +15,7 @@ public class InventoryServiceImpl implements InventoryService {
     private ModelToEntityMapper<InventoryModel, Inventory> modelToEntityMapper = new ModelToEntityMapper<>(Inventory.class);
     private EntityToModelMapper<Inventory, InventoryModel> entityToModelMapper = new EntityToModelMapper<>(InventoryModel.class);
     @Override
-    public Set<Inventory> inventories(Product product, Set<InventoryModel> inventoryModels) {
+    public Set<Inventory> mapModelToInventory(Product product, Set<InventoryModel> inventoryModels) {
 
         Set<Inventory> inventories = new HashSet<>();
 

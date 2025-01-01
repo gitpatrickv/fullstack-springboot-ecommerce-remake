@@ -1,6 +1,7 @@
 package com.ecommerce.ecommerce_remake.feature.user.model;
 
 import com.ecommerce.ecommerce_remake.common.dto.Model;
+import com.ecommerce.ecommerce_remake.common.dto.enums.Status;
 import com.ecommerce.ecommerce_remake.common.marker.CreateInfo;
 import com.ecommerce.ecommerce_remake.common.marker.UpdateInfo;
 import com.ecommerce.ecommerce_remake.feature.user.enums.Gender;
@@ -46,10 +47,8 @@ public class UserModel extends Model {
     @NotBlank(message = "{name.required}")
     private String name;
     private String picture;
-
+    private Status status;
     @NotNull
     @Enumerated(EnumType.STRING)
     private Gender gender;
-
-    private Integer storeId;
 }

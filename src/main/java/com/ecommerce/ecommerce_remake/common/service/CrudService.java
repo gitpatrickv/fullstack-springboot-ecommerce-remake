@@ -7,6 +7,7 @@ import com.ecommerce.ecommerce_remake.common.dto.response.GetAllResponse;
 import com.ecommerce.ecommerce_remake.common.dto.response.Response;
 import com.ecommerce.ecommerce_remake.common.marker.CreateInfo;
 import com.ecommerce.ecommerce_remake.common.marker.DataValidation;
+import com.ecommerce.ecommerce_remake.common.marker.UpdateInfo;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
@@ -24,7 +25,7 @@ public abstract class CrudService {
     protected abstract <T extends Model> Model save(T model);
     protected abstract <T extends Model> Model getOne(String id);
     protected abstract GetAllResponse getAll(int pageNo, int pageSize, String sortBy);
-    protected abstract String updateOne();
+    protected abstract  <T extends Model> Model updateOne(T model);
     protected abstract void changeOneState(String id, Status status);
     protected abstract String moduleName();
     protected abstract Class modelClass();
@@ -61,9 +62,17 @@ public abstract class CrudService {
         }
     }
 
-    public final String update(){
-        log.info("Updated {} ", this.moduleName());
-        return this.updateOne();
+    public final Response update(String jsonRequest){
+        Model object = Model.parse(jsonRequest, this.modelClass());
+        this.validateFormat(object, UpdateInfo.class);
+        Model saved = this.updateOne(object);
+
+        if(saved == null) {
+            return new Response(ResponseCode.RESP_NOT_FOUND, String.format("No %s record found", this.moduleName()));
+        }else {
+            log.info("Saving updated {} record: {}", this.moduleName(), saved);
+            return new Response(ResponseCode.RESP_SUCCESS, String.format("Saved updated %s record to DB", this.moduleName()), saved);
+        }
     }
 
     public final Response changeState(String id, Status status) {

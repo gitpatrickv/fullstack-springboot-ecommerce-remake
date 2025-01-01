@@ -52,9 +52,7 @@ public class ProductServiceImpl extends CrudService implements ProductService {
 
     @Override
     protected ProductModel getOne(String id) {
-        Optional<Product> optionalProduct = this.getProductById(id);
-        return optionalProduct.map(entityToModelMapper::map)
-                .orElse(null);
+        return this.getProductById(id).map(entityToModelMapper::map).orElse(null);
     }
 
     @Override //TODO: Not yet implemented on the frontend //Get All Store Product
@@ -70,8 +68,19 @@ public class ProductServiceImpl extends CrudService implements ProductService {
     }
 
     @Override
-    protected String updateOne() {
-        return null;
+    protected  <T extends Model> Model updateOne(T model) {
+        ProductModel productModel = (ProductModel) model;
+        return this.getProductById(productModel.getProductId().toString())
+                .map( product -> {
+                    Optional.ofNullable(productModel.getProductName())
+                            .ifPresent(product::setProductName);
+                    Optional.ofNullable(productModel.getDescription())
+                            .ifPresent(product::setDescription);
+                    product.setSlug(null);
+                    Product savedProduct = productRepository.save(product);
+
+                    return entityToModelMapper.map(savedProduct);
+                }).orElse(null);
     }
 
     @Override   //TODO: Not yet implemented on the frontend
@@ -106,9 +115,9 @@ public class ProductServiceImpl extends CrudService implements ProductService {
         product.setStatus(Status.ACTIVE);
         product.setStore(store);
 
-        Set<Inventory> inventories = inventoryService.inventories(product, model.getInventories());
+        Set<Inventory> saveToInventory = inventoryService.mapModelToInventory(product, model.getInventories());
 
-        product.setInventories(inventories);
+        product.setInventories(saveToInventory);
 
         Product savedProduct = productRepository.save(product);
 
@@ -134,8 +143,8 @@ public class ProductServiceImpl extends CrudService implements ProductService {
 
     private List<ProductModel> getProducts(Page<Product> products) {
         return products.stream()
-                 .map(entityToModelMapper::map)
-                 .toList();
+                .map(entityToModelMapper::map)
+                .toList();
     }
 
 

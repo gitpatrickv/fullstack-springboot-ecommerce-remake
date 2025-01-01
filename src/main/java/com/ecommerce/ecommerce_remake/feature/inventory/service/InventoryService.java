@@ -8,5 +8,5 @@ import java.util.Set;
 
 public interface InventoryService {
 
-    Set<Inventory> inventories(Product product, Set<InventoryModel> inventoryModels);
+    Set<Inventory> mapModelToInventory(Product product, Set<InventoryModel> inventoryModels);
 }

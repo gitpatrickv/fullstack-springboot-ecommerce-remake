@@ -70,8 +70,8 @@ public class StoreServiceImpl extends CrudService implements StoreService {
     }
 
     @Override
-    protected String updateOne() {
-        return "Update One remake";
+    protected  <T extends Model> Model updateOne(T model) {
+        return null;
     }
 
     @Override //TODO: Not yet implemented on the frontend
@@ -100,5 +100,13 @@ public class StoreServiceImpl extends CrudService implements StoreService {
     @Override
     public Optional<Store> getStoreById(String id) {
         return storeRepository.findById(Integer.parseInt(id));
+    }
+
+    @Override
+    public StoreModel getUserStore() {
+        return Optional.ofNullable(userService.getCurrentAuthenticatedUser())
+                .map(User::getStore)
+                .map(entityToModelMapper::map)
+                .orElse(null);
     }
 }
