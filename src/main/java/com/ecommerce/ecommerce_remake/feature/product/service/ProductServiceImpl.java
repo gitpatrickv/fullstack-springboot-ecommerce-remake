@@ -51,13 +51,19 @@ public class ProductServiceImpl extends CrudService implements ProductService {
     }
 
     @Override
-    protected ProductModel getOne(String id) {
-        return this.getProductById(id).map(entityToModelMapper::map).orElse(null);
+    protected Optional<ProductModel> getOne(String id) {
+        return this.getProductById(id).map(entityToModelMapper::map);
     }
 
-    @Override //TODO: Not yet implemented on the frontend //Get All Store Product
+    @Override //Get All Store Product
     protected GetAllResponse getAll(int pageNo, int pageSize, String sortBy) {
-        Sort sort = Sort.by("createdDate").descending();
+        Sort sort = switch (sortBy) {
+            case "totalSold" -> Sort.by("totalSold").descending();
+            case "lowProductSold" -> Sort.by("totalSold").ascending();
+            case "productName" -> Sort.by("productName").ascending();
+            case null, default -> Sort.by("createdDate").descending();
+        };
+
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
         User user = userService.getCurrentAuthenticatedUser();
         Store store = user.getStore();
@@ -66,8 +72,8 @@ public class ProductServiceImpl extends CrudService implements ProductService {
         List<ProductModel> productModels = this.getProducts(products);
         return new GetAllResponse(productModels, pageResponse);
     }
-
-    @Override
+    @Transactional
+    @Override //TODO: Not yet implemented on the frontend
     protected  <T extends Model> Model updateOne(T model) {
         ProductModel productModel = (ProductModel) model;
         return this.getProductById(productModel.getProductId().toString())
@@ -91,21 +97,8 @@ public class ProductServiceImpl extends CrudService implements ProductService {
         });
     }
 
-    @Override
-    protected String moduleName() { return Module.product.getModuleName(); }
-
-    @Override
-    protected Class modelClass() {
-        return ProductModel.class;
-    }
-
-    @Override
-    protected Validator validator() {
-        return validator;
-    }
-
     @Transactional
-    @Override //TODO: Not yet implemented on the frontend
+    @Override
     public void saveProduct(ProductModel model, MultipartFile[] files) {
 
         User user = userService.getCurrentAuthenticatedUser();
@@ -139,6 +132,19 @@ public class ProductServiceImpl extends CrudService implements ProductService {
     @Override
     public Optional<Product> getProductById(String id) {
         return productRepository.findById(Integer.parseInt(id));
+    }
+
+    @Override
+    protected String moduleName() { return Module.product.getModuleName(); }
+
+    @Override
+    protected Class modelClass() {
+        return ProductModel.class;
+    }
+
+    @Override
+    protected Validator validator() {
+        return validator;
     }
 
     private List<ProductModel> getProducts(Page<Product> products) {

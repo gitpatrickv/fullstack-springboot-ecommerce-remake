@@ -8,6 +8,7 @@ import com.ecommerce.ecommerce_remake.feature.inventory.model.InventoryModel;
 import com.ecommerce.ecommerce_remake.feature.product.enums.Category;
 import com.ecommerce.ecommerce_remake.feature.product_image.model.ProductImageModel;
 import com.ecommerce.ecommerce_remake.feature.store.model.StoreModel;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -18,6 +19,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -39,6 +41,8 @@ public class ProductModel extends Model {
     @NotNull(message = "{product.description.required}")
     private String description;
     private Integer totalSold;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime createdDate;
     @Enumerated(EnumType.STRING)
     private Status status;
     @Enumerated(EnumType.STRING)
@@ -50,4 +54,5 @@ public class ProductModel extends Model {
     private List<ProductImageModel> productImages = new ArrayList<>();
 
     private StoreModel store;
+
 }

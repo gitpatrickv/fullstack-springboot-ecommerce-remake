@@ -51,10 +51,8 @@ public class StoreServiceImpl extends CrudService implements StoreService {
     }
 
     @Override
-    protected StoreModel getOne(String id) {
-        Optional<Store> optionalStore = this.getStoreById(id);
-        return optionalStore.map(entityToModelMapper::map)
-                .orElse(null);
+    protected Optional<StoreModel> getOne(String id) {
+        return this.getStoreById(id).map(entityToModelMapper::map);
     }
 
     @Override //TODO: Not yet implemented on the frontend //Get All Stores
@@ -71,7 +69,16 @@ public class StoreServiceImpl extends CrudService implements StoreService {
 
     @Override
     protected  <T extends Model> Model updateOne(T model) {
-        return null;
+        StoreModel storeModel = (StoreModel) model;
+        return this.getStoreById(storeModel.getStoreId().toString())
+                .map(store -> {
+                    Optional.ofNullable(storeModel.getStoreName())
+                            .ifPresent(store::setStoreName);
+                    Optional.ofNullable(storeModel.getContactNumber())
+                            .ifPresent(store::setContactNumber);
+                    Store savedStore = storeRepository.save(store);
+                    return entityToModelMapper.map(savedStore);
+                }).orElse(null);
     }
 
     @Override //TODO: Not yet implemented on the frontend
@@ -80,6 +87,19 @@ public class StoreServiceImpl extends CrudService implements StoreService {
             store.setStatus(status);
             storeRepository.save(store);
         });
+    }
+
+    @Override
+    public Optional<Store> getStoreById(String id) {
+        return storeRepository.findById(Integer.parseInt(id));
+    }
+
+    @Override
+    public StoreModel getUserStore() {
+        return Optional.ofNullable(userService.getCurrentAuthenticatedUser())
+                .map(User::getStore)
+                .map(entityToModelMapper::map)
+                .orElse(null);
     }
 
     @Override
@@ -95,18 +115,5 @@ public class StoreServiceImpl extends CrudService implements StoreService {
     @Override
     protected Validator validator() {
         return validator;
-    }
-
-    @Override
-    public Optional<Store> getStoreById(String id) {
-        return storeRepository.findById(Integer.parseInt(id));
-    }
-
-    @Override
-    public StoreModel getUserStore() {
-        return Optional.ofNullable(userService.getCurrentAuthenticatedUser())
-                .map(User::getStore)
-                .map(entityToModelMapper::map)
-                .orElse(null);
     }
 }

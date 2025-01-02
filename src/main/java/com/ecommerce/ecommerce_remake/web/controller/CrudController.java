@@ -96,7 +96,7 @@ public class CrudController {
             log.info("PUT RESPONSE: 200 - {} ", response.getResponseDescription());
             return new ResponseEntity<>(responseObject, HttpStatus.OK);
         } else if (response.getResponseCode().equals(ResponseCode.RESP_NOT_FOUND)) {
-            log.warn("GET Response: 404 - {}", response.getResponseDescription());
+            log.warn("PUT Response: 404 - {}", response.getResponseDescription());
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         } else {
             log.error("PUT Response: 500 - Internal server error (failed to execute request)");

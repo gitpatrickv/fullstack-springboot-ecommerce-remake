@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -23,7 +24,7 @@ public abstract class CrudService {
 
     private static final Logger log = LoggerFactory.getLogger(CrudService.class);
     protected abstract <T extends Model> Model save(T model);
-    protected abstract <T extends Model> Model getOne(String id);
+    protected abstract <T extends Model> Optional<Model> getOne(String id);
     protected abstract GetAllResponse getAll(int pageNo, int pageSize, String sortBy);
     protected abstract  <T extends Model> Model updateOne(T model);
     protected abstract void changeOneState(String id, Status status);
@@ -41,13 +42,13 @@ public abstract class CrudService {
 
     public final Response retrieve(String id){
         log.info("ID provided, retrieving {} record for id: {}", this.moduleName(), id);
-        Model obj = this.getOne(id);
-        if (obj == null) {
+        Optional<Model> obj = this.getOne(id);
+        if (obj.isEmpty()) {
             log.info("Record for {} id '{}' not found", this.moduleName(), id);
             return new Response(ResponseCode.RESP_NOT_FOUND, String.format("Record for %s id %s not found", this.moduleName(), id), id);
         } else {
             log.info("Object of type '{}' found", this.moduleName());
-            return new Response(ResponseCode.RESP_SUCCESS, String.format("Found record for ID = %s", id), obj);
+            return new Response(ResponseCode.RESP_SUCCESS, String.format("Found record for ID = %s", id), obj.orElse(null));
         }
     }
 
