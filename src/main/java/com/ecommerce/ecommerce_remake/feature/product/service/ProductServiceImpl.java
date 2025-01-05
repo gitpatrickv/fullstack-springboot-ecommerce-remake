@@ -64,16 +64,18 @@ public class ProductServiceImpl extends CrudService implements ProductService {
             case null, default -> Sort.by("createdDate").descending();
         };
 
+        List<Status> statuses = List.of(Status.ACTIVE, Status.SUSPENDED);
+
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
         User user = userService.getCurrentAuthenticatedUser();
         Store store = user.getStore();
-        Page<Product> products = productRepository.findByStore(store, pageable);
+        Page<Product> products = productRepository.findByStoreAndStatusIn(store, statuses ,pageable);
         PageResponse pageResponse = pagination.getPagination(products);
         List<ProductModel> productModels = this.getProducts(products);
         return new GetAllResponse(productModels, pageResponse);
     }
     @Transactional
-    @Override //TODO: Not yet implemented on the frontend
+    @Override
     protected  <T extends Model> Model updateOne(T model) {
         ProductModel productModel = (ProductModel) model;
         return this.getProductById(productModel.getProductId().toString())
@@ -89,7 +91,7 @@ public class ProductServiceImpl extends CrudService implements ProductService {
                 }).orElse(null);
     }
 
-    @Override   //TODO: Not yet implemented on the frontend
+    @Override
     protected void changeOneState(String id, Status status) {
         this.getProductById(id).ifPresent(product -> {
             product.setStatus(status);

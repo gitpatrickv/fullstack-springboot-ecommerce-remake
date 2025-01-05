@@ -8,8 +8,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer> {
-    Page<Product> findByStore(Store store, Pageable pageable);
+    Page<Product> findByStoreAndStatusIn(Store store, List<Status> statusList, Pageable pageable);
     Page<Product> findAllByStatus(Status status, Pageable pageable);
 }

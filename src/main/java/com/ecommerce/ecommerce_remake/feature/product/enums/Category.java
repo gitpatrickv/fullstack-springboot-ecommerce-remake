@@ -11,6 +11,10 @@ public enum Category {
     Office_Supplies,
     Accessories,
     Computers,
-    Health,
-    Bags
+    Personal_Care,
+    Bags,
+    Cameras,
+    Shoes,
+    Audio,
+    Babies_And_Kids
 }

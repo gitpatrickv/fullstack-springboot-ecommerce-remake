@@ -20,7 +20,7 @@ public class ProductController {
     @PostMapping(value = {"/save"},  consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<String> saveProduct(@RequestPart("product") @Valid ProductModel model,
-                                      @RequestPart("file") MultipartFile[] files){
+                                              @RequestPart("file") MultipartFile[] files){
         log.info("Received request to save product");
         if (files != null) {
             log.info("Number of images to be saved: {}", files.length);
@@ -41,14 +41,10 @@ public class ProductController {
                                                          @RequestParam(defaultValue = "createdDate", required = false) String sortBy){
         GetAllResponse getAllResponse = productService.getAllProducts(pageNo,pageSize,sortBy);
         if(getAllResponse.getModels().isEmpty()){
-            log.warn("GET Response: 200 - {}", "No data found");
-            return new ResponseEntity<>(null, HttpStatus.OK);
-        } else if (getAllResponse.getModels().size() > 1){
-            log.info("GET Response: 200 - Returning {} product records", getAllResponse.getModels().size());
-            return new ResponseEntity<>(getAllResponse, HttpStatus.OK);
-        } else {
-            log.error("GET Response: 500 - Internal server error (failed to execute request)");
-            throw new RuntimeException("An unexpected error occurred while processing the request.");
+            log.warn("GET Response: 200 - No data found");
         }
+        log.info("GET Response: 200 - Returning {} product records", getAllResponse.getModels().size());
+        return new ResponseEntity<>(getAllResponse, HttpStatus.OK);
     }
+
 }

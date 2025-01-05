@@ -5,6 +5,7 @@ import com.ecommerce.ecommerce_remake.common.dto.enums.Module;
 import com.ecommerce.ecommerce_remake.common.dto.enums.ResponseCode;
 import com.ecommerce.ecommerce_remake.common.dto.enums.Status;
 import com.ecommerce.ecommerce_remake.common.dto.response.GetAllResponse;
+import com.ecommerce.ecommerce_remake.common.dto.response.PageResponse;
 import com.ecommerce.ecommerce_remake.common.dto.response.Response;
 import com.ecommerce.ecommerce_remake.common.factory.CrudServiceFactory;
 import com.ecommerce.ecommerce_remake.common.service.CrudService;
@@ -13,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
 
 @RestController
 @RequestMapping("/api/factory")
@@ -59,10 +62,12 @@ public class CrudController {
 
             log.info("GET Response: 200 - Returning {} records", getAllResponse.getModels().size());
             return new ResponseEntity<>(getAllResponse, HttpStatus.OK);
-
         } else if (response.getResponseCode().equals(ResponseCode.RESP_NOT_FOUND)) {
+            GetAllResponse getAllResponse = new GetAllResponse();
+            getAllResponse.setModels(Collections.emptyList());
+            getAllResponse.setPageResponse(new PageResponse(0,0,0L,0,true));
             log.warn("GET Response: 200 - {}", "No data found");
-            return new ResponseEntity<>(null, HttpStatus.OK);
+            return new ResponseEntity<>(getAllResponse, HttpStatus.OK);
         } else {
             log.error("GET Response: 500 - Internal server error (failed to execute request)");
             throw new RuntimeException("An unexpected error occurred while processing the request.");
