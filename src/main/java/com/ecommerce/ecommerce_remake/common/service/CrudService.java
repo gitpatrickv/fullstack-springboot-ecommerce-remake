@@ -27,7 +27,7 @@ public abstract class CrudService {
     protected abstract <T extends Model> Optional<Model> getOne(String id);
     protected abstract GetAllResponse getAll(int pageNo, int pageSize, String sortBy);
     protected abstract  <T extends Model> Model updateOne(T model);
-    protected abstract void changeOneState(String id, Status status);
+    protected abstract void changeStatus(String id, Status status);
     protected abstract String moduleName();
     protected abstract Class modelClass();
     protected abstract Validator validator();
@@ -76,8 +76,8 @@ public abstract class CrudService {
         }
     }
 
-    public final Response changeState(String id, Status status) {
-        this.changeOneState(id, status);
+    public final Response changeOneStatus(String id, Status status) {
+        this.changeStatus(id, status);
         return new Response(ResponseCode.RESP_SUCCESS, String.format("Successfully change status for %s ID %s", this.moduleName(), id));
     }
 

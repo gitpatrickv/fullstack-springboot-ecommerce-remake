@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS stores (
 CREATE TABLE IF NOT EXISTS products (
     `product_id` INT AUTO_INCREMENT PRIMARY KEY,
     `store_id` INT NOT NULL,
-    `status` ENUM('ACTIVE', 'SUSPENDED', 'DELETED') NOT NULL,
+    `status` ENUM('LISTED', 'SUSPENDED', 'DELETED') NOT NULL,
     `category` ENUM('Motors',
                         'Home_Appliances',
                         'Apparel',
@@ -36,8 +36,12 @@ CREATE TABLE IF NOT EXISTS products (
                         'Office_Supplies',
                         'Accessories',
                         'Computers',
-                        'Health',
-                        'Bags') NOT NULL,
+                        'Personal_Care',
+                        'Bags',
+                        'Cameras',
+                        'Shoes',
+                        'Audio',
+                        'Babies_And_Kids') NOT NULL,
     `product_name` VARCHAR(100) NOT NULL,
     `slug` VARCHAR(100) NOT NULL,
     `description` VARCHAR(255) NOT NULL,
@@ -62,6 +66,20 @@ CREATE TABLE IF NOT EXISTS product_images (
     `image_id` INT AUTO_INCREMENT PRIMARY KEY,
     `product_id` INT NOT NULL,
     `product_image` VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS address (
+    `address_id` INT AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT NOT NULL,
+    `status` ENUM('ACTIVE', 'INACTIVE') NOT NULL,
+    `address_type` ENUM('HOME', 'OFFICE') NOT NULL,
+    `full_name` VARCHAR(100) NOT NULL,
+    `contact_number` VARCHAR(15) NOT NULL,
+    `street_address` VARCHAR(255) NOT NULL,
+    `city` VARCHAR(50) NOT NULL,
+    `post_code` VARCHAR(10) NOT NULL,
+    `created_date` TIMESTAMP,
+    `last_modified` TIMESTAMP
 );
 
 

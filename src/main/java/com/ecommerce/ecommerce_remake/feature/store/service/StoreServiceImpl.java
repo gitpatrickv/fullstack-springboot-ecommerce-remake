@@ -82,7 +82,7 @@ public class StoreServiceImpl extends CrudService implements StoreService {
     }
 
     @Override //TODO: Not yet implemented on the frontend
-    protected void changeOneState(String id, Status status) {
+    protected void changeStatus(String id, Status status) {
         this.getStoreById(id).ifPresent(store -> {
             store.setStatus(status);
             storeRepository.save(store);

@@ -29,7 +29,7 @@ public class CrudController {
     }
 
     @PostMapping("/{module}")
-    public ResponseEntity<Model> save(@PathVariable Module module, @Valid @RequestBody String jsonRequest){
+    public ResponseEntity<Model> saveResource(@PathVariable Module module, @Valid @RequestBody String jsonRequest){
         CrudService service = getService(module);
         Response response = service.create(jsonRequest);
         log.info("CrudService.create() response code={}", response.getResponseCode());
@@ -45,7 +45,7 @@ public class CrudController {
     }
 
     @GetMapping("/{module}")
-    public ResponseEntity<GetAllResponse> getAll(@PathVariable Module module,
+    public ResponseEntity<GetAllResponse> getAllResources(@PathVariable Module module,
                                                  @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
                                                  @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
                                                  @RequestParam(defaultValue = "createdDate", required = false) String sortBy){
@@ -75,7 +75,7 @@ public class CrudController {
     }
 
     @GetMapping("/{module}/{id}")
-    public ResponseEntity<?> getOne(@PathVariable Module module,@PathVariable String id){
+    public ResponseEntity<?> getOneResource(@PathVariable Module module,@PathVariable String id){
         CrudService service = getService(module);
         Response response = service.retrieve(id);
         log.info("CrudService.retrieve() response code={}", response.getResponseCode());
@@ -93,7 +93,7 @@ public class CrudController {
     }
 
     @PutMapping("/{module}")
-    public ResponseEntity<Model> update(@PathVariable Module module, @Valid @RequestBody String jsonRequest){
+    public ResponseEntity<Model> updateOneResource(@PathVariable Module module, @Valid @RequestBody String jsonRequest){
         CrudService service = getService(module);
         Response response = service.update(jsonRequest);
         if(response.getResponseCode().equals(ResponseCode.RESP_SUCCESS)){
@@ -110,12 +110,12 @@ public class CrudController {
     }
 
     @PutMapping("/{module}/{id}/{status}")
-    public ResponseEntity<String> changeOneState(@PathVariable Module module,
+    public ResponseEntity<String> changeResourceStatus(@PathVariable Module module,
                                            @PathVariable String id,
                                            @PathVariable Status status){
         log.info("Received request to update status for {} ID {}", module, id);
         CrudService service = getService(module);
-        Response response = service.changeState(id,status);
+        Response response = service.changeOneStatus(id,status);
         log.info("CrudService.changeOneState() response code={}", response.getResponseCode());
         if(response.getResponseCode().equals(ResponseCode.RESP_SUCCESS)){
             log.info("PUT RESPONSE: 200 - {} ", response.getResponseDescription());

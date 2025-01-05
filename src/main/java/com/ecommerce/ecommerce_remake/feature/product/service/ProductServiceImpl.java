@@ -64,7 +64,7 @@ public class ProductServiceImpl extends CrudService implements ProductService {
             case null, default -> Sort.by("createdDate").descending();
         };
 
-        List<Status> statuses = List.of(Status.ACTIVE, Status.SUSPENDED);
+        List<Status> statuses = List.of(Status.LISTED, Status.SUSPENDED);
 
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
         User user = userService.getCurrentAuthenticatedUser();
@@ -92,7 +92,7 @@ public class ProductServiceImpl extends CrudService implements ProductService {
     }
 
     @Override
-    protected void changeOneState(String id, Status status) {
+    protected void changeStatus(String id, Status status) {
         this.getProductById(id).ifPresent(product -> {
             product.setStatus(status);
             productRepository.save(product);
@@ -107,7 +107,7 @@ public class ProductServiceImpl extends CrudService implements ProductService {
         Store store = user.getStore();
 
         Product product = modelToEntityMapper.map(model);
-        product.setStatus(Status.ACTIVE);
+        product.setStatus(Status.LISTED);
         product.setStore(store);
 
         Set<Inventory> saveToInventory = inventoryService.mapModelToInventory(product, model.getInventories());
@@ -125,7 +125,7 @@ public class ProductServiceImpl extends CrudService implements ProductService {
     public GetAllResponse getAllProducts(int pageNo, int pageSize, String sortBy) {
         Sort sort = Sort.by("createdDate").descending();
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-        Page<Product> products = productRepository.findAllByStatus(Status.ACTIVE, pageable);
+        Page<Product> products = productRepository.findAllByStatus(Status.LISTED, pageable);
         PageResponse pageResponse = pagination.getPagination(products);
         List<ProductModel> productModels = this.getProducts(products);
         return new GetAllResponse(productModels, pageResponse);

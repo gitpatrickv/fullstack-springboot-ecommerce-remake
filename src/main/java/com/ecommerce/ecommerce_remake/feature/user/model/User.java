@@ -2,15 +2,20 @@ package com.ecommerce.ecommerce_remake.feature.user.model;
 
 import com.ecommerce.ecommerce_remake.common.dto.AuditEntity;
 import com.ecommerce.ecommerce_remake.common.dto.enums.Status;
+import com.ecommerce.ecommerce_remake.feature.address.model.Address;
 import com.ecommerce.ecommerce_remake.feature.store.model.Store;
 import com.ecommerce.ecommerce_remake.feature.user.enums.Gender;
 import com.ecommerce.ecommerce_remake.feature.user.enums.Role;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -38,6 +43,9 @@ public class User extends AuditEntity implements UserDetails {
 
     @OneToOne(mappedBy = "user")
     private Store store;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Address> addresses = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
