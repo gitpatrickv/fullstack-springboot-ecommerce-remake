@@ -55,10 +55,28 @@ public class AddressServiceImpl extends CrudService implements AddressService {
                 .toList();
         return new GetAllResponse(addressModels, new PageResponse(0,0, (long) addresses.size(),0,true));
     }
-
+    @Transactional
     @Override
     protected <T extends Model> Model updateOne(T model) {
-        return null;
+        AddressModel addressModel = (AddressModel) model;
+        return this.getAddressById(addressModel.getAddressId().toString())
+                .map(address -> {
+                    Optional.ofNullable(addressModel.getFullName())
+                            .ifPresent(address::setFullName);
+                    Optional.ofNullable(addressModel.getContactNumber())
+                            .ifPresent(address::setContactNumber);
+                    Optional.ofNullable(addressModel.getStreetAddress())
+                            .ifPresent(address::setStreetAddress);
+                    Optional.ofNullable(addressModel.getCity())
+                            .ifPresent(address::setCity);
+                    Optional.ofNullable(addressModel.getPostCode())
+                            .ifPresent(address::setPostCode);
+                    Optional.ofNullable(addressModel.getAddressType())
+                            .ifPresent(address::setAddressType);
+
+                    Address savedAddress = addressRepository.save(address);
+                    return entityToModelMapper.map(savedAddress);
+                }).orElse(null);
     }
 
     @Transactional
