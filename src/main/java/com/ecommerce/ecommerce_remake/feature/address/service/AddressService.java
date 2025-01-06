@@ -6,4 +6,5 @@ import java.util.Optional;
 
 public interface AddressService {
     Optional<Address> getAddressById(String id);
+    void deleteAddressById(String id);
 }

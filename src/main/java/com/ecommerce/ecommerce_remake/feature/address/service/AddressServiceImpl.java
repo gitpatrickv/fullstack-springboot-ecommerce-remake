@@ -97,4 +97,9 @@ public class AddressServiceImpl extends CrudService implements AddressService {
     public Optional<Address> getAddressById(String id) {
         return addressRepository.findById(Integer.parseInt(id));
     }
+
+    @Override
+    public void deleteAddressById(String id) {
+        addressRepository.deleteById(Integer.parseInt(id));
+    }
 }

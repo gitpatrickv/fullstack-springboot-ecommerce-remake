@@ -72,5 +72,9 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now()), HttpStatus.NOT_IMPLEMENTED);
     }
 
-
+    @ExceptionHandler (RuntimeException.class)
+    protected ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex) {
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(),
+                LocalDateTime.now()), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
