@@ -9,6 +9,7 @@ import com.ecommerce.ecommerce_remake.common.service.CrudService;
 import com.ecommerce.ecommerce_remake.common.util.Pagination;
 import com.ecommerce.ecommerce_remake.common.util.mapper.EntityToModelMapper;
 import com.ecommerce.ecommerce_remake.common.util.mapper.ModelToEntityMapper;
+import com.ecommerce.ecommerce_remake.feature.product_image.service.ProductImageService;
 import com.ecommerce.ecommerce_remake.feature.store.model.Store;
 import com.ecommerce.ecommerce_remake.feature.store.model.StoreModel;
 import com.ecommerce.ecommerce_remake.feature.store.repository.StoreRepository;
@@ -22,6 +23,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +35,7 @@ public class StoreServiceImpl extends CrudService implements StoreService {
     private final Validator validator;
     private final UserService userService;
     private final Pagination pagination;
+    private final ProductImageService productImageService;
 
     private ModelToEntityMapper<StoreModel, Store> modelToEntityMapper = new ModelToEntityMapper<>(Store.class);
     private EntityToModelMapper<Store, StoreModel> entityToModelMapper = new EntityToModelMapper<>(StoreModel.class);
@@ -100,6 +103,14 @@ public class StoreServiceImpl extends CrudService implements StoreService {
                 .map(User::getStore)
                 .map(entityToModelMapper::map)
                 .orElse(null);
+    }
+
+    @Override
+    public void uploadStoreAvatar(MultipartFile file) {
+        User user = userService.getCurrentAuthenticatedUser();
+        Store store = user.getStore();
+        store.setPicture(productImageService.processImages(file));
+        storeRepository.save(store);
     }
 
     @Override

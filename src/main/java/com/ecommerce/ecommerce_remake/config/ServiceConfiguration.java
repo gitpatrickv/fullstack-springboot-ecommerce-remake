@@ -35,8 +35,9 @@ public class ServiceConfiguration {
     public StoreServiceImpl getStoreService(StoreRepository repository,
                                             Validator validator,
                                             UserService userService,
-                                            Pagination pagination){
-        return new StoreServiceImpl(repository, validator, userService, pagination);
+                                            Pagination pagination,
+                                            ProductImageService productImageService){
+        return new StoreServiceImpl(repository, validator, userService, pagination, productImageService);
     }
 
     @Bean (name = "productService")
