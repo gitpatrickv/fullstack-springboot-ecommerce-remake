@@ -1,9 +1,13 @@
 package com.ecommerce.ecommerce_remake.feature.inventory.model;
 
 import com.ecommerce.ecommerce_remake.common.dto.AuditEntity;
+import com.ecommerce.ecommerce_remake.feature.cart.model.CartItem;
 import com.ecommerce.ecommerce_remake.feature.product.model.Product;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -26,4 +30,7 @@ public class Inventory extends AuditEntity {
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
+
+    @OneToMany(mappedBy = "inventory", cascade = CascadeType.ALL)
+    private List<CartItem> cartItems = new ArrayList<>();
 }

@@ -3,7 +3,8 @@ package com.ecommerce.ecommerce_remake.common.dto.enums;
 public enum ResponseCode {
 
     RESP_NOT_FOUND("404"),
-    RESP_SUCCESS("200");
+    RESP_SUCCESS("200"),
+    RESP_FAILURE("400");
 
     private String value;
 

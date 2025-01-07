@@ -2,6 +2,8 @@ package com.ecommerce.ecommerce_remake.security.service;
 
 import com.ecommerce.ecommerce_remake.common.dto.enums.Status;
 import com.ecommerce.ecommerce_remake.common.util.mapper.ModelToEntityMapper;
+import com.ecommerce.ecommerce_remake.feature.cart.model.Cart;
+import com.ecommerce.ecommerce_remake.feature.cart.repository.CartRepository;
 import com.ecommerce.ecommerce_remake.feature.user.enums.Role;
 import com.ecommerce.ecommerce_remake.feature.user.model.User;
 import com.ecommerce.ecommerce_remake.feature.user.model.UserModel;
@@ -23,6 +25,7 @@ public class AuthServiceImpl implements AuthService{
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CartRepository cartRepository;
 
     private ModelToEntityMapper<UserModel, User> modelToEntityMapper = new ModelToEntityMapper<>(User.class);
 
@@ -32,7 +35,14 @@ public class AuthServiceImpl implements AuthService{
         user.setPassword(passwordEncoder.encode(userModel.getPassword()));
         user.setRole(Role.USER);
         user.setStatus(Status.ACTIVE);
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        Cart cart = new Cart();
+        cart.setUser(savedUser);
+        cart.setTotalItems(0);
+        cart.setProductsQuantity(0);
+        cartRepository.save(cart);
+
         return this.authenticate(userModel.getEmail(), userModel.getPassword());
     }
     @Override

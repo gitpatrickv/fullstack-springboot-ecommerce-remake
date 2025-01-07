@@ -82,6 +82,24 @@ CREATE TABLE IF NOT EXISTS address (
     `last_modified` TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS cart (
+    `cart_id` INT AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT UNIQUE NOT NULL,
+    `total_items` INT DEFAULT 0,
+    `products_quantity` INT DEFAULT 0,
+    `created_date` TIMESTAMP,
+    `last_modified` TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS cart_item (
+    `cart_item_id` INT AUTO_INCREMENT PRIMARY KEY,
+    `cart_id` INT NOT NULL,
+    `inventory_id` INT NOT NULL,
+    `quantity` INT NOT NULL DEFAULT 0,
+    `created_date` TIMESTAMP,
+    `last_modified` TIMESTAMP
+);
+
 
 
 

@@ -4,16 +4,22 @@ import com.ecommerce.ecommerce_remake.common.util.mapper.EntityToModelMapper;
 import com.ecommerce.ecommerce_remake.common.util.mapper.ModelToEntityMapper;
 import com.ecommerce.ecommerce_remake.feature.inventory.model.Inventory;
 import com.ecommerce.ecommerce_remake.feature.inventory.model.InventoryModel;
+import com.ecommerce.ecommerce_remake.feature.inventory.repository.InventoryRepository;
 import com.ecommerce.ecommerce_remake.feature.product.model.Product;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 @Service
+@RequiredArgsConstructor
 public class InventoryServiceImpl implements InventoryService {
 
     private ModelToEntityMapper<InventoryModel, Inventory> modelToEntityMapper = new ModelToEntityMapper<>(Inventory.class);
     private EntityToModelMapper<Inventory, InventoryModel> entityToModelMapper = new EntityToModelMapper<>(InventoryModel.class);
+
+    private final InventoryRepository inventoryRepository;
     @Override
     public Set<Inventory> mapModelToInventory(Product product, Set<InventoryModel> inventoryModels) {
 
@@ -27,4 +33,11 @@ public class InventoryServiceImpl implements InventoryService {
 
         return inventories;
     }
+
+    @Override
+    public Optional<Inventory> findInventoryByProductId(Integer productId) {
+        return inventoryRepository.findByProduct_ProductId(productId);
+    }
+
+
 }
