@@ -6,5 +6,6 @@ import com.ecommerce.ecommerce_remake.feature.cart.dto.AddToCartRequest;
 public interface CartService {
 
     Response addToCart(AddToCartRequest request);
+    Response addToCartWithVariation(AddToCartRequest request, String color, String size);
 
 }

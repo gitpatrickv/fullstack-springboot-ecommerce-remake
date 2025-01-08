@@ -18,6 +18,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class CartServiceImpl implements CartService{
 
     private final UserService userService;
@@ -25,33 +26,50 @@ public class CartServiceImpl implements CartService{
     private final InventoryService inventoryService;
     private final CartItemRepository cartItemRepository;
 
-    @Transactional
+
     @Override
     public Response addToCart(AddToCartRequest request) {
+        Optional<Inventory> optionalInventory = inventoryService.findInventoryByProductId(request.getProductId());
+        Inventory inventory = optionalInventory.get();
+        return this.addProductsToCart(request, inventory);
+    }
+
+    @Override
+    public Response addToCartWithVariation(AddToCartRequest request, String color, String size) {
+        Optional<Inventory> optionalInventory = inventoryService.findInventoryByColorAndSize(color, size, request.getProductId());
+        Inventory inventory = optionalInventory.get();
+        return this.addProductsToCart(request, inventory);
+    }
+
+    private  Response addProductsToCart(AddToCartRequest request, Inventory inventory){
         User user = userService.getCurrentAuthenticatedUser();
         Cart cart = user.getCart();
-        CartItem cartItem;
-        Optional<CartItem> existingCartItem = cartItemService.findExistingCartItem(request.getInventoryId(), cart.getCartId());
-        Optional<Inventory> inventory = inventoryService.findInventoryByProductId(request.getProductId());
 
-        if(request.getQuantity() > inventory.get().getQuantity()){
-            return new Response(ResponseCode.RESP_FAILURE,"Not enough stock available. Please adjust the quantity.");
+        Optional<CartItem> existingCartItem = cartItemService.findExistingCartItem(inventory.getInventoryId(), cart.getCartId());
+
+        CartItem cartItem;
+
+        if(request.getQuantity() > inventory.getQuantity()){
+            return new Response(ResponseCode.RESP_FAILURE,"Insufficient stock. Please adjust the quantity.");
         }
 
         if(existingCartItem.isPresent()){
             cartItem = existingCartItem.get();
+            if(cartItem.getQuantity() + request.getQuantity() > inventory.getQuantity()){
+                return new Response(ResponseCode.RESP_FAILURE, String.format("Insufficient stock. You already have %s in your cart", existingCartItem.get().getQuantity()));
+            }
             cartItem.setQuantity(cartItem.getQuantity() + request.getQuantity());
             cartItemRepository.save(cartItem);
-        } else {
+        }
+        else {
             cartItem = new CartItem();
             cartItem.setQuantity(request.getQuantity());
             cartItem.setCart(cart);
-            cartItem.setInventory(inventory.get());
+            cartItem.setInventory(inventory);
             cartItemRepository.save(cartItem);
         }
-        return new Response(ResponseCode.RESP_SUCCESS, String.format("'%s' has been successfully added to your shopping cart!", inventory.get().getProduct().getProductName()));
+        return new Response(ResponseCode.RESP_SUCCESS, String.format("Added %s '%s' to your shopping cart!",request.getQuantity(), inventory.getProduct().getProductName()));
     }
-
 
 
 }

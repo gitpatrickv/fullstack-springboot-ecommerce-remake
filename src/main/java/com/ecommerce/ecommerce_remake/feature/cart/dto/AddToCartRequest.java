@@ -1,5 +1,6 @@
 package com.ecommerce.ecommerce_remake.feature.cart.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,7 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class AddToCartRequest {
-    private Integer productId;
-    private Integer inventoryId;
+    @NotNull
+    private String productId;
+    @NotNull
     private Integer quantity;
 }

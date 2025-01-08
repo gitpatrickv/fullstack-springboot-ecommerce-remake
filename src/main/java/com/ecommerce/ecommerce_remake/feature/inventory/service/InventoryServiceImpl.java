@@ -35,8 +35,13 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
-    public Optional<Inventory> findInventoryByProductId(Integer productId) {
-        return inventoryRepository.findByProduct_ProductId(productId);
+    public Optional<Inventory> findInventoryByProductId(String productId) {
+        return inventoryRepository.findByProduct_ProductId(Integer.parseInt(productId));
+    }
+
+    @Override
+    public Optional<Inventory> findInventoryByColorAndSize(String color, String size, String productId) {
+        return inventoryRepository.findByColorIgnoreCaseAndSizeIgnoreCaseAndProduct_ProductId(color, size, Integer.parseInt(productId));
     }
 
 
