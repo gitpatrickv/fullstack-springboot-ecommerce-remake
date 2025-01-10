@@ -7,5 +7,5 @@ public interface CartService {
 
     Response addToCart(AddToCartRequest request);
     Response addToCartWithVariation(AddToCartRequest request, String color, String size);
-
+    Integer getCartSize();
 }

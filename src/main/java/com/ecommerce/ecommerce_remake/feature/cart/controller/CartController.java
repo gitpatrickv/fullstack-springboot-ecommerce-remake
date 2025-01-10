@@ -45,4 +45,8 @@ public class CartController {
             return ResponseEntity.badRequest().body(response.getResponseDescription());
         }
     }
+    @GetMapping("/size")
+    public Integer getCartSize(){
+        return cartService.getCartSize();
+    }
 }

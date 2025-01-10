@@ -26,7 +26,6 @@ public class CartServiceImpl implements CartService{
     private final InventoryService inventoryService;
     private final CartItemRepository cartItemRepository;
 
-
     @Override
     public Response addToCart(AddToCartRequest request) {
         Optional<Inventory> optionalInventory = inventoryService.findInventoryByProductId(request.getProductId());
@@ -39,6 +38,13 @@ public class CartServiceImpl implements CartService{
         Optional<Inventory> optionalInventory = inventoryService.findInventoryByColorAndSize(color, size, request.getProductId());
         Inventory inventory = optionalInventory.get();
         return this.addProductsToCart(request, inventory);
+    }
+
+    @Override
+    public Integer getCartSize() {
+        User user = userService.getCurrentAuthenticatedUser();
+        Cart cart = user.getCart();
+        return cart.getTotalItems();
     }
 
     private  Response addProductsToCart(AddToCartRequest request, Inventory inventory){
@@ -69,9 +75,8 @@ public class CartServiceImpl implements CartService{
             cartItem.setCart(cart);
             cartItem.setInventory(inventory);
             cartItemRepository.save(cartItem);
+            cart.setTotalItems(cart.getTotalItems() + 1);
         }
         return new Response(ResponseCode.RESP_SUCCESS, String.format("Added %s '%s' to your shopping cart!",request.getQuantity(), inventory.getProduct().getProductName()));
     }
-
-
 }
