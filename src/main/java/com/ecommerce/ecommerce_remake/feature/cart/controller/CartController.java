@@ -30,7 +30,9 @@ public class CartController {
     }
 
     @PostMapping("/{color}/{size}")
-    public ResponseEntity<String> addToCartWithVariation(@RequestBody @Valid AddToCartRequest request, @PathVariable("color") String color, @PathVariable("size") String size) {
+    public ResponseEntity<String> addToCartWithVariation(@RequestBody @Valid AddToCartRequest request,
+                                                         @PathVariable("color") String color,
+                                                         @PathVariable("size") String size) {
         log.info("Received the request to add a new items to the cart");
         Response response = cartService.addToCartWithVariation(request, color, size);
         if(response.getResponseCode().equals(ResponseCode.RESP_SUCCESS)) {

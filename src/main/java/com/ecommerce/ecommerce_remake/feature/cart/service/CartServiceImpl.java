@@ -49,14 +49,16 @@ public class CartServiceImpl implements CartService{
 
         CartItem cartItem;
 
-        if(request.getQuantity() > inventory.getQuantity()){
+        int availableStock = inventory.getQuantity();
+
+        if(request.getQuantity() > availableStock){
             return new Response(ResponseCode.RESP_FAILURE,"Insufficient stock. Please adjust the quantity.");
         }
 
         if(existingCartItem.isPresent()){
             cartItem = existingCartItem.get();
-            if(cartItem.getQuantity() + request.getQuantity() > inventory.getQuantity()){
-                return new Response(ResponseCode.RESP_FAILURE, String.format("Insufficient stock. You already have %s in your cart", existingCartItem.get().getQuantity()));
+            if(cartItem.getQuantity() + request.getQuantity() > availableStock){
+                return new Response(ResponseCode.RESP_FAILURE, String.format("Insufficient stock. You already have %s in your cart", cartItem.getQuantity()));
             }
             cartItem.setQuantity(cartItem.getQuantity() + request.getQuantity());
             cartItemRepository.save(cartItem);
