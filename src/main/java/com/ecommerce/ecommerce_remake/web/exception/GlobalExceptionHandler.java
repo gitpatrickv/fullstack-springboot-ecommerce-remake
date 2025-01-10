@@ -77,4 +77,16 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage(),
                 LocalDateTime.now()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler (InvalidQuantityException.class)
+    protected ResponseEntity<ErrorResponse> handleInvalidQuantityException(InvalidQuantityException ex) {
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(),
+                LocalDateTime.now()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler (ResourceNotFoundException.class)
+    protected ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException ex) {
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), LocalDateTime.now()),
+                HttpStatus.NOT_FOUND);
+    }
 }

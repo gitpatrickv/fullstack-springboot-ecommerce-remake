@@ -10,5 +10,8 @@ public interface CartItemService {
 
     Optional<CartItem> findExistingCartItem(Integer inventoryId, Integer cartId);
     List<CartItemsResponse> getAllCartItems();
+    void updateQuantity(Integer cartItemId, Integer newQuantity);
+    CartItem findCartItemById(Integer id);
+
 
 }

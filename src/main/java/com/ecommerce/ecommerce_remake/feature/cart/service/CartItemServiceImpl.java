@@ -8,7 +8,9 @@ import com.ecommerce.ecommerce_remake.feature.cart.model.CartItemModel;
 import com.ecommerce.ecommerce_remake.feature.cart.repository.CartItemRepository;
 import com.ecommerce.ecommerce_remake.feature.user.model.User;
 import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
+import com.ecommerce.ecommerce_remake.web.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +18,8 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
+@Transactional
 public class CartItemServiceImpl implements CartItemService{
 
     private final CartItemRepository cartItemRepository;
@@ -28,7 +32,6 @@ public class CartItemServiceImpl implements CartItemService{
         return cartItemRepository.findItemIfExist(inventoryId,cartId);
     }
 
-    @Transactional
     @Override
     public List<CartItemsResponse> getAllCartItems() {
         User user = userService.getCurrentAuthenticatedUser();
@@ -43,6 +46,18 @@ public class CartItemServiceImpl implements CartItemService{
                 .stream()
                 .map(entry -> new CartItemsResponse(entry.getKey(), entry.getValue()))
                 .toList();
+    }
+
+    @Override
+    public void updateQuantity(Integer cartItemId, Integer newQuantity) {
+        CartItem cartItem = this.findCartItemById(cartItemId);
+        cartItem.setQuantity(newQuantity);
+        cartItemRepository.save(cartItem);
+    }
+
+    @Override
+    public CartItem findCartItemById(Integer id) {
+        return cartItemRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format("Cart Item not found with ID: %s", id)));
     }
 
     private Map<String, List<CartItemModel>> groupCartItemsByStore(List<CartItem> cartItemList){
