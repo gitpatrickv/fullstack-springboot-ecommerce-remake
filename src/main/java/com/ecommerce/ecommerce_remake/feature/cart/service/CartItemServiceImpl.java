@@ -6,6 +6,7 @@ import com.ecommerce.ecommerce_remake.feature.cart.model.Cart;
 import com.ecommerce.ecommerce_remake.feature.cart.model.CartItem;
 import com.ecommerce.ecommerce_remake.feature.cart.model.CartItemModel;
 import com.ecommerce.ecommerce_remake.feature.cart.repository.CartItemRepository;
+import com.ecommerce.ecommerce_remake.feature.cart.repository.CartRepository;
 import com.ecommerce.ecommerce_remake.feature.user.model.User;
 import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import com.ecommerce.ecommerce_remake.web.exception.ResourceNotFoundException;
@@ -24,6 +25,7 @@ public class CartItemServiceImpl implements CartItemService{
 
     private final CartItemRepository cartItemRepository;
     private final UserService userService;
+    private final CartRepository cartRepository;
 
     private EntityToModelMapper<CartItem, CartItemModel> entityToModelMapper = new EntityToModelMapper<>(CartItemModel.class);
 
@@ -53,6 +55,15 @@ public class CartItemServiceImpl implements CartItemService{
         CartItem cartItem = this.findCartItemById(cartItemId);
         cartItem.setQuantity(newQuantity);
         cartItemRepository.save(cartItem);
+    }
+
+    @Override
+    public void deleteCartItemById(Integer cartItemId) {
+        User user = userService.getCurrentAuthenticatedUser();
+        Cart cart = user.getCart();
+        cartItemRepository.deleteById(cartItemId);
+        cart.setTotalItems(cart.getTotalItems() - 1);
+        cartRepository.save(cart);
     }
 
     @Override

@@ -24,6 +24,7 @@ public class CartItemController {
     }
 
     @PutMapping("/{cartItemId}/{newQuantity}")
+    @ResponseStatus(HttpStatus.OK)
     public void updateQuantity(@PathVariable("cartItemId") Integer cartItemId,
                                @PathVariable("newQuantity") Integer newQuantity) {
         log.info("Received request to update quantity for CartItemId={} to new Quantity={} ", cartItemId, newQuantity);
@@ -32,6 +33,13 @@ public class CartItemController {
             throw new InvalidQuantityException();
         }
         cartItemService.updateQuantity(cartItemId,newQuantity);
+    }
 
+    @DeleteMapping("/delete/{cartItemId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteCartItemById(@PathVariable("cartItemId") Integer cartItemId) {
+        log.info("Received request to delete cart item with id = {}", cartItemId);
+        cartItemService.deleteCartItemById(cartItemId);
+        log.info("cart item with id = {} is successfully deleted", cartItemId);
     }
 }
