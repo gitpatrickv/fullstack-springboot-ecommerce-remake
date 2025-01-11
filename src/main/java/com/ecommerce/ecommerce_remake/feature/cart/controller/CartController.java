@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class CartController {
     private final CartService cartService;
-    @PostMapping
+    @PostMapping("/add")
     public ResponseEntity<String> addToCart(@RequestBody @Valid AddToCartRequest request){
         log.info("Received the request to add a new items to the cart");
         Response response = cartService.addToCart(request);
@@ -29,7 +29,7 @@ public class CartController {
         }
     }
 
-    @PostMapping("/{color}/{size}")
+    @PostMapping("/{color}/{size}/add")
     public ResponseEntity<String> addToCartWithVariation(@RequestBody @Valid AddToCartRequest request,
                                                          @PathVariable("color") String color,
                                                          @PathVariable("size") String size) {

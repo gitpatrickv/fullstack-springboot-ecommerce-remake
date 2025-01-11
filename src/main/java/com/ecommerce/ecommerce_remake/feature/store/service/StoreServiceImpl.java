@@ -53,7 +53,7 @@ public class StoreServiceImpl extends CrudService implements StoreService {
         return entityToModelMapper.map(savedStore);
     }
 
-    @Override
+    @Override //TODO: Not yet implemented on the frontend
     protected Optional<StoreModel> getOne(String id) {
         return this.getStoreById(id).map(entityToModelMapper::map);
     }

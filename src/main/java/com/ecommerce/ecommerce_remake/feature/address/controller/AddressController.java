@@ -14,7 +14,7 @@ public class AddressController {
 
     private final AddressService addressService;
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}/delete")
     @ResponseStatus(HttpStatus.OK)
     public void deleteAddressById(@PathVariable("id") String id){
         log.info("Received request to delete address with id {}", id);

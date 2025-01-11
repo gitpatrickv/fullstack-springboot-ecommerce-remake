@@ -74,8 +74,8 @@ public class CrudController {
         }
     }
 
-    @GetMapping("/{module}/{id}")
-    public ResponseEntity<?> getOneResource(@PathVariable Module module,@PathVariable String id){
+    @GetMapping("/{id}/{module}")
+    public ResponseEntity<?> getOneResource(@PathVariable String id, @PathVariable Module module){
         CrudService service = getService(module);
         Response response = service.retrieve(id);
         log.info("CrudService.retrieve() response code={}", response.getResponseCode());

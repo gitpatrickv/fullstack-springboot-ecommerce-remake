@@ -23,7 +23,7 @@ public class CartItemController {
         return cartItemService.getAllCartItems();
     }
 
-    @PutMapping("/{cartItemId}/{newQuantity}")
+    @PutMapping("/{cartItemId}/{newQuantity}/quantity")
     @ResponseStatus(HttpStatus.OK)
     public void updateQuantity(@PathVariable("cartItemId") Integer cartItemId,
                                @PathVariable("newQuantity") Integer newQuantity) {
@@ -35,7 +35,7 @@ public class CartItemController {
         cartItemService.updateQuantity(cartItemId,newQuantity);
     }
 
-    @DeleteMapping("/delete/{cartItemId}")
+    @DeleteMapping("/{cartItemId}/delete")
     @ResponseStatus(HttpStatus.OK)
     public void deleteCartItemById(@PathVariable("cartItemId") Integer cartItemId) {
         log.info("Received request to delete cart item with id = {}", cartItemId);
