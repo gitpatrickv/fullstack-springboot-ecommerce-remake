@@ -38,7 +38,7 @@ public class SecurityConfig {
                                         .requestMatchers(HttpMethod.GET,"/api/product").permitAll()
                                         .requestMatchers(HttpMethod.GET,"/api/factory/product/**").permitAll()
                                         .requestMatchers(HttpMethod.POST,"/api/product/save").hasAuthority(SELLER.name())
-                                        .requestMatchers(HttpMethod.DELETE,"/api/cart/item/delete/**").hasAnyAuthority(SELLER.name(), USER.name())
+                                        .requestMatchers(HttpMethod.DELETE,"/api/cart/**").hasAnyAuthority(SELLER.name(), USER.name())
                                         .anyRequest()
                                         .authenticated());
         httpSecurity.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

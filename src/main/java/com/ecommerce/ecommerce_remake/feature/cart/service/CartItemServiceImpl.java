@@ -2,6 +2,7 @@ package com.ecommerce.ecommerce_remake.feature.cart.service;
 
 import com.ecommerce.ecommerce_remake.common.util.mapper.EntityToModelMapper;
 import com.ecommerce.ecommerce_remake.feature.cart.dto.CartItemsResponse;
+import com.ecommerce.ecommerce_remake.feature.cart.dto.DeleteRequest;
 import com.ecommerce.ecommerce_remake.feature.cart.model.Cart;
 import com.ecommerce.ecommerce_remake.feature.cart.model.CartItem;
 import com.ecommerce.ecommerce_remake.feature.cart.model.CartItemModel;
@@ -63,6 +64,16 @@ public class CartItemServiceImpl implements CartItemService{
         Cart cart = user.getCart();
         cartItemRepository.deleteById(cartItemId);
         cart.setTotalItems(cart.getTotalItems() - 1);
+        cartRepository.save(cart);
+    }
+
+    @Override
+    public void deleteAllSelectedCartItem(DeleteRequest request) {
+        User user = userService.getCurrentAuthenticatedUser();
+        Cart cart = user.getCart();
+        Set<Integer> itemIds = request.getIds();
+        cartItemRepository.deleteAllByIdInBatch(itemIds);
+        cart.setTotalItems(cart.getTotalItems() - itemIds.size());
         cartRepository.save(cart);
     }
 

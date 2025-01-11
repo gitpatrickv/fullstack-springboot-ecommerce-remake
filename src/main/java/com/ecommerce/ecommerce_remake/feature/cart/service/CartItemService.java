@@ -1,6 +1,7 @@
 package com.ecommerce.ecommerce_remake.feature.cart.service;
 
 import com.ecommerce.ecommerce_remake.feature.cart.dto.CartItemsResponse;
+import com.ecommerce.ecommerce_remake.feature.cart.dto.DeleteRequest;
 import com.ecommerce.ecommerce_remake.feature.cart.model.CartItem;
 
 import java.util.List;
@@ -12,6 +13,7 @@ public interface CartItemService {
     List<CartItemsResponse> getAllCartItems();
     void updateQuantity(Integer cartItemId, Integer newQuantity);
     void deleteCartItemById(Integer cartItemId);
+    void deleteAllSelectedCartItem(DeleteRequest request);
     CartItem findCartItemById(Integer id);
 
 }

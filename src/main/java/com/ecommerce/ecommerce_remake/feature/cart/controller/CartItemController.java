@@ -1,17 +1,20 @@
 package com.ecommerce.ecommerce_remake.feature.cart.controller;
 
 import com.ecommerce.ecommerce_remake.feature.cart.dto.CartItemsResponse;
+import com.ecommerce.ecommerce_remake.feature.cart.dto.DeleteRequest;
 import com.ecommerce.ecommerce_remake.feature.cart.service.CartItemService;
 import com.ecommerce.ecommerce_remake.web.exception.InvalidQuantityException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/cart/item")
+@RequestMapping("/api/cart")
 @RequiredArgsConstructor
 @Slf4j
 public class CartItemController {
@@ -41,5 +44,18 @@ public class CartItemController {
         log.info("Received request to delete cart item with id = {}", cartItemId);
         cartItemService.deleteCartItemById(cartItemId);
         log.info("cart item with id = {} is successfully deleted", cartItemId);
+    }
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteAllSelectedCartItem(@RequestBody DeleteRequest request) {
+        log.info("Received request to delete cart items for ids = {}", request.getIds());
+        if(request.getIds().isEmpty()){
+            log.warn("No IDs provided for deletion");
+            return new ResponseEntity<>("Please select items to delete.", HttpStatus.BAD_REQUEST);
+        } else {
+            log.info("number of items to be deleted: {} ", request.getIds().size());
+            cartItemService.deleteAllSelectedCartItem(request);
+            log.info("cart item for ids = {} is successfully deleted", request.getIds());
+            return new ResponseEntity<>("Selected cart items have been deleted successfully.", HttpStatus.OK);
+        }
     }
 }
