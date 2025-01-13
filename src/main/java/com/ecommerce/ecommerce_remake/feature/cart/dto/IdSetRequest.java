@@ -9,7 +9,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-public class DeleteRequest {
+public class IdSetRequest {
 
     private Set<Integer> ids;
 }

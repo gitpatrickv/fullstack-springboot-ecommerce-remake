@@ -2,7 +2,7 @@ package com.ecommerce.ecommerce_remake.feature.cart.controller;
 
 import com.ecommerce.ecommerce_remake.feature.cart.dto.CartItemsResponse;
 import com.ecommerce.ecommerce_remake.feature.cart.dto.CheckOutResponse;
-import com.ecommerce.ecommerce_remake.feature.cart.dto.DeleteRequest;
+import com.ecommerce.ecommerce_remake.feature.cart.dto.IdSetRequest;
 import com.ecommerce.ecommerce_remake.feature.cart.service.CartItemService;
 import com.ecommerce.ecommerce_remake.web.exception.InvalidQuantityException;
 import lombok.RequiredArgsConstructor;
@@ -57,7 +57,7 @@ public class CartItemController {
         log.info("cart item with id = {} is successfully deleted", cartItemId);
     }
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteAllSelectedCartItem(@RequestBody DeleteRequest request) {
+    public ResponseEntity<String> deleteAllSelectedCartItem(@RequestBody IdSetRequest request) {
         log.info("Received request to delete cart items for ids = {}", request.getIds());
         if(request.getIds().isEmpty()){
             log.warn("Cart item deletion failed due to missing item IDs.");
