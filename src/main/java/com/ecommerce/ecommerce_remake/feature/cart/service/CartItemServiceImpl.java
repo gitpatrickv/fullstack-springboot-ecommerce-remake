@@ -2,6 +2,7 @@ package com.ecommerce.ecommerce_remake.feature.cart.service;
 
 import com.ecommerce.ecommerce_remake.common.util.mapper.EntityToModelMapper;
 import com.ecommerce.ecommerce_remake.feature.cart.dto.CartItemsResponse;
+import com.ecommerce.ecommerce_remake.feature.cart.dto.CheckOutResponse;
 import com.ecommerce.ecommerce_remake.feature.cart.dto.DeleteRequest;
 import com.ecommerce.ecommerce_remake.feature.cart.model.Cart;
 import com.ecommerce.ecommerce_remake.feature.cart.model.CartItem;
@@ -16,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 @Service
@@ -39,16 +41,20 @@ public class CartItemServiceImpl implements CartItemService{
     public List<CartItemsResponse> getAllCartItems() {
         User user = userService.getCurrentAuthenticatedUser();
         Cart cart = user.getCart();
-
         List<CartItem> cartItemList = cartItemRepository.findByCart(cart);
-
         Map<String, List<CartItemModel>> cartItemMap = this.groupCartItemsByStore(cartItemList);
+        return this.fetchAllCartItems(cartItemMap);
+    }
 
-        return cartItemMap
-                .entrySet()
-                .stream()
-                .map(entry -> new CartItemsResponse(entry.getKey(), entry.getValue()))
-                .toList();
+    @Override
+    public CheckOutResponse checkoutCart(Set<Integer> ids) {
+        User user = userService.getCurrentAuthenticatedUser();
+        Cart cart = user.getCart();
+        List<CartItem> cartItemList = cartItemRepository.findByCartAndCartItemIdIn(cart, ids);
+        Map<String, List<CartItemModel>> cartItemMap = this.groupCartItemsByStore(cartItemList);
+        List<CartItemsResponse> retrievedCartItems = this.fetchAllCartItems(cartItemMap);
+        BigDecimal totalAmount = this.calculateTotalAmount(cartItemList);
+        return new CheckOutResponse(totalAmount, retrievedCartItems);
     }
 
     @Override
@@ -95,5 +101,20 @@ public class CartItemServiceImpl implements CartItemService{
             cartItemMap.computeIfAbsent(storeName, k -> new ArrayList<>()).add(cartItemModel);
         }
         return cartItemMap;
+    }
+
+    private List<CartItemsResponse> fetchAllCartItems(Map<String, List<CartItemModel>> cartItemMap){
+        return cartItemMap
+                .entrySet()
+                .stream()
+                .map(entry -> new CartItemsResponse(entry.getKey(), entry.getValue()))
+                .toList();
+    }
+
+    private BigDecimal calculateTotalAmount (List<CartItem> cartItems){
+        return cartItems.stream()
+                .map(cartItem -> cartItem.getInventory().getPrice()
+                        .multiply(BigDecimal.valueOf(cartItem.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

@@ -53,8 +53,8 @@ CREATE TABLE IF NOT EXISTS products (
 CREATE TABLE IF NOT EXISTS inventory (
     `inventory_id` INT AUTO_INCREMENT PRIMARY KEY,
     `product_id` INT NOT NULL,
-    `quantity` INT NOT NULL,
-    `price` INT NOT NULL,
+    `quantity` INT NOT NULL CHECK (quantity >= 0),
+    `price` DECIMAL NOT NULL CHECK (price > 0),
     `discount_percent` INT DEFAULT 0,
     `color` VARCHAR(30) DEFAULT NULL,
     `size` VARCHAR(30) DEFAULT NULL,
@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS cart_item (
     `cart_item_id` INT AUTO_INCREMENT PRIMARY KEY,
     `cart_id` INT NOT NULL,
     `inventory_id` INT NOT NULL,
-    `quantity` INT NOT NULL DEFAULT 0,
+    `quantity` INT NOT NULL CHECK (quantity >= 1),
     `created_date` TIMESTAMP,
     `last_modified` TIMESTAMP
 );

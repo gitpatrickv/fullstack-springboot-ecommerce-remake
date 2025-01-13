@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface CartItemRepository extends JpaRepository<CartItem, Integer> {
@@ -22,5 +23,5 @@ public interface CartItemRepository extends JpaRepository<CartItem, Integer> {
             "JOIN FETCH p.productImages pi " +
             "WHERE ci.cart = :cart")
     List<CartItem> findByCart(@Param("cart") Cart cart);
-
+    List<CartItem> findByCartAndCartItemIdIn(Cart cart, Set<Integer> ids);
 }

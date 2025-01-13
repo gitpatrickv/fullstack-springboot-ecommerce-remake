@@ -6,6 +6,7 @@ import com.ecommerce.ecommerce_remake.feature.product.model.Product;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class Inventory extends AuditEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer inventoryId;
     private Integer quantity;
-    private Integer price;
+    private BigDecimal price;
     private Integer discountPercent;
     private String color;
     private String size;
