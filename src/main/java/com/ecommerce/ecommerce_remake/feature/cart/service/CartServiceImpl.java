@@ -1,7 +1,6 @@
 package com.ecommerce.ecommerce_remake.feature.cart.service;
 
-import com.ecommerce.ecommerce_remake.common.dto.enums.ResponseCode;
-import com.ecommerce.ecommerce_remake.common.dto.response.Response;
+import com.ecommerce.ecommerce_remake.common.util.StrUtil;
 import com.ecommerce.ecommerce_remake.feature.cart.dto.AddToCartRequest;
 import com.ecommerce.ecommerce_remake.feature.cart.dto.CartTotalResponse;
 import com.ecommerce.ecommerce_remake.feature.cart.model.Cart;
@@ -11,6 +10,8 @@ import com.ecommerce.ecommerce_remake.feature.inventory.model.Inventory;
 import com.ecommerce.ecommerce_remake.feature.inventory.service.InventoryService;
 import com.ecommerce.ecommerce_remake.feature.user.model.User;
 import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
+import com.ecommerce.ecommerce_remake.web.exception.OutOfStockException;
+import com.ecommerce.ecommerce_remake.web.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,17 +32,27 @@ public class CartServiceImpl implements CartService{
     private final CartItemRepository cartItemRepository;
 
     @Override
-    public Response addToCart(AddToCartRequest request) {
+    public void addToCart(AddToCartRequest request) {
         Optional<Inventory> optionalInventory = inventoryService.findInventoryByProductId(request.getProductId());
+
+        if(optionalInventory.isEmpty()){
+            throw new ResourceNotFoundException(StrUtil.INVENTORY_NOT_FOUND);
+        }
+
         Inventory inventory = optionalInventory.get();
-        return this.addProductsToCart(request, inventory);
+        this.addProductsToCart(request, inventory);
     }
 
     @Override
-    public Response addToCartWithVariation(AddToCartRequest request, String color, String size) {
+    public void addToCartWithVariation(AddToCartRequest request, String color, String size) {
         Optional<Inventory> optionalInventory = inventoryService.findInventoryByColorAndSize(color, size, request.getProductId());
+
+        if(optionalInventory.isEmpty()){
+            throw new ResourceNotFoundException(StrUtil.INVENTORY_NOT_FOUND);
+        }
+
         Inventory inventory = optionalInventory.get();
-        return this.addProductsToCart(request, inventory);
+        this.addProductsToCart(request, inventory);
     }
 
     @Override
@@ -61,7 +72,7 @@ public class CartServiceImpl implements CartService{
         return new CartTotalResponse(totalAmount,totalItems);
     }
 
-    private  Response addProductsToCart(AddToCartRequest request, Inventory inventory){
+    private void addProductsToCart(AddToCartRequest request, Inventory inventory){
         User user = userService.getCurrentAuthenticatedUser();
         Cart cart = user.getCart();
 
@@ -71,27 +82,30 @@ public class CartServiceImpl implements CartService{
 
         int availableStock = inventory.getQuantity();
 
-        if(request.getQuantity() > availableStock){
-            return new Response(ResponseCode.RESP_FAILURE,"Insufficient stock. Please adjust the quantity.");
-        }
+        this.validateStock(request.getQuantity(), availableStock);
 
-        if(existingCartItem.isPresent()){
-            cartItem = existingCartItem.get();
-            if(cartItem.getQuantity() + request.getQuantity() > availableStock){
-                return new Response(ResponseCode.RESP_FAILURE, String.format("Insufficient stock. You already have %s in your cart", cartItem.getQuantity()));
-            }
-            cartItem.setQuantity(cartItem.getQuantity() + request.getQuantity());
-            cartItemRepository.save(cartItem);
-        }
-        else {
+        if(existingCartItem.isEmpty()){
             cartItem = new CartItem();
             cartItem.setQuantity(request.getQuantity());
             cartItem.setCart(cart);
             cartItem.setInventory(inventory);
             cartItemRepository.save(cartItem);
             cart.setTotalItems(cart.getTotalItems() + 1);
+        } else {
+            cartItem = existingCartItem.get();
+            if(cartItem.getQuantity() + request.getQuantity() > availableStock){
+                throw new OutOfStockException(String.format("Insufficient stock. You already have %s in your cart", cartItem.getQuantity()));
+            } else {
+                cartItem.setQuantity(cartItem.getQuantity() + request.getQuantity());
+                cartItemRepository.save(cartItem);
+            }
         }
-        return new Response(ResponseCode.RESP_SUCCESS, String.format("Added %s '%s' to your shopping cart!",request.getQuantity(), inventory.getProduct().getProductName()));
+    }
+
+    private void validateStock(int requestQuantity, int availableStock){
+        if(requestQuantity > availableStock){
+            throw new OutOfStockException("Insufficient stock. Please adjust the quantity.");
+        }
     }
 
     private BigDecimal calculateTotalAmount(List<CartItem> cartItems){

@@ -89,4 +89,10 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), LocalDateTime.now()),
                 HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler (OutOfStockException.class)
+    protected ResponseEntity<ErrorResponse> handleOutOfStockException(OutOfStockException ex) {
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), LocalDateTime.now()),
+                HttpStatus.BAD_REQUEST);
+    }
 }

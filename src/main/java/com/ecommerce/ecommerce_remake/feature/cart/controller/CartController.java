@@ -1,10 +1,9 @@
 package com.ecommerce.ecommerce_remake.feature.cart.controller;
 
-import com.ecommerce.ecommerce_remake.common.dto.enums.ResponseCode;
-import com.ecommerce.ecommerce_remake.common.dto.response.Response;
 import com.ecommerce.ecommerce_remake.feature.cart.dto.AddToCartRequest;
 import com.ecommerce.ecommerce_remake.feature.cart.dto.CartTotalResponse;
 import com.ecommerce.ecommerce_remake.feature.cart.service.CartService;
+import com.ecommerce.ecommerce_remake.web.exception.OutOfStockException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,13 +22,13 @@ public class CartController {
     @PostMapping("/add")
     public ResponseEntity<String> addToCart(@RequestBody @Valid AddToCartRequest request){
         log.info("Received the request to add a new items to the cart");
-        Response response = cartService.addToCart(request);
-        if(response.getResponseCode().equals(ResponseCode.RESP_SUCCESS)) {
-            log.info("POST Response 200 - Product with ID={} was successfully added to the cart.", request.getProductId());
-            return ResponseEntity.ok().body(response.getResponseDescription());
-        } else {
-            log.warn("POST Response 400 - failed to add product with ID={} to the cart", request.getProductId());
-            return ResponseEntity.badRequest().body(response.getResponseDescription());
+        try {
+            cartService.addToCart(request);
+            log.info("Add To Cart - Product with ID={} was successfully added to the cart.", request.getProductId());
+            return ResponseEntity.ok().body("Item has been added to your Shopping Cart!");
+        } catch(OutOfStockException ex) {
+            log.warn("Add To Cart - failed to add product with ID={} to the cart", request.getProductId());
+            return ResponseEntity.badRequest().body(ex.getMessage());
         }
     }
 
@@ -38,15 +37,15 @@ public class CartController {
                                                          @PathVariable("color") String color,
                                                          @PathVariable("size") String size) {
         log.info("Received the request to add a new items to the cart");
-        Response response = cartService.addToCartWithVariation(request, color, size);
-        if(response.getResponseCode().equals(ResponseCode.RESP_SUCCESS)) {
-            log.info("Product with ID={} and variation (Color: {}, Size: {}) successfully added to the cart.",
+        try {
+            cartService.addToCartWithVariation(request, color, size);
+            log.info("Add To Cart - Product with ID={} and variation (Color: {}, Size: {}) successfully added to the cart.",
                     request.getProductId(), color, size);
-            return ResponseEntity.ok().body(response.getResponseDescription());
-        } else {
-            log.warn("Failed to add product with ID={} (Color: {}, Size: {}) to the cart",
+            return ResponseEntity.ok().body("Item has been added to your Shopping Cart!");
+        } catch(OutOfStockException ex) {
+            log.warn("Add To Cart - Failed to add product with ID={} (Color: {}, Size: {}) to the cart",
                     request.getProductId(), color, size );
-            return ResponseEntity.badRequest().body(response.getResponseDescription());
+            return ResponseEntity.badRequest().body(ex.getMessage());
         }
     }
     @GetMapping("/size")

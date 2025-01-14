@@ -13,6 +13,7 @@ import com.ecommerce.ecommerce_remake.feature.address.model.AddressModel;
 import com.ecommerce.ecommerce_remake.feature.address.repository.AddressRepository;
 import com.ecommerce.ecommerce_remake.feature.user.model.User;
 import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
+import com.ecommerce.ecommerce_remake.web.exception.NotImplementedException;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,7 +43,7 @@ public class AddressServiceImpl extends CrudService implements AddressService {
 
     @Override
     protected <T extends Model> Optional<Model> getOne(String id) {
-        return Optional.empty();
+        throw new NotImplementedException();
     }
 
     @Override
