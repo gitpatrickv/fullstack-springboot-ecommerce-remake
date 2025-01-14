@@ -3,12 +3,15 @@ package com.ecommerce.ecommerce_remake.feature.cart.controller;
 import com.ecommerce.ecommerce_remake.common.dto.enums.ResponseCode;
 import com.ecommerce.ecommerce_remake.common.dto.response.Response;
 import com.ecommerce.ecommerce_remake.feature.cart.dto.AddToCartRequest;
+import com.ecommerce.ecommerce_remake.feature.cart.dto.CartTotalResponse;
 import com.ecommerce.ecommerce_remake.feature.cart.service.CartService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/cart")
@@ -48,5 +51,11 @@ public class CartController {
     @GetMapping("/size")
     public Integer getCartSize(){
         return cartService.getCartSize();
+    }
+
+    @GetMapping("/{ids}/total")
+    public CartTotalResponse getCartTotal(@PathVariable("ids") Set<Integer> ids){
+        log.info("retrieving cart total");
+        return cartService.getCartTotal(ids);
     }
 }

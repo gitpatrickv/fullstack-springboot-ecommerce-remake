@@ -3,6 +3,7 @@ package com.ecommerce.ecommerce_remake.feature.cart.service;
 import com.ecommerce.ecommerce_remake.common.dto.enums.ResponseCode;
 import com.ecommerce.ecommerce_remake.common.dto.response.Response;
 import com.ecommerce.ecommerce_remake.feature.cart.dto.AddToCartRequest;
+import com.ecommerce.ecommerce_remake.feature.cart.dto.CartTotalResponse;
 import com.ecommerce.ecommerce_remake.feature.cart.model.Cart;
 import com.ecommerce.ecommerce_remake.feature.cart.model.CartItem;
 import com.ecommerce.ecommerce_remake.feature.cart.repository.CartItemRepository;
@@ -14,7 +15,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Service
@@ -45,6 +49,16 @@ public class CartServiceImpl implements CartService{
         User user = userService.getCurrentAuthenticatedUser();
         Cart cart = user.getCart();
         return cart.getTotalItems();
+    }
+
+    @Override
+    public CartTotalResponse getCartTotal(Set<Integer> ids) {
+        User user = userService.getCurrentAuthenticatedUser();
+        Cart cart = user.getCart();
+        List<CartItem> cartItemList = cartItemRepository.findByCartAndCartItemIdIn(cart, ids);
+        BigDecimal totalAmount = this.calculateTotalAmount(cartItemList);
+        Integer totalItems = this.calculateTotalItems(cartItemList);
+        return new CartTotalResponse(totalAmount,totalItems);
     }
 
     private  Response addProductsToCart(AddToCartRequest request, Inventory inventory){
@@ -78,5 +92,19 @@ public class CartServiceImpl implements CartService{
             cart.setTotalItems(cart.getTotalItems() + 1);
         }
         return new Response(ResponseCode.RESP_SUCCESS, String.format("Added %s '%s' to your shopping cart!",request.getQuantity(), inventory.getProduct().getProductName()));
+    }
+
+    private BigDecimal calculateTotalAmount(List<CartItem> cartItems){
+        return cartItems.stream()
+                .map(cartItem -> cartItem.getInventory().getPrice()
+                        .multiply(BigDecimal.valueOf(cartItem.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private Integer calculateTotalItems(List<CartItem> cartItems){
+        return cartItems.stream()
+                .map(CartItem::getQuantity)
+                .reduce(Integer::sum)
+                .orElse(0);
     }
 }
