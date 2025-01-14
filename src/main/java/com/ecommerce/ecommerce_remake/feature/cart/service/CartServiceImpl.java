@@ -57,7 +57,7 @@ public class CartServiceImpl implements CartService{
         Cart cart = user.getCart();
         List<CartItem> cartItemList = cartItemRepository.findByCartAndCartItemIdIn(cart, ids);
         BigDecimal totalAmount = this.calculateTotalAmount(cartItemList);
-        Integer totalItems = this.calculateTotalItems(cartItemList);
+        Integer totalItems = this.calculateTotalProducts(cartItemList);
         return new CartTotalResponse(totalAmount,totalItems);
     }
 
@@ -101,7 +101,7 @@ public class CartServiceImpl implements CartService{
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    private Integer calculateTotalItems(List<CartItem> cartItems){
+    private Integer calculateTotalProducts(List<CartItem> cartItems){
         return cartItems.stream()
                 .map(CartItem::getQuantity)
                 .reduce(Integer::sum)

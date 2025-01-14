@@ -8,6 +8,7 @@ import com.ecommerce.ecommerce_remake.feature.cart.service.CartService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,8 +55,14 @@ public class CartController {
     }
 
     @GetMapping("/{ids}/total")
+    @ResponseStatus(HttpStatus.OK)
     public CartTotalResponse getCartTotal(@PathVariable("ids") Set<Integer> ids){
-        log.info("retrieving cart total");
+
+        if(ids.isEmpty()){
+            log.warn("getCartTotal: No IDs provided. Unable to compute cart total.");
+        }
+
+        log.info("getCartTotal: Calculating cart total for {} item(s) with IDs: {}", ids.size(), ids);
         return cartService.getCartTotal(ids);
     }
 }

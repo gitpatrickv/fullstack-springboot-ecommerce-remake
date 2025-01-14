@@ -4,6 +4,7 @@ import com.ecommerce.ecommerce_remake.common.dto.AuditEntity;
 import com.ecommerce.ecommerce_remake.common.dto.enums.Status;
 import com.ecommerce.ecommerce_remake.feature.address.model.Address;
 import com.ecommerce.ecommerce_remake.feature.cart.model.Cart;
+import com.ecommerce.ecommerce_remake.feature.order.model.Order;
 import com.ecommerce.ecommerce_remake.feature.store.model.Store;
 import com.ecommerce.ecommerce_remake.feature.user.enums.Gender;
 import com.ecommerce.ecommerce_remake.feature.user.enums.Role;
@@ -48,9 +49,11 @@ public class User extends AuditEntity implements UserDetails {
     @OneToOne(mappedBy = "user")
     private Cart cart;
 
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Address> addresses = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Order> orders = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

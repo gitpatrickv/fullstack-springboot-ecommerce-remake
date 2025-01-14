@@ -55,7 +55,6 @@ CREATE TABLE IF NOT EXISTS inventory (
     `product_id` INT NOT NULL,
     `quantity` INT NOT NULL CHECK (quantity >= 0),
     `price` DECIMAL NOT NULL CHECK (price > 0),
-    `discount_percent` INT DEFAULT 0,
     `color` VARCHAR(30) DEFAULT NULL,
     `size` VARCHAR(30) DEFAULT NULL,
     `created_date` TIMESTAMP,
@@ -97,6 +96,28 @@ CREATE TABLE IF NOT EXISTS cart_item (
     `quantity` INT NOT NULL CHECK (quantity >= 1),
     `created_date` TIMESTAMP,
     `last_modified` TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS orders (
+    `order_id` INT AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT NOT NULL,
+    `recipient_name` VARCHAR(255) NOT NULL,
+    `contact_number` VARCHAR(20) NOT NULL,
+    `delivery_address` VARCHAR(255) NOT NULL,
+    `payment_method` ENUM('CASH_ON_DELIVERY', 'STRIPE_PAYMENT') NOT NULL,
+    `total_amount` DECIMAL NOT NULL CHECK (total_amount > 0),
+    `order_status` ENUM('PENDING', 'TO_SHIP', 'TO_RECEIVE', 'COMPLETED', 'RATED', 'CANCELLED') NOT NULL,
+    `delivery_cost` INT DEFAULT 0,
+    `item_quantity` INT NOT NULL,
+    `created_date` TIMESTAMP,
+    `last_modified` TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS order_items (
+    `order_item_id` INT AUTO_INCREMENT PRIMARY KEY,
+    `order_id` INT NOT NULL,
+    `inventory_id` INT NOT NULL,
+    `product_quantity` INT NOT NULL
 );
 
 

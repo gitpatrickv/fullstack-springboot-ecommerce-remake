@@ -19,3 +19,10 @@ ADD CONSTRAINT fk_cart_user_id FOREIGN KEY (user_id) REFERENCES users(user_id);
 ALTER TABLE cart_item
 ADD CONSTRAINT fk_cart_item_cart_id FOREIGN KEY (cart_id) REFERENCES cart(cart_id),
 ADD CONSTRAINT fk_cart_item_inventory_id FOREIGN KEY (inventory_id) REFERENCES inventory(inventory_id);
+
+ALTER TABLE orders
+ADD CONSTRAINT fk_orders_user_id FOREIGN KEY (user_id) REFERENCES users(user_id);
+
+ALTER TABLE order_items
+ADD CONSTRAINT fk_order_item_order_id FOREIGN KEY (order_id) REFERENCES orders(order_id),
+ADD CONSTRAINT fk_order_item_inventory_id FOREIGN KEY (inventory_id) REFERENCES inventory(inventory_id);
