@@ -12,21 +12,25 @@ import com.ecommerce.ecommerce_remake.feature.inventory.model.Inventory;
 import com.ecommerce.ecommerce_remake.feature.inventory.repository.InventoryRepository;
 import com.ecommerce.ecommerce_remake.feature.inventory.service.InventoryService;
 import com.ecommerce.ecommerce_remake.feature.order.dto.OrderRequest;
+import com.ecommerce.ecommerce_remake.feature.order.dto.PaymentResponse;
 import com.ecommerce.ecommerce_remake.feature.order.enums.OrderStatus;
 import com.ecommerce.ecommerce_remake.feature.order.model.Order;
 import com.ecommerce.ecommerce_remake.feature.order.model.OrderItem;
 import com.ecommerce.ecommerce_remake.feature.order.repository.OrderItemRepository;
 import com.ecommerce.ecommerce_remake.feature.order.repository.OrderRepository;
+import com.ecommerce.ecommerce_remake.feature.payment.service.PaymentService;
 import com.ecommerce.ecommerce_remake.feature.product.model.Product;
 import com.ecommerce.ecommerce_remake.feature.product.repository.ProductRepository;
 import com.ecommerce.ecommerce_remake.feature.user.model.User;
 import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import com.ecommerce.ecommerce_remake.web.exception.OutOfStockException;
+import com.stripe.exception.StripeException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -46,9 +50,10 @@ public class OrderServiceImpl implements OrderService{
     private final InventoryService inventoryService;
     private final InventoryRepository inventoryRepository;
     private final ProductRepository productRepository;
+    private final PaymentService paymentService;
 
     @Override
-    public void placeOrder(OrderRequest request) {
+    public PaymentResponse placeOrder(OrderRequest request) throws StripeException {
         User user = userService.getCurrentAuthenticatedUser();
         Cart cart = user.getCart();
         Address address = addressService.findAddressByStatusAndUser(Status.ACTIVE, user);
@@ -65,6 +70,10 @@ public class OrderServiceImpl implements OrderService{
         }
         cartItemService.updateCartItemCount(cart, request.getIds().size());
         cartItemRepository.deleteAllByIdInBatch(request.getIds());
+
+        BigDecimal totalAmount = CartServiceImpl.calculateTotalAmount(cartItemList);
+
+        return paymentService.paymentLink(totalAmount.longValue(), request.getPaymentMethod());
     }
 
     private Map<Integer, List<CartItem>> groupItemsByStore(List<CartItem> cartItemList) {
@@ -123,7 +132,7 @@ public class OrderServiceImpl implements OrderService{
         log.info("Current product total sold: {}, for product with ID={}", product.getTotalSold(), product.getProductId());
         product.setTotalSold(product.getTotalSold() + quantityToAdd);
         Product savedProduct = productRepository.save(product);
-        log.info("Updated product total sold: {}, for product with ID={}", savedProduct.getTotalSold(), product.getProductId());
+        log.info("Updated product total sold: {}, for product with ID={}", savedProduct.getTotalSold(), savedProduct.getProductId());
     }
 
 

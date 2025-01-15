@@ -12,6 +12,7 @@ import com.ecommerce.ecommerce_remake.feature.user.model.User;
 import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import com.ecommerce.ecommerce_remake.web.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class CartItemServiceImpl implements CartItemService{
 
     private final CartItemRepository cartItemRepository;
@@ -74,8 +76,11 @@ public class CartItemServiceImpl implements CartItemService{
 
     @Override
     public void updateCartItemCount(Cart cart, int count){
+        log.info("Current cart item count: {}", cart.getTotalItems());
+        log.info("number to be subtracted: {}", count);
         cart.setTotalItems(cart.getTotalItems() - count);
-        cartRepository.save(cart);
+        Cart savedCart = cartRepository.save(cart);
+        log.info("Updated cart item count: {}", savedCart.getTotalItems());
     }
 
     private Map<String, List<CartItemModel>> groupCartItemsByStore(List<CartItem> cartItemList){
@@ -100,8 +105,4 @@ public class CartItemServiceImpl implements CartItemService{
                 .map(entry -> new CartItemsResponse(entry.getKey(), entry.getValue()))
                 .toList();
     }
-
-
-
-
 }
