@@ -12,7 +12,6 @@ import com.ecommerce.ecommerce_remake.feature.user.model.User;
 import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import com.ecommerce.ecommerce_remake.web.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +19,6 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 @Transactional
 public class CartItemServiceImpl implements CartItemService{
 
@@ -66,13 +64,18 @@ public class CartItemServiceImpl implements CartItemService{
         Cart cart = user.getCart();
         Set<Integer> itemIds = request.getIds();
         cartItemRepository.deleteAllByIdInBatch(itemIds);
-        cart.setTotalItems(cart.getTotalItems() - itemIds.size());
-        cartRepository.save(cart);
+        this.updateCartItemCount(cart, itemIds.size());
     }
 
     @Override
     public CartItem findCartItemById(Integer id) {
         return cartItemRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format("Cart Item not found with ID: %s", id)));
+    }
+
+    @Override
+    public void updateCartItemCount(Cart cart, int count){
+        cart.setTotalItems(cart.getTotalItems() - count);
+        cartRepository.save(cart);
     }
 
     private Map<String, List<CartItemModel>> groupCartItemsByStore(List<CartItem> cartItemList){
@@ -97,6 +100,8 @@ public class CartItemServiceImpl implements CartItemService{
                 .map(entry -> new CartItemsResponse(entry.getKey(), entry.getValue()))
                 .toList();
     }
+
+
 
 
 }

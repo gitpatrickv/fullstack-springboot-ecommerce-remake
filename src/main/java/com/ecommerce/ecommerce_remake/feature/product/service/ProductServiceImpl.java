@@ -108,6 +108,7 @@ public class ProductServiceImpl extends CrudService implements ProductService {
 
         Product product = modelToEntityMapper.map(model);
         product.setStatus(Status.LISTED);
+        product.setTotalSold(0);
         product.setStore(store);
 
         Set<Inventory> saveToInventory = inventoryService.mapModelToInventory(product, model.getInventories());

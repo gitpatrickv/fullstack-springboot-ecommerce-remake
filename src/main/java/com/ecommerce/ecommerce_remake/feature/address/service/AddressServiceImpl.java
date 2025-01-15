@@ -14,6 +14,7 @@ import com.ecommerce.ecommerce_remake.feature.address.repository.AddressReposito
 import com.ecommerce.ecommerce_remake.feature.user.model.User;
 import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import com.ecommerce.ecommerce_remake.web.exception.NotImplementedException;
+import com.ecommerce.ecommerce_remake.web.exception.ResourceNotFoundException;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -115,6 +116,12 @@ public class AddressServiceImpl extends CrudService implements AddressService {
     @Override
     public Optional<Address> getAddressById(String id) {
         return addressRepository.findById(Integer.parseInt(id));
+    }
+
+    @Override
+    public Address findAddressByStatusAndUser(Status status, User user) {
+        return addressRepository.findByStatusAndUser(status,user)
+                .orElseThrow(() -> new ResourceNotFoundException("Address not found!."));
     }
 
     @Override

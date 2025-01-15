@@ -1,11 +1,13 @@
 package com.ecommerce.ecommerce_remake.feature.inventory.service;
 
+import com.ecommerce.ecommerce_remake.common.util.StrUtil;
 import com.ecommerce.ecommerce_remake.common.util.mapper.EntityToModelMapper;
 import com.ecommerce.ecommerce_remake.common.util.mapper.ModelToEntityMapper;
 import com.ecommerce.ecommerce_remake.feature.inventory.model.Inventory;
 import com.ecommerce.ecommerce_remake.feature.inventory.model.InventoryModel;
 import com.ecommerce.ecommerce_remake.feature.inventory.repository.InventoryRepository;
 import com.ecommerce.ecommerce_remake.feature.product.model.Product;
+import com.ecommerce.ecommerce_remake.web.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +44,12 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public Optional<Inventory> findInventoryByColorAndSize(String color, String size, String productId) {
         return inventoryRepository.findByColorIgnoreCaseAndSizeIgnoreCaseAndProduct_ProductId(color, size, Integer.parseInt(productId));
+    }
+
+    @Override
+    public Inventory findInventoryById(Integer inventoryId) {
+        return inventoryRepository.findById(inventoryId)
+                .orElseThrow(() -> new ResourceNotFoundException(StrUtil.INVENTORY_NOT_FOUND));
     }
 
 

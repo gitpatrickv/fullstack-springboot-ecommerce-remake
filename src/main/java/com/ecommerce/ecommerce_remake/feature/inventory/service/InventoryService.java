@@ -12,4 +12,5 @@ public interface InventoryService {
     Set<Inventory> mapModelToInventory(Product product, Set<InventoryModel> inventoryModels);
     Optional<Inventory> findInventoryByProductId(String productId);
     Optional<Inventory> findInventoryByColorAndSize(String color, String size, String productId);
+    Inventory findInventoryById(Integer inventoryId);
 }
