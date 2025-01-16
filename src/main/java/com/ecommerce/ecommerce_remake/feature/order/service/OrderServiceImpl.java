@@ -69,8 +69,9 @@ public class OrderServiceImpl implements OrderService{
             savedOrder.setOrderItems(orderItems);
         }
         cartItemService.updateCartItemCount(cart, request.getIds().size());
+        log.info("Deleting cart items...");
         cartItemRepository.deleteAllByIdInBatch(request.getIds());
-
+        log.info("Deleted");
         BigDecimal totalAmount = CartServiceImpl.calculateTotalAmount(cartItemList);
 
         return paymentService.paymentLink(totalAmount.longValue(), request.getPaymentMethod());

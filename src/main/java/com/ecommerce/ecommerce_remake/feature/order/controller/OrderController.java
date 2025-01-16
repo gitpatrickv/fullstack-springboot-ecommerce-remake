@@ -4,6 +4,7 @@ import com.ecommerce.ecommerce_remake.feature.order.dto.OrderRequest;
 import com.ecommerce.ecommerce_remake.feature.order.dto.PaymentResponse;
 import com.ecommerce.ecommerce_remake.feature.order.service.OrderService;
 import com.ecommerce.ecommerce_remake.web.exception.OutOfStockException;
+import com.ecommerce.ecommerce_remake.web.exception.ResourceNotFoundException;
 import com.stripe.exception.StripeException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,11 +34,10 @@ public class OrderController {
 
         try {
             PaymentResponse paymentResponse = orderService.placeOrder(request);
-            return ResponseEntity.ok(paymentResponse);
-        } catch (OutOfStockException ex){
+            return new ResponseEntity<>(paymentResponse, HttpStatus.OK);
+        } catch (OutOfStockException | ResourceNotFoundException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             log.error("An unexpected error occurred while placing the order: {}", ex.getMessage());
             return new ResponseEntity<>("An unexpected error occurred while processing your order. Please try again.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
