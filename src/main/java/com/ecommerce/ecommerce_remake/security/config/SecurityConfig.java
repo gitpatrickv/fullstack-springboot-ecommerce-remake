@@ -36,7 +36,7 @@ public class SecurityConfig {
                                         .requestMatchers("/api/auth/**").permitAll()
                                         .requestMatchers("/api/image/**").permitAll()
                                         .requestMatchers(HttpMethod.GET,"/api/product").permitAll()
-                                        .requestMatchers(HttpMethod.GET,"/api/factory/product/**").permitAll()
+                                        .requestMatchers(HttpMethod.GET,"/api/factory/{id}/product").permitAll()
                                         .requestMatchers(HttpMethod.POST,"/api/product/save").hasAuthority(SELLER.name())
                                         .requestMatchers(HttpMethod.DELETE,"/api/cart/**").hasAnyAuthority(SELLER.name(), USER.name())
                                         .anyRequest()

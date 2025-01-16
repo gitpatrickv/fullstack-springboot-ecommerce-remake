@@ -3,6 +3,7 @@ package com.ecommerce.ecommerce_remake.feature.cart.service;
 import com.ecommerce.ecommerce_remake.common.util.mapper.EntityToModelMapper;
 import com.ecommerce.ecommerce_remake.feature.cart.dto.CartItemsResponse;
 import com.ecommerce.ecommerce_remake.feature.cart.dto.IdSetRequest;
+import com.ecommerce.ecommerce_remake.feature.cart.dto.StoreInfo;
 import com.ecommerce.ecommerce_remake.feature.cart.model.Cart;
 import com.ecommerce.ecommerce_remake.feature.cart.model.CartItem;
 import com.ecommerce.ecommerce_remake.feature.cart.model.CartItemModel;
@@ -40,7 +41,7 @@ public class CartItemServiceImpl implements CartItemService{
         User user = userService.getCurrentAuthenticatedUser();
         Cart cart = user.getCart();
         List<CartItem> cartItemList = cartItemRepository.findByCart(cart);
-        Map<String, List<CartItemModel>> cartItemMap = this.groupCartItemsByStore(cartItemList);
+        Map<StoreInfo, List<CartItemModel>> cartItemMap = this.groupCartItemsByStore(cartItemList);
         return this.fetchAllCartItems(cartItemMap);
     }
 
@@ -83,26 +84,37 @@ public class CartItemServiceImpl implements CartItemService{
         log.info("Updated cart item count: {}", savedCart.getTotalItems());
     }
 
-    private Map<String, List<CartItemModel>> groupCartItemsByStore(List<CartItem> cartItemList){
-        Map<String, List<CartItemModel>> cartItemMap = new HashMap<>();
+    private Map<StoreInfo, List<CartItemModel>> groupCartItemsByStore(List<CartItem> cartItemList){
+        Map<StoreInfo, List<CartItemModel>> cartItemMap = new HashMap<>();
         for(CartItem cartItem : cartItemList){
             String storeName = cartItem.getInventory().getProduct().getStore().getStoreName();
+            Integer storeId = cartItem.getInventory().getProduct().getStore().getStoreId();
+            Integer productId = cartItem.getInventory().getProduct().getProductId();
             String productName = cartItem.getInventory().getProduct().getProductName();
             String productImage = cartItem.getInventory().getProduct().getProductImages().get(0).getProductImage();
+            String slug = cartItem.getInventory().getProduct().getSlug();
 
             CartItemModel cartItemModel = entityToModelMapper.map(cartItem);
+            cartItemModel.setProductId(productId);
             cartItemModel.setProductName(productName);
             cartItemModel.setProductImage(productImage);
-            cartItemMap.computeIfAbsent(storeName, k -> new ArrayList<>()).add(cartItemModel);
+            cartItemModel.setSlug(slug);
+
+            StoreInfo storeInfo = new StoreInfo(storeName, storeId);
+            cartItemMap.computeIfAbsent(storeInfo, k -> new ArrayList<>()).add(cartItemModel);
         }
         return cartItemMap;
     }
 
-    private List<CartItemsResponse> fetchAllCartItems(Map<String, List<CartItemModel>> cartItemMap){
+    private List<CartItemsResponse> fetchAllCartItems(Map<StoreInfo, List<CartItemModel>> cartItemMap){
         return cartItemMap
                 .entrySet()
                 .stream()
-                .map(entry -> new CartItemsResponse(entry.getKey(), entry.getValue()))
+                .map(entry -> {
+                    StoreInfo storeInfo = entry.getKey();
+                    List<CartItemModel> cartItems = entry.getValue();
+                    return new CartItemsResponse(storeInfo.getStoreName(), storeInfo.getStoreId(), cartItems);
+                })
                 .toList();
     }
 }
