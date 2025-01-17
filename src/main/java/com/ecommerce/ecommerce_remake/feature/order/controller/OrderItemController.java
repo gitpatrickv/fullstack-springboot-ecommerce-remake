@@ -1,6 +1,7 @@
 package com.ecommerce.ecommerce_remake.feature.order.controller;
 
 import com.ecommerce.ecommerce_remake.feature.order.dto.OrderItemResponse;
+import com.ecommerce.ecommerce_remake.feature.order.enums.OrderStatus;
 import com.ecommerce.ecommerce_remake.feature.order.service.OrderItemService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,9 @@ public class OrderItemController {
     private final OrderItemService orderItemService;
     @GetMapping
     public OrderItemResponse getAllOrderItems(@RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
-                                              @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize) {
-        return orderItemService.getAllOrderItems(pageNo,pageSize);
+                                              @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
+                                              @RequestParam(value = "status", required = false) OrderStatus status) {
+        log.info("Returning order items with status: {}", status != null ? status : "ALL");
+        return orderItemService.getAllOrderItems(pageNo, pageSize, status);
     }
 }

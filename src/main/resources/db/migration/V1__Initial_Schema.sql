@@ -107,7 +107,7 @@ CREATE TABLE IF NOT EXISTS orders (
     `delivery_address` VARCHAR(255) NOT NULL,
     `payment_method` ENUM('CASH_ON_DELIVERY', 'STRIPE_PAYMENT') NOT NULL,
     `total_amount` DECIMAL NOT NULL CHECK (total_amount > 0),
-    `order_status` ENUM('PENDING', 'TO_SHIP', 'TO_RECEIVE', 'COMPLETED', 'RATED', 'CANCELLED') NOT NULL,
+    `order_status` ENUM('TO_PAY', 'TO_SHIP', 'TO_RECEIVE', 'COMPLETED', 'RATED', 'CANCELLED') NOT NULL,
     `delivery_cost` INT DEFAULT 0,
     `item_quantity` INT NOT NULL,
     `created_date` TIMESTAMP,

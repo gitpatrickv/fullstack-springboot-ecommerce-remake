@@ -4,6 +4,7 @@ import com.ecommerce.ecommerce_remake.common.dto.response.PageResponse;
 import com.ecommerce.ecommerce_remake.common.util.Pagination;
 import com.ecommerce.ecommerce_remake.common.util.mapper.EntityToModelMapper;
 import com.ecommerce.ecommerce_remake.feature.order.dto.OrderItemResponse;
+import com.ecommerce.ecommerce_remake.feature.order.enums.OrderStatus;
 import com.ecommerce.ecommerce_remake.feature.order.model.Order;
 import com.ecommerce.ecommerce_remake.feature.order.model.OrderModel;
 import com.ecommerce.ecommerce_remake.feature.order.repository.OrderRepository;
@@ -28,10 +29,10 @@ public class OrderItemServiceImpl implements OrderItemService{
 
     private EntityToModelMapper<Order, OrderModel> entityToModelMapper = new EntityToModelMapper<>(OrderModel.class);
     @Override
-    public OrderItemResponse getAllOrderItems(int pageNo, int pageSize) {
+    public OrderItemResponse getAllOrderItems(int pageNo, int pageSize, OrderStatus status) {
         User user = userService.getCurrentAuthenticatedUser();
         Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(Sort.Direction.DESC, "createdDate"));
-        Page<Order> orders = orderRepository.findByUser(user, pageable);
+        Page<Order> orders = orderRepository.findByUserAndStatus(user, status, pageable);
         PageResponse pageResponse = pagination.getPagination(orders);
         List<OrderModel> orderModelList = this.getOrderItems(orders);
         return new OrderItemResponse(orderModelList, pageResponse);

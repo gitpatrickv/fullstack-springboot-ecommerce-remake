@@ -24,14 +24,14 @@ public class PaymentServiceImpl implements PaymentService{
     public PaymentResponse paymentLink(Long totalAmount, PaymentMethod paymentMethod) throws StripeException {
 
         if(paymentMethod.equals(PaymentMethod.CASH_ON_DELIVERY)){
-            return new PaymentResponse("http://localhost:5173/user/purchase/order/pending");
+            return new PaymentResponse("http://localhost:5173/user/purchase/order/to-pay");
         }
 
         Stripe.apiKey=stripeSecretKey;
         SessionCreateParams params = SessionCreateParams.builder()
                 .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
                 .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setSuccessUrl("http://localhost:5173/user/purchase/order/pending")
+                .setSuccessUrl("http://localhost:5173/user/purchase/order/to-ship")
                 .setCancelUrl("http://localhost:5173/cart")
                 .addLineItem(SessionCreateParams.LineItem.builder()
                         .setQuantity(1L)

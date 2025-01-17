@@ -2,7 +2,7 @@ package com.ecommerce.ecommerce_remake.feature.order.enums;
 
 public enum OrderStatus {
 
-    PENDING,
+    TO_PAY,
     TO_SHIP,
     TO_RECEIVE,
     COMPLETED,

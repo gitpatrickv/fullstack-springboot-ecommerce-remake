@@ -14,6 +14,7 @@ import com.ecommerce.ecommerce_remake.feature.inventory.service.InventoryService
 import com.ecommerce.ecommerce_remake.feature.order.dto.OrderRequest;
 import com.ecommerce.ecommerce_remake.feature.order.dto.PaymentResponse;
 import com.ecommerce.ecommerce_remake.feature.order.enums.OrderStatus;
+import com.ecommerce.ecommerce_remake.feature.order.enums.PaymentMethod;
 import com.ecommerce.ecommerce_remake.feature.order.model.Order;
 import com.ecommerce.ecommerce_remake.feature.order.model.OrderItem;
 import com.ecommerce.ecommerce_remake.feature.order.repository.OrderItemRepository;
@@ -95,7 +96,7 @@ public class OrderServiceImpl implements OrderService{
         order.setTotalAmount(CartServiceImpl.calculateTotalAmount(cartItems));
         order.setDeliveryCost(50);
         order.setPaymentMethod(request.getPaymentMethod());
-        order.setOrderStatus(OrderStatus.PENDING);
+        order.setOrderStatus(request.getPaymentMethod().equals(PaymentMethod.STRIPE_PAYMENT) ? OrderStatus.TO_SHIP : OrderStatus.TO_PAY);
         order.setUser(user);
         order.setStore(store);
         return orderRepository.save(order);
