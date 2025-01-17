@@ -22,4 +22,20 @@ SELECT 3, 'https://st2.depositphotos.com/3336339/8196/i/450/depositphotos_819698
 FROM products
 WHERE product_id = 3;
 
+INSERT INTO product_images (
+    product_id,
+    product_image
+)
+SELECT 4, 'https://cdn.pixabay.com/photo/2016/06/02/02/33/triangles-1430105_1280.png'
+FROM products
+WHERE product_id = 4;
+
+INSERT INTO product_images (
+    product_id,
+    product_image
+)
+SELECT 5, 'https://img.freepik.com/free-vector/background-realistic-abstract-technology-particle_23-2148431735.jpg'
+FROM products
+WHERE product_id = 5;
+
 

@@ -101,6 +101,7 @@ CREATE TABLE IF NOT EXISTS cart_item (
 CREATE TABLE IF NOT EXISTS orders (
     `order_id` INT AUTO_INCREMENT PRIMARY KEY,
     `user_id` INT NOT NULL,
+    `store_id` INT NOT NULL,
     `recipient_name` VARCHAR(255) NOT NULL,
     `contact_number` VARCHAR(20) NOT NULL,
     `delivery_address` VARCHAR(255) NOT NULL,

@@ -5,7 +5,14 @@ WHERE NOT EXISTS (
 );
 
 INSERT INTO stores (user_id, status, store_name, contact_number, created_date, last_modified)
-SELECT 2, 'ACTIVE', 'Super Store', '09201233214', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+SELECT 2, 'ACTIVE', 'Grocery Store', '09201233214', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
 WHERE NOT EXISTS (
-    SELECT 1 FROM stores WHERE store_name = 'Super Store'
+    SELECT 1 FROM stores WHERE store_name = 'Grocery Store'
 );
+
+INSERT INTO stores (user_id, status, store_name, contact_number, created_date, last_modified)
+SELECT 3, 'ACTIVE', 'Super Market', '09675423123', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+WHERE NOT EXISTS (
+    SELECT 1 FROM stores WHERE store_name = 'Super Market'
+);
+

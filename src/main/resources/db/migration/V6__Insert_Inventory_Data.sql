@@ -275,5 +275,41 @@ WHERE EXISTS (
     WHERE product_id = 3
 );
 
+INSERT INTO inventory (
+    product_id,
+    quantity,
+    price,
+    color,
+    size,
+    created_date,
+    last_modified
+)
+SELECT
+    4, 10, 2000, NULL, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+WHERE EXISTS (
+    SELECT 1
+    FROM products
+    WHERE product_id = 4
+);
+
+INSERT INTO inventory (
+    product_id,
+    quantity,
+    price,
+    color,
+    size,
+    created_date,
+    last_modified
+)
+SELECT
+    5, 10, 1000, NULL, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+WHERE EXISTS (
+    SELECT 1
+    FROM products
+    WHERE product_id = 5
+);
+
+
+
 
 

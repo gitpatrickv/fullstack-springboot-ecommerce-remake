@@ -2,6 +2,7 @@ package com.ecommerce.ecommerce_remake.feature.store.model;
 
 import com.ecommerce.ecommerce_remake.common.dto.AuditEntity;
 import com.ecommerce.ecommerce_remake.common.dto.enums.Status;
+import com.ecommerce.ecommerce_remake.feature.order.model.Order;
 import com.ecommerce.ecommerce_remake.feature.product.model.Product;
 import com.ecommerce.ecommerce_remake.feature.user.model.User;
 import jakarta.persistence.*;
@@ -36,4 +37,8 @@ public class Store extends AuditEntity {
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
     private List<Product> product = new ArrayList<>();
+
+    @OneToMany(mappedBy = "store")
+    private List<Order> orders = new ArrayList<>();
+
 }

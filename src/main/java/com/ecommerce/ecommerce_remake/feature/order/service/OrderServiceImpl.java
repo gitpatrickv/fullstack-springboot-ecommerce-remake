@@ -21,6 +21,7 @@ import com.ecommerce.ecommerce_remake.feature.order.repository.OrderRepository;
 import com.ecommerce.ecommerce_remake.feature.payment.service.PaymentService;
 import com.ecommerce.ecommerce_remake.feature.product.model.Product;
 import com.ecommerce.ecommerce_remake.feature.product.repository.ProductRepository;
+import com.ecommerce.ecommerce_remake.feature.store.model.Store;
 import com.ecommerce.ecommerce_remake.feature.user.model.User;
 import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import com.ecommerce.ecommerce_remake.web.exception.OutOfStockException;
@@ -60,11 +61,12 @@ public class OrderServiceImpl implements OrderService{
 
         List<CartItem> cartItemList = cartItemRepository.findByCartAndCartItemIdIn(cart, request.getIds());
 
-        Map<Integer, List<CartItem>> cartItemMap = this.groupItemsByStore(cartItemList);
+        Map<Store, List<CartItem>> cartItemMap = this.groupItemsByStore(cartItemList);
 
-        for (Map.Entry<Integer, List<CartItem>> cartItem : cartItemMap.entrySet()) {
+        for (Map.Entry<Store, List<CartItem>> cartItem : cartItemMap.entrySet()) {
             List<CartItem> cartItems = cartItem.getValue();
-            Order savedOrder = this.createNewOrder(cartItems, address, user, request);
+            Store store = cartItem.getKey();
+            Order savedOrder = this.createNewOrder(cartItems, address, user, request, store);
             List<OrderItem> orderItems = this.createAndSaveOrderItems(cartItems, savedOrder);
             savedOrder.setOrderItems(orderItems);
         }
@@ -77,14 +79,14 @@ public class OrderServiceImpl implements OrderService{
         return paymentService.paymentLink(totalAmount.longValue(), request.getPaymentMethod());
     }
 
-    private Map<Integer, List<CartItem>> groupItemsByStore(List<CartItem> cartItemList) {
+    private Map<Store, List<CartItem>> groupItemsByStore(List<CartItem> cartItemList) {
         return cartItemList.stream()
                 .collect(Collectors.groupingBy(cartItem ->
-                        cartItem.getInventory().getProduct().getStore().getStoreId()
+                        cartItem.getInventory().getProduct().getStore()
                 ));
     }
 
-    private Order createNewOrder(List<CartItem> cartItems, Address address, User user, OrderRequest request){
+    private Order createNewOrder(List<CartItem> cartItems, Address address, User user, OrderRequest request, Store store){
         Order order = new Order();
         order.setItemQuantity(cartItems.size());
         order.setRecipientName(address.getFullName());
@@ -95,6 +97,7 @@ public class OrderServiceImpl implements OrderService{
         order.setPaymentMethod(request.getPaymentMethod());
         order.setOrderStatus(OrderStatus.PENDING);
         order.setUser(user);
+        order.setStore(store);
         return orderRepository.save(order);
     }
 

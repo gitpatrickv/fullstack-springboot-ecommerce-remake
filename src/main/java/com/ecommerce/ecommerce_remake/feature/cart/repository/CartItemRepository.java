@@ -20,7 +20,6 @@ public interface CartItemRepository extends JpaRepository<CartItem, Integer> {
             "JOIN FETCH ci.inventory i " +
             "JOIN FETCH i.product p " +
             "JOIN FETCH p.store s " +
-            "JOIN FETCH p.productImages pi " +
             "WHERE ci.cart = :cart")
     List<CartItem> findByCart(@Param("cart") Cart cart);
     List<CartItem> findByCartAndCartItemIdIn(Cart cart, Set<Integer> ids);
