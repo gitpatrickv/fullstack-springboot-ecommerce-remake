@@ -1,6 +1,7 @@
 package com.ecommerce.ecommerce_remake.feature.order.model;
 
-import com.ecommerce.ecommerce_remake.common.dto.enums.Status;
+import com.ecommerce.ecommerce_remake.common.dto.Model;
+import com.ecommerce.ecommerce_remake.feature.order.enums.OrderStatus;
 import com.ecommerce.ecommerce_remake.feature.order.enums.PaymentMethod;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -15,7 +16,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderModel {
+public class OrderModel extends Model {
 
     private Integer orderId;
     private Integer itemQuantity;
@@ -24,12 +25,14 @@ public class OrderModel {
     private String deliveryAddress;
     private BigDecimal totalAmount;
     private Integer deliveryCost;
+    private Integer storeId;
+    private String storeName;
 
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
 
     @Enumerated(EnumType.STRING)
-    private Status orderStatus;
+    private OrderStatus orderStatus;
 
     private List<OrderItemModel> orderItems = new ArrayList<>();
 }

@@ -2,7 +2,6 @@ package com.ecommerce.ecommerce_remake.feature.inventory.model;
 
 import com.ecommerce.ecommerce_remake.common.dto.AuditEntity;
 import com.ecommerce.ecommerce_remake.feature.cart.model.CartItem;
-import com.ecommerce.ecommerce_remake.feature.order.model.OrderItem;
 import com.ecommerce.ecommerce_remake.feature.product.model.Product;
 import jakarta.persistence.*;
 import lombok.*;
@@ -35,6 +34,4 @@ public class Inventory extends AuditEntity {
     @OneToMany(mappedBy = "inventory", cascade = CascadeType.ALL)
     private List<CartItem> cartItems = new ArrayList<>();
 
-    @OneToMany(mappedBy = "inventory")
-    private List<OrderItem> orderItems = new ArrayList<>();
 }

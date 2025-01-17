@@ -117,8 +117,12 @@ CREATE TABLE IF NOT EXISTS orders (
 CREATE TABLE IF NOT EXISTS order_items (
     `order_item_id` INT AUTO_INCREMENT PRIMARY KEY,
     `order_id` INT NOT NULL,
-    `inventory_id` INT NOT NULL,
-    `product_quantity` INT NOT NULL
+    `product_name` VARCHAR(100) NOT NULL,
+    `quantity` INT NOT NULL,
+    `product_price` DECIMAL NOT NULL CHECK (product_price > 0),
+    `color` VARCHAR(30) DEFAULT NULL,
+    `size` VARCHAR(30) DEFAULT NULL,
+    `product_image` VARCHAR(255) NOT NULL
 );
 
 

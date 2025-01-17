@@ -1,9 +1,10 @@
 package com.ecommerce.ecommerce_remake.feature.order.model;
 
-import com.ecommerce.ecommerce_remake.feature.inventory.model.InventoryModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
 
 @Data
 @AllArgsConstructor
@@ -11,6 +12,10 @@ import lombok.NoArgsConstructor;
 public class OrderItemModel {
 
     private Integer orderItemId;
-    private Integer productQuantity;
-    private InventoryModel inventory;
+    private Integer quantity;
+    private String productName;
+    private String productImage;
+    private BigDecimal productPrice;
+    private String color;
+    private String size;
 }

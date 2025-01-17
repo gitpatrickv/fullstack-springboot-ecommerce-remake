@@ -1,11 +1,12 @@
 package com.ecommerce.ecommerce_remake.feature.order.model;
 
-import com.ecommerce.ecommerce_remake.feature.inventory.model.Inventory;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -17,14 +18,15 @@ public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer orderItemId;
-    private Integer productQuantity;
+    private Integer quantity;
+    private String productName;
+    private String productImage;
+    private BigDecimal productPrice;
+    private String color;
+    private String size;
 
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;
-
-    @ManyToOne
-    @JoinColumn(name = "inventory_id")
-    private Inventory inventory;
 
 }

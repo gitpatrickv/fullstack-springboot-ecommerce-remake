@@ -104,8 +104,12 @@ public class OrderServiceImpl implements OrderService{
     private List<OrderItem> createAndSaveOrderItems(List<CartItem> cartItems, Order savedOrder) {
         return cartItems.stream().map(cartItem -> {
             OrderItem orderItem = new OrderItem();
-            orderItem.setProductQuantity(cartItem.getQuantity());
-            orderItem.setInventory(cartItem.getInventory());
+            orderItem.setQuantity(cartItem.getQuantity());
+            orderItem.setProductName(cartItem.getInventory().getProduct().getProductName());
+            orderItem.setProductImage(cartItem.getInventory().getProduct().getProductImages().get(0).getProductImage());
+            orderItem.setProductPrice(cartItem.getInventory().getPrice());
+            orderItem.setColor(cartItem.getInventory().getColor());
+            orderItem.setSize(cartItem.getInventory().getSize());
             orderItem.setOrder(savedOrder);
 
             this.updateAndValidateInventoryQuantity(cartItem.getInventory().getInventoryId(), cartItem.getQuantity());
