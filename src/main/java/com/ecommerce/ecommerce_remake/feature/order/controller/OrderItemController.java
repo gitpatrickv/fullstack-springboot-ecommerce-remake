@@ -18,10 +18,10 @@ public class OrderItemController {
 
     private final OrderItemService orderItemService;
     @GetMapping
-    public OrderItemResponse getAllOrderItems(@RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+    public OrderItemResponse getUserOrders(@RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
                                               @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
                                               @RequestParam(value = "status", required = false) OrderStatus status) {
         log.info("Returning order items with status: {}", status != null ? status : "ALL");
-        return orderItemService.getAllOrderItems(pageNo, pageSize, status);
+        return orderItemService.getUserOrders(pageNo, pageSize, status);
     }
 }

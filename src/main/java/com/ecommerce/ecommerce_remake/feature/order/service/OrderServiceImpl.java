@@ -26,6 +26,7 @@ import com.ecommerce.ecommerce_remake.feature.store.model.Store;
 import com.ecommerce.ecommerce_remake.feature.user.model.User;
 import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import com.ecommerce.ecommerce_remake.web.exception.OutOfStockException;
+import com.ecommerce.ecommerce_remake.web.exception.ResourceNotFoundException;
 import com.stripe.exception.StripeException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -80,6 +81,31 @@ public class OrderServiceImpl implements OrderService{
         return paymentService.paymentLink(totalAmount.longValue(), request.getPaymentMethod());
     }
 
+    @Override
+    public void updateOrderStatus(Integer orderId, OrderStatus status) {
+        Order order = this.getOrderById(orderId);
+        order.setOrderStatus(status);
+        orderRepository.save(order);
+
+        if(status.equals(OrderStatus.CANCELLED)){
+            List<OrderItem> orderItems = order.getOrderItems();
+            for(OrderItem orderItem : orderItems) {
+                int orderedProductQuantity = orderItem.getQuantity();
+                log.info("Ordered product quantity: {}", orderedProductQuantity);
+                Inventory inventory = orderItem.getInventory();
+                this.updateInventoryOnOrderCancellation(inventory, orderedProductQuantity);
+                Product product = inventory.getProduct();
+                this.updateTotalProductSoldOnOrderCancellation(product, orderedProductQuantity);
+            }
+        }
+    }
+
+    @Override
+    public Order getOrderById(Integer orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found."));
+    }
+
     private Map<Store, List<CartItem>> groupItemsByStore(List<CartItem> cartItemList) {
         return cartItemList.stream()
                 .collect(Collectors.groupingBy(cartItem ->
@@ -111,6 +137,7 @@ public class OrderServiceImpl implements OrderService{
             orderItem.setProductPrice(cartItem.getInventory().getPrice());
             orderItem.setColor(cartItem.getInventory().getColor());
             orderItem.setSize(cartItem.getInventory().getSize());
+            orderItem.setInventory(cartItem.getInventory());
             orderItem.setOrder(savedOrder);
 
             this.updateAndValidateInventoryQuantity(cartItem.getInventory().getInventoryId(), cartItem.getQuantity());
@@ -142,6 +169,20 @@ public class OrderServiceImpl implements OrderService{
         product.setTotalSold(product.getTotalSold() + quantityToAdd);
         Product savedProduct = productRepository.save(product);
         log.info("Updated product total sold: {}, for product with ID={}", savedProduct.getTotalSold(), savedProduct.getProductId());
+    }
+
+    private void updateInventoryOnOrderCancellation(Inventory inventory, Integer quantity){
+        log.info("Before order cancellation, Available inventory stock: {}, for inventory with ID={}", inventory.getQuantity(), inventory.getInventoryId());
+        inventory.setQuantity(inventory.getQuantity() + quantity);
+        Inventory savedInventory = inventoryRepository.save(inventory);
+        log.info("After order cancellation, Updated inventory stock: {}, for inventory with ID={}", savedInventory.getQuantity(), savedInventory.getInventoryId());
+    }
+
+    private void updateTotalProductSoldOnOrderCancellation(Product product, Integer quantityToSubtract){
+        log.info("Before order cancellation, Current product total sold: {}, for product with ID={}", product.getTotalSold(), product.getProductId());
+        product.setTotalSold(product.getTotalSold() - quantityToSubtract);
+        Product savedProduct = productRepository.save(product);
+        log.info("After order cancellation, Updated product total sold: {}, for product with ID={}", savedProduct.getTotalSold(), savedProduct.getProductId());
     }
 
 

@@ -1,5 +1,6 @@
 package com.ecommerce.ecommerce_remake.feature.order.model;
 
+import com.ecommerce.ecommerce_remake.feature.inventory.model.Inventory;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,5 +29,9 @@ public class OrderItem {
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;
+
+    @ManyToOne
+    @JoinColumn(name = "inventory_id")
+    private Inventory inventory;
 
 }

@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS products (
     `product_name` VARCHAR(100) NOT NULL,
     `slug` VARCHAR(100) NOT NULL,
     `description` VARCHAR(255) NOT NULL,
-    `total_sold` INT DEFAULT 0,
+    `total_sold` INT DEFAULT 0 CHECK (total_sold >= 0) NOT NULL,
     `created_date` TIMESTAMP,
     `last_modified` TIMESTAMP
 );
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS products (
 CREATE TABLE IF NOT EXISTS inventory (
     `inventory_id` INT AUTO_INCREMENT PRIMARY KEY,
     `product_id` INT NOT NULL,
-    `quantity` INT NOT NULL CHECK (quantity >= 0),
+    `quantity` INT DEFAULT 0 NOT NULL CHECK (quantity >= 0),
     `price` DECIMAL NOT NULL CHECK (price > 0),
     `color` VARCHAR(30) DEFAULT NULL,
     `size` VARCHAR(30) DEFAULT NULL,
@@ -117,6 +117,7 @@ CREATE TABLE IF NOT EXISTS orders (
 CREATE TABLE IF NOT EXISTS order_items (
     `order_item_id` INT AUTO_INCREMENT PRIMARY KEY,
     `order_id` INT NOT NULL,
+    `inventory_id` INT NOT NULL,
     `product_name` VARCHAR(100) NOT NULL,
     `quantity` INT NOT NULL,
     `product_price` DECIMAL NOT NULL CHECK (product_price > 0),

@@ -2,6 +2,7 @@ package com.ecommerce.ecommerce_remake.feature.order.controller;
 
 import com.ecommerce.ecommerce_remake.feature.order.dto.OrderRequest;
 import com.ecommerce.ecommerce_remake.feature.order.dto.PaymentResponse;
+import com.ecommerce.ecommerce_remake.feature.order.enums.OrderStatus;
 import com.ecommerce.ecommerce_remake.feature.order.service.OrderService;
 import com.ecommerce.ecommerce_remake.web.exception.OutOfStockException;
 import com.ecommerce.ecommerce_remake.web.exception.ResourceNotFoundException;
@@ -10,10 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/order")
@@ -43,4 +41,12 @@ public class OrderController {
         }
 
     }
+
+    @PostMapping("/{orderId}/{status}")
+    public void updateOrderStatus(@PathVariable("orderId") Integer orderId,
+                                  @PathVariable("status") OrderStatus status){
+        log.info("Received request to update status for Order ID={}, Setting status to = {}", orderId, status);
+        orderService.updateOrderStatus(orderId, status);
+    }
+
 }
