@@ -22,7 +22,6 @@ public class Cart extends AuditEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer cartId;
-    private Integer totalItems;
 
     @OneToOne
     @JoinColumn(name = "user_id", unique = true)

@@ -97,7 +97,6 @@ public class CartServiceImpl implements CartService{
         cartItem.setCart(cart);
         cartItem.setInventory(inventory);
         cartItemRepository.save(cartItem);
-        cart.setTotalItems(cart.getTotalItems() + 1);
     }
 
     private void validateStock(int requestQuantity, int availableStock){

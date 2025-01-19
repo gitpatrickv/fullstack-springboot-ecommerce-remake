@@ -6,7 +6,6 @@ import com.ecommerce.ecommerce_remake.feature.address.service.AddressService;
 import com.ecommerce.ecommerce_remake.feature.cart.model.Cart;
 import com.ecommerce.ecommerce_remake.feature.cart.model.CartItem;
 import com.ecommerce.ecommerce_remake.feature.cart.repository.CartItemRepository;
-import com.ecommerce.ecommerce_remake.feature.cart.service.CartItemService;
 import com.ecommerce.ecommerce_remake.feature.cart.service.CartServiceImpl;
 import com.ecommerce.ecommerce_remake.feature.inventory.model.Inventory;
 import com.ecommerce.ecommerce_remake.feature.inventory.repository.InventoryRepository;
@@ -45,7 +44,6 @@ import java.util.stream.Collectors;
 public class OrderServiceImpl implements OrderService{
 
     private final CartItemRepository cartItemRepository;
-    private final CartItemService cartItemService;
     private final UserService userService;
     private final AddressService addressService;
     private final OrderRepository orderRepository;
@@ -72,7 +70,6 @@ public class OrderServiceImpl implements OrderService{
             List<OrderItem> orderItems = this.createAndSaveOrderItems(cartItems, savedOrder);
             savedOrder.setOrderItems(orderItems);
         }
-        cartItemService.updateCartItemCount(cart, request.getIds().size());
         log.info("Deleting cart items...");
         cartItemRepository.deleteAllByIdInBatch(request.getIds());
         log.info("Deleted");
@@ -89,14 +86,15 @@ public class OrderServiceImpl implements OrderService{
 
         if(status.equals(OrderStatus.CANCELLED)){
             List<OrderItem> orderItems = order.getOrderItems();
-            for(OrderItem orderItem : orderItems) {
+
+            orderItems.forEach(orderItem -> {
                 int orderedProductQuantity = orderItem.getQuantity();
                 log.info("Ordered product quantity: {}", orderedProductQuantity);
                 Inventory inventory = orderItem.getInventory();
                 this.updateInventoryOnOrderCancellation(inventory, orderedProductQuantity);
                 Product product = inventory.getProduct();
                 this.updateTotalProductSoldOnOrderCancellation(product, orderedProductQuantity);
-            }
+            });
         }
     }
 

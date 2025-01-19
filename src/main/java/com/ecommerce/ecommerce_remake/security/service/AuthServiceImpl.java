@@ -39,7 +39,6 @@ public class AuthServiceImpl implements AuthService{
 
         Cart cart = new Cart();
         cart.setUser(savedUser);
-        cart.setTotalItems(0);
         cartRepository.save(cart);
 
         return this.authenticate(userModel.getEmail(), userModel.getPassword());

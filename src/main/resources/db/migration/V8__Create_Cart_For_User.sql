@@ -1,5 +1,5 @@
-INSERT INTO cart (total_items, user_id, created_date, last_modified)
-SELECT 0, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+INSERT INTO cart (user_id, created_date, last_modified)
+SELECT 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
 WHERE EXISTS (
     SELECT 1
     FROM users
@@ -11,8 +11,8 @@ AND NOT EXISTS (
     WHERE user_id = 1
 );
 
-INSERT INTO cart (total_items, user_id, created_date, last_modified)
-SELECT 0, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+INSERT INTO cart (user_id, created_date, last_modified)
+SELECT 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
 WHERE EXISTS (
     SELECT 1
     FROM users
@@ -24,8 +24,8 @@ AND NOT EXISTS (
     WHERE user_id = 2
 );
 
-INSERT INTO cart (total_items, user_id, created_date, last_modified)
-SELECT 0, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+INSERT INTO cart (user_id, created_date, last_modified)
+SELECT 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
 WHERE EXISTS (
     SELECT 1
     FROM users
