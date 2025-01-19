@@ -2,6 +2,7 @@ package com.ecommerce.ecommerce_remake.feature.cart.repository;
 
 import com.ecommerce.ecommerce_remake.feature.cart.model.Cart;
 import com.ecommerce.ecommerce_remake.feature.cart.model.CartItem;
+import com.ecommerce.ecommerce_remake.feature.inventory.model.Inventory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,4 +24,5 @@ public interface CartItemRepository extends JpaRepository<CartItem, Integer> {
             "WHERE ci.cart = :cart")
     List<CartItem> findByCart(@Param("cart") Cart cart);
     List<CartItem> findByCartAndCartItemIdIn(Cart cart, Set<Integer> ids);
+    Optional<CartItem> findByCartAndInventory(Cart cart, Inventory inventory);
 }

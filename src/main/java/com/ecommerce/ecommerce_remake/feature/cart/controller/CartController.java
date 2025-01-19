@@ -48,10 +48,6 @@ public class CartController {
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
     }
-    @GetMapping("/size")
-    public Integer getCartSize(){
-        return cartService.getCartSize();
-    }
 
     @GetMapping("/{ids}/total")
     @ResponseStatus(HttpStatus.OK)

@@ -55,12 +55,6 @@ public class CartServiceImpl implements CartService{
         this.addProductsToCart(request, inventory);
     }
 
-    @Override
-    public Integer getCartSize() {
-        User user = userService.getCurrentAuthenticatedUser();
-        Cart cart = user.getCart();
-        return cart.getTotalItems();
-    }
 
     @Override
     public CartTotalResponse getCartTotal(Set<Integer> ids) {
@@ -86,11 +80,7 @@ public class CartServiceImpl implements CartService{
 
         if(existingCartItem.isEmpty()){
             cartItem = new CartItem();
-            cartItem.setQuantity(request.getQuantity());
-            cartItem.setCart(cart);
-            cartItem.setInventory(inventory);
-            cartItemRepository.save(cartItem);
-            cart.setTotalItems(cart.getTotalItems() + 1);
+            this.createNewCartItem(request.getQuantity(), cart, inventory, cartItem);
         } else {
             cartItem = existingCartItem.get();
             if(cartItem.getQuantity() + request.getQuantity() > availableStock){
@@ -100,6 +90,14 @@ public class CartServiceImpl implements CartService{
                 cartItemRepository.save(cartItem);
             }
         }
+    }
+    @Override
+    public void createNewCartItem(int quantity, Cart cart, Inventory inventory, CartItem cartItem){
+        cartItem.setQuantity(quantity);
+        cartItem.setCart(cart);
+        cartItem.setInventory(inventory);
+        cartItemRepository.save(cartItem);
+        cart.setTotalItems(cart.getTotalItems() + 1);
     }
 
     private void validateStock(int requestQuantity, int availableStock){
