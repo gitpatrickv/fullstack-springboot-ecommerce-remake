@@ -24,7 +24,7 @@ public class PaymentServiceImpl implements PaymentService{
     public PaymentResponse paymentLink(Long totalAmount, PaymentMethod paymentMethod) throws StripeException {
 
         if(paymentMethod.equals(PaymentMethod.CASH_ON_DELIVERY)){
-            return new PaymentResponse("http://localhost:5173/user/purchase/order/to-pay");
+            return new PaymentResponse("http://localhost:5173/user/purchase/order/all");
         }
 
         Stripe.apiKey=stripeSecretKey;

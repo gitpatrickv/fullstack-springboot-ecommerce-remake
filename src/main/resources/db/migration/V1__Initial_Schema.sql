@@ -116,7 +116,9 @@ CREATE TABLE IF NOT EXISTS orders (
 CREATE TABLE IF NOT EXISTS order_items (
     `order_item_id` INT AUTO_INCREMENT PRIMARY KEY,
     `order_id` INT NOT NULL,
+    `product_id` INT NOT NULL,
     `inventory_id` INT NOT NULL,
+    `review_status` ENUM('TO_REVIEW', 'REVIEWED') NOT NULL,
     `product_name` VARCHAR(100) NOT NULL,
     `quantity` INT NOT NULL,
     `product_price` DECIMAL NOT NULL CHECK (product_price > 0),
@@ -124,6 +126,29 @@ CREATE TABLE IF NOT EXISTS order_items (
     `size` VARCHAR(30) DEFAULT NULL,
     `product_image` VARCHAR(255) NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS product_reviews (
+    `product_review_id` INT AUTO_INCREMENT PRIMARY KEY,
+    `product_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `rating` INT NOT NULL CHECK (rating > 0),
+    `customer_review` VARCHAR(255) DEFAULT NULL,
+    `reply_status` ENUM('TO_REPLY', 'REPLIED') NOT NULL,
+    `seller_response` VARCHAR(255) DEFAULT NULL,
+    `created_date` TIMESTAMP,
+    `last_modified` TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS store_reviews (
+    `store_review_id` INT AUTO_INCREMENT PRIMARY KEY,
+    `store_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `rating` INT NOT NULL CHECK (rating > 0),
+    `customer_review` VARCHAR(255) DEFAULT NULL,
+    `created_date` TIMESTAMP,
+    `last_modified` TIMESTAMP
+);
+
 
 
 
