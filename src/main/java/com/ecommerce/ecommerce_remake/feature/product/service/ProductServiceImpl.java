@@ -8,7 +8,6 @@ import com.ecommerce.ecommerce_remake.common.dto.response.PageResponse;
 import com.ecommerce.ecommerce_remake.common.service.CrudService;
 import com.ecommerce.ecommerce_remake.common.util.Pagination;
 import com.ecommerce.ecommerce_remake.common.util.mapper.EntityToModelMapper;
-import com.ecommerce.ecommerce_remake.common.util.mapper.ModelToEntityMapper;
 import com.ecommerce.ecommerce_remake.feature.inventory.model.Inventory;
 import com.ecommerce.ecommerce_remake.feature.inventory.service.InventoryService;
 import com.ecommerce.ecommerce_remake.feature.product.model.Product;

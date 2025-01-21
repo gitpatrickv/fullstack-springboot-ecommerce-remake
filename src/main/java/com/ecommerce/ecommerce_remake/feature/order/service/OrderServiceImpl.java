@@ -9,7 +9,6 @@ import com.ecommerce.ecommerce_remake.feature.cart.repository.CartItemRepository
 import com.ecommerce.ecommerce_remake.feature.cart.service.CartServiceImpl;
 import com.ecommerce.ecommerce_remake.feature.inventory.model.Inventory;
 import com.ecommerce.ecommerce_remake.feature.inventory.repository.InventoryRepository;
-import com.ecommerce.ecommerce_remake.feature.inventory.service.InventoryService;
 import com.ecommerce.ecommerce_remake.feature.order.dto.OrderRequest;
 import com.ecommerce.ecommerce_remake.feature.order.dto.PaymentResponse;
 import com.ecommerce.ecommerce_remake.feature.order.enums.OrderStatus;
@@ -49,7 +48,6 @@ public class OrderServiceImpl implements OrderService{
     private final AddressService addressService;
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
-    private final InventoryService inventoryService;
     private final InventoryRepository inventoryRepository;
     private final ProductRepository productRepository;
     private final PaymentService paymentService;
@@ -90,11 +88,14 @@ public class OrderServiceImpl implements OrderService{
 
             orderItems.forEach(orderItem -> {
                 int orderedProductQuantity = orderItem.getQuantity();
-                log.info("Ordered product quantity: {}", orderedProductQuantity);
                 Inventory inventory = orderItem.getInventory();
-                this.updateInventoryOnOrderCancellation(inventory, orderedProductQuantity);
                 Product product = inventory.getProduct();
-                this.updateTotalProductSoldOnOrderCancellation(product, orderedProductQuantity);
+
+                log.info("Order cancellation initiated: adding {} quantity to inventory ID={}", orderedProductQuantity, inventory.getInventoryId());
+                inventoryRepository.addInventoryStockOnOrderCancellation(inventory.getInventoryId(), orderedProductQuantity);
+
+                log.info("Updating product sales: subtracting {} quantity from total sold for product ID={}", orderedProductQuantity, product.getProductId());
+                productRepository.subtractTotalProductSoldOnOrderCancellation(product.getProductId(), orderedProductQuantity);
             });
         }
     }
@@ -113,17 +114,18 @@ public class OrderServiceImpl implements OrderService{
     }
 
     private Order createNewOrder(List<CartItem> cartItems, Address address, User user, OrderRequest request, Store store){
-        Order order = new Order();
-        order.setItemQuantity(cartItems.size());
-        order.setRecipientName(address.getFullName());
-        order.setContactNumber(address.getContactNumber());
-        order.setDeliveryAddress(String.format("%s %s, %s", address.getStreetAddress(), address.getCity(), address.getPostCode()));
-        order.setTotalAmount(CartServiceImpl.calculateTotalAmount(cartItems));
-        order.setDeliveryCost(50);
-        order.setPaymentMethod(request.getPaymentMethod());
-        order.setOrderStatus(request.getPaymentMethod().equals(PaymentMethod.STRIPE_PAYMENT) ? OrderStatus.TO_SHIP : OrderStatus.TO_PAY);
-        order.setUser(user);
-        order.setStore(store);
+        Order order = Order.builder()
+                .itemQuantity(cartItems.size())
+                .recipientName(address.getFullName())
+                .contactNumber(address.getContactNumber())
+                .deliveryAddress(String.format("%s %s, %s", address.getStreetAddress(), address.getCity(), address.getPostCode()))
+                .totalAmount(CartServiceImpl.calculateTotalAmount(cartItems))
+                .deliveryCost(50)
+                .paymentMethod(request.getPaymentMethod())
+                .orderStatus(request.getPaymentMethod().equals(PaymentMethod.STRIPE_PAYMENT) ? OrderStatus.TO_SHIP : OrderStatus.TO_PAY)
+                .user(user)
+                .store(store)
+                .build();
         return orderRepository.save(order);
     }
 
@@ -131,64 +133,38 @@ public class OrderServiceImpl implements OrderService{
         return cartItems.stream().map(cartItem -> {
             Inventory inventory = cartItem.getInventory();
             Product product = inventory.getProduct();
-            OrderItem orderItem = new OrderItem();
-            orderItem.setQuantity(cartItem.getQuantity());
-            orderItem.setProductId(product.getProductId());
-            orderItem.setProductName(product.getProductName());
-            orderItem.setProductImage(product.getProductImages().get(0).getProductImage());
-            orderItem.setProductPrice(inventory.getPrice());
-            orderItem.setColor(inventory.getColor());
-            orderItem.setSize(inventory.getSize());
-            orderItem.setInventory(inventory);
-            orderItem.setReviewStatus(ReviewStatus.TO_REVIEW);
-            orderItem.setOrder(savedOrder);
 
-            this.updateAndValidateInventoryQuantity(cartItem.getInventory().getInventoryId(), cartItem.getQuantity());
+            OrderItem orderItem = OrderItem.builder()
+                    .quantity(cartItem.getQuantity())
+                    .productId(product.getProductId())
+                    .productName(product.getProductName())
+                    .productImage(product.getProductImages().get(0).getProductImage())
+                    .productPrice(inventory.getPrice())
+                    .color(inventory.getColor())
+                    .size(inventory.getSize())
+                    .inventory(inventory)
+                    .reviewStatus(ReviewStatus.TO_REVIEW)
+                    .order(savedOrder)
+                    .build();
+
+            this.updateAndValidateInventoryQuantity(inventory, product, cartItem.getQuantity());
 
             return orderItemRepository.save(orderItem);
         }).toList();
     }
 
-    private void updateAndValidateInventoryQuantity(int inventoryId, int itemQuantity) {
-        Inventory inventory = inventoryService.findInventoryById(inventoryId);
-        log.info("Updating inventory...");
-        log.info("Cart item quantity = {}" , itemQuantity);
-        log.info("Available inventory stock: {}, for inventory with ID={}", inventory.getQuantity(), inventory.getInventoryId());
-        int availableStock  = inventory.getQuantity();
+    private void updateAndValidateInventoryQuantity(Inventory inventory, Product product, int itemQuantity) {
 
+        int availableStock  = inventory.getQuantity();
         if(itemQuantity > availableStock) {
             throw new OutOfStockException(String.format("Insufficient stock for product '%s', Please adjust the quantity.", inventory.getProduct().getProductName()));
         } else {
-            inventory.setQuantity(availableStock - itemQuantity);
-            Inventory savedInventory = inventoryRepository.save(inventory);
-            log.info("Updated inventory stock: {}, for inventory with ID={}", savedInventory.getQuantity(), savedInventory.getInventoryId());
-            this.updateTotalProductSold(inventory, itemQuantity);
+            log.info("Processing order: Subtracting {} from inventory ID={}", itemQuantity, inventory.getInventoryId());
+            inventoryRepository.subtractInventoryStockOnOrder (inventory.getInventoryId(), itemQuantity);
+
+            log.info("Updating product sales: Adding {} to total sold for product ID={}", itemQuantity, product.getProductId());
+            productRepository.addTotalProductSoldOnOrder(product.getProductId(), itemQuantity);
         }
     }
-
-    private void updateTotalProductSold(Inventory inventory, int quantityToAdd) {
-        Product product = inventory.getProduct();
-        log.info("Current product total sold: {}, for product with ID={}", product.getTotalSold(), product.getProductId());
-        product.setTotalSold(product.getTotalSold() + quantityToAdd);
-        Product savedProduct = productRepository.save(product);
-        log.info("Updated product total sold: {}, for product with ID={}", savedProduct.getTotalSold(), savedProduct.getProductId());
-    }
-
-    private void updateInventoryOnOrderCancellation(Inventory inventory, Integer quantity){
-        log.info("Before order cancellation, Available inventory stock: {}, for inventory with ID={}", inventory.getQuantity(), inventory.getInventoryId());
-        inventory.setQuantity(inventory.getQuantity() + quantity);
-        Inventory savedInventory = inventoryRepository.save(inventory);
-        log.info("After order cancellation, Updated inventory stock: {}, for inventory with ID={}", savedInventory.getQuantity(), savedInventory.getInventoryId());
-    }
-
-    private void updateTotalProductSoldOnOrderCancellation(Product product, Integer quantityToSubtract){
-        log.info("Before order cancellation, Current product total sold: {}, for product with ID={}", product.getTotalSold(), product.getProductId());
-        product.setTotalSold(product.getTotalSold() - quantityToSubtract);
-        Product savedProduct = productRepository.save(product);
-        log.info("After order cancellation, Updated product total sold: {}, for product with ID={}", savedProduct.getTotalSold(), savedProduct.getProductId());
-    }
-
-
-
 }
 
