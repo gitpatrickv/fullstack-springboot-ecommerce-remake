@@ -28,6 +28,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -42,7 +43,6 @@ public class ProductServiceImpl extends CrudService implements ProductService {
     private final ProductImageService productImageService;
     private final Pagination pagination;
 
-    private ModelToEntityMapper<ProductModel, Product> modelToEntityMapper = new ModelToEntityMapper<>(Product.class);
     private EntityToModelMapper<Product, ProductModel> entityToModelMapper = new EntityToModelMapper<>(ProductModel.class);
 
     @Override
@@ -106,10 +106,16 @@ public class ProductServiceImpl extends CrudService implements ProductService {
         User user = userService.getCurrentAuthenticatedUser();
         Store store = user.getStore();
 
-        Product product = modelToEntityMapper.map(model);
-        product.setStatus(Status.LISTED);
-        product.setTotalSold(0);
-        product.setStore(store);
+        Product product = Product.builder()
+                .productName(model.getProductName())
+                .description(model.getDescription())
+                .category(model.getCategory())
+                .totalSold(0)
+                .averageRating(BigDecimal.ZERO)
+                .reviewsCount(0)
+                .status(Status.LISTED)
+                .store(store)
+                .build();
 
         Set<Inventory> saveToInventory = inventoryService.mapModelToInventory(product, model.getInventories());
 

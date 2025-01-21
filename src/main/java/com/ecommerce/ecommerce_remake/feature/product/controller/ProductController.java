@@ -28,7 +28,7 @@ public class ProductController {
         try{
             productService.saveProduct(model, files);
             String message = String.format("Product '%s' was saved successfully.", model.getProductName());
-            log.info("POST Response 201: {}", message);
+            log.info("Save Product POST Response 201 : {}", message);
             return new ResponseEntity<>(message, HttpStatus.CREATED);
         } catch (Exception e){
             log.error("Unexpected error while saving product: {}", e.getMessage(), e);

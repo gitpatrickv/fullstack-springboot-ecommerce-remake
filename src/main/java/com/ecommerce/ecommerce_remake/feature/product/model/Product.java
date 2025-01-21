@@ -8,11 +8,9 @@ import com.ecommerce.ecommerce_remake.feature.product.enums.Category;
 import com.ecommerce.ecommerce_remake.feature.product_image.model.ProductImage;
 import com.ecommerce.ecommerce_remake.feature.store.model.Store;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -22,6 +20,7 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Entity
 @Table(name = "products")
 public class Product extends AuditEntity {
@@ -32,6 +31,8 @@ public class Product extends AuditEntity {
     private String slug;
     private String description;
     private Integer totalSold;
+    private BigDecimal averageRating;
+    private Integer reviewsCount;
     @Enumerated(EnumType.STRING)
     private Status status;
     @Enumerated(EnumType.STRING)

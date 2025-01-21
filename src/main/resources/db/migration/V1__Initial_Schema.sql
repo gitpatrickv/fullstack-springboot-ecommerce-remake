@@ -42,10 +42,12 @@ CREATE TABLE IF NOT EXISTS products (
                         'Shoes',
                         'Audio',
                         'Babies_And_Kids') NOT NULL,
+    `total_sold` INT DEFAULT 0 CHECK (total_sold >= 0) NOT NULL,
+    `average_rating` DECIMAL DEFAULT 0 CHECK (average_rating >= 0) NOT NULL,
+    `reviews_count` INT DEFAULT 0 CHECK (reviews_count >= 0) NOT NULL,
     `product_name` VARCHAR(100) NOT NULL,
     `slug` VARCHAR(100) NOT NULL,
     `description` VARCHAR(255) NOT NULL,
-    `total_sold` INT DEFAULT 0 CHECK (total_sold >= 0) NOT NULL,
     `created_date` TIMESTAMP,
     `last_modified` TIMESTAMP
 );

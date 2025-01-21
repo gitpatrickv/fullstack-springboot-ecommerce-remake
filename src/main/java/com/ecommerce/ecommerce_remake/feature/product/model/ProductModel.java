@@ -19,6 +19,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -41,6 +42,8 @@ public class ProductModel extends Model {
     @NotNull(message = "{product.description.required}")
     private String description;
     private Integer totalSold;
+    private BigDecimal averageRating;
+    private Integer reviewsCount;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdDate;
     @Enumerated(EnumType.STRING)

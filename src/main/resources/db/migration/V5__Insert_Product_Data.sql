@@ -6,6 +6,8 @@ INSERT INTO products (
     slug,
     description,
     total_sold,
+    average_rating,
+    reviews_count,
     created_date,
     last_modified
 )
@@ -16,6 +18,8 @@ SELECT
     'With Variation',
     'with-variation',
     'Example description for the product.',
+    0,
+    0,
     0,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
@@ -34,6 +38,8 @@ INSERT INTO products (
     slug,
     description,
     total_sold,
+    average_rating,
+    reviews_count,
     created_date,
     last_modified
 )
@@ -44,6 +50,8 @@ SELECT
     'Variation',
     'variation',
     'Example description for the product.',
+    0,
+    0,
     0,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
@@ -62,6 +70,8 @@ INSERT INTO products (
     slug,
     description,
     total_sold,
+    average_rating,
+    reviews_count,
     created_date,
     last_modified
 )
@@ -72,6 +82,8 @@ SELECT
     'Without Variation',
     'without-variation',
     'Example description for the product.',
+    0,
+    0,
     0,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
@@ -91,6 +103,8 @@ INSERT INTO products (
     slug,
     description,
     total_sold,
+    average_rating,
+    reviews_count,
     created_date,
     last_modified
 )
@@ -101,6 +115,8 @@ SELECT
     'Product Name',
     'product-name',
     'Example description for the product.',
+    0,
+    0,
     0,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
@@ -119,6 +135,8 @@ INSERT INTO products (
     slug,
     description,
     total_sold,
+    average_rating,
+    reviews_count,
     created_date,
     last_modified
 )
@@ -129,6 +147,8 @@ SELECT
     'Item Name',
     'item-name',
     'Example description for the product.',
+    0,
+    0,
     0,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP

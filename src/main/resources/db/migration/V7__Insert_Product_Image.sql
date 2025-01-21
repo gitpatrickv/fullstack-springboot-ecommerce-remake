@@ -10,6 +10,46 @@ INSERT INTO product_images (
     product_id,
     product_image
 )
+SELECT 1, 'https://png.pngtree.com/thumb_back/fh260/background/20230408/pngtree-rainbow-curves-abstract-colorful-background-image_2164067.jpg'
+FROM products
+WHERE product_id = 1;
+
+INSERT INTO product_images (
+    product_id,
+    product_image
+)
+SELECT 1, 'https://png.pngtree.com/thumb_back/fh260/background/20200714/pngtree-modern-double-color-futuristic-neon-background-image_351866.jpg'
+FROM products
+WHERE product_id = 1;
+
+INSERT INTO product_images (
+    product_id,
+    product_image
+)
+SELECT 1, 'https://png.pngtree.com/thumb_back/fh260/background/20210709/pngtree-light-green-summer-nice-background-stock-pngtree-image_738450.jpg'
+FROM products
+WHERE product_id = 1;
+
+INSERT INTO product_images (
+    product_id,
+    product_image
+)
+SELECT 1, 'https://png.pngtree.com/thumb_back/fh260/background/20211031/pngtree-abstract-bg-image_914283.png'
+FROM products
+WHERE product_id = 1;
+
+INSERT INTO product_images (
+    product_id,
+    product_image
+)
+SELECT 1, 'https://png.pngtree.com/thumb_back/fw800/background/20231221/pngtree-blue-business-gradient-convergence-light-triangle-background-image_15538766.png'
+FROM products
+WHERE product_id = 1;
+
+INSERT INTO product_images (
+    product_id,
+    product_image
+)
 SELECT 2, 'https://png.pngtree.com/thumb_back/fh260/background/20230408/pngtree-rainbow-curves-abstract-colorful-background-image_2164067.jpg'
 FROM products
 WHERE product_id = 2;
