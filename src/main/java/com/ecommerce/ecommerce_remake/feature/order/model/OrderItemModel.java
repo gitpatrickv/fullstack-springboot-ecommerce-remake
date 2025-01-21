@@ -1,6 +1,9 @@
 package com.ecommerce.ecommerce_remake.feature.order.model;
 
+import com.ecommerce.ecommerce_remake.feature.order.enums.ReviewStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,7 +22,10 @@ public class OrderItemModel {
     private Integer quantity;
     private String productName;
     private String productImage;
+    private Integer productId;
     private BigDecimal productPrice;
     private String color;
     private String size;
+    @Enumerated(EnumType.STRING)
+    private ReviewStatus reviewStatus;
 }

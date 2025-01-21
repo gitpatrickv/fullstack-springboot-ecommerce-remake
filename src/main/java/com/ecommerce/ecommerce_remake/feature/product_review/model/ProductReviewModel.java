@@ -1,10 +1,10 @@
 package com.ecommerce.ecommerce_remake.feature.product_review.model;
 
 import com.ecommerce.ecommerce_remake.common.dto.Model;
-import com.ecommerce.ecommerce_remake.feature.product_review.enums.ReplyStatus;
-import com.ecommerce.ecommerce_remake.feature.user.model.UserModel;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.persistence.*;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,9 +27,4 @@ public class ProductReviewModel extends Model {
     private Integer rating;
     private String customerReview;
     private String sellerResponse;
-
-    @Enumerated(EnumType.STRING)
-    private ReplyStatus replyStatus;
-
-    private UserModel user;
 }

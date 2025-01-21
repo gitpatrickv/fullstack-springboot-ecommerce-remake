@@ -14,6 +14,7 @@ import com.ecommerce.ecommerce_remake.feature.order.dto.OrderRequest;
 import com.ecommerce.ecommerce_remake.feature.order.dto.PaymentResponse;
 import com.ecommerce.ecommerce_remake.feature.order.enums.OrderStatus;
 import com.ecommerce.ecommerce_remake.feature.order.enums.PaymentMethod;
+import com.ecommerce.ecommerce_remake.feature.order.enums.ReviewStatus;
 import com.ecommerce.ecommerce_remake.feature.order.model.Order;
 import com.ecommerce.ecommerce_remake.feature.order.model.OrderItem;
 import com.ecommerce.ecommerce_remake.feature.order.repository.OrderItemRepository;
@@ -128,14 +129,18 @@ public class OrderServiceImpl implements OrderService{
 
     private List<OrderItem> createAndSaveOrderItems(List<CartItem> cartItems, Order savedOrder) {
         return cartItems.stream().map(cartItem -> {
+            Inventory inventory = cartItem.getInventory();
+            Product product = inventory.getProduct();
             OrderItem orderItem = new OrderItem();
             orderItem.setQuantity(cartItem.getQuantity());
-            orderItem.setProductName(cartItem.getInventory().getProduct().getProductName());
-            orderItem.setProductImage(cartItem.getInventory().getProduct().getProductImages().get(0).getProductImage());
-            orderItem.setProductPrice(cartItem.getInventory().getPrice());
-            orderItem.setColor(cartItem.getInventory().getColor());
-            orderItem.setSize(cartItem.getInventory().getSize());
-            orderItem.setInventory(cartItem.getInventory());
+            orderItem.setProductId(product.getProductId());
+            orderItem.setProductName(product.getProductName());
+            orderItem.setProductImage(product.getProductImages().get(0).getProductImage());
+            orderItem.setProductPrice(inventory.getPrice());
+            orderItem.setColor(inventory.getColor());
+            orderItem.setSize(inventory.getSize());
+            orderItem.setInventory(inventory);
+            orderItem.setReviewStatus(ReviewStatus.TO_REVIEW);
             orderItem.setOrder(savedOrder);
 
             this.updateAndValidateInventoryQuantity(cartItem.getInventory().getInventoryId(), cartItem.getQuantity());

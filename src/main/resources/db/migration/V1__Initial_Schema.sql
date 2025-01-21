@@ -133,7 +133,6 @@ CREATE TABLE IF NOT EXISTS product_reviews (
     `user_id` INT NOT NULL,
     `rating` INT NOT NULL CHECK (rating > 0),
     `customer_review` VARCHAR(255) DEFAULT NULL,
-    `reply_status` ENUM('TO_REPLY', 'REPLIED') NOT NULL,
     `seller_response` VARCHAR(255) DEFAULT NULL,
     `created_date` TIMESTAMP,
     `last_modified` TIMESTAMP

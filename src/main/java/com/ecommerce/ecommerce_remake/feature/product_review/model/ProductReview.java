@@ -1,7 +1,6 @@
 package com.ecommerce.ecommerce_remake.feature.product_review.model;
 
 import com.ecommerce.ecommerce_remake.common.dto.AuditEntity;
-import com.ecommerce.ecommerce_remake.feature.product_review.enums.ReplyStatus;
 import com.ecommerce.ecommerce_remake.feature.user.model.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,9 +23,6 @@ public class ProductReview extends AuditEntity {
     private Integer rating;
     private String customerReview;
     private String sellerResponse;
-
-    @Enumerated(EnumType.STRING)
-    private ReplyStatus replyStatus;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

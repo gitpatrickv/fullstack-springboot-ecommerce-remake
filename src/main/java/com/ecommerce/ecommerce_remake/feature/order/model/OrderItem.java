@@ -1,6 +1,7 @@
 package com.ecommerce.ecommerce_remake.feature.order.model;
 
 import com.ecommerce.ecommerce_remake.feature.inventory.model.Inventory;
+import com.ecommerce.ecommerce_remake.feature.order.enums.ReviewStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,11 +21,15 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer orderItemId;
     private Integer quantity;
+    private Integer productId;
     private String productName;
     private String productImage;
     private BigDecimal productPrice;
     private String color;
     private String size;
+
+    @Enumerated(EnumType.STRING)
+    private ReviewStatus reviewStatus;
 
     @ManyToOne
     @JoinColumn(name = "order_id")

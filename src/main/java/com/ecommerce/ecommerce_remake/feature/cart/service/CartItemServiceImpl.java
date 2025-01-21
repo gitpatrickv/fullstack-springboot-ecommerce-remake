@@ -8,6 +8,7 @@ import com.ecommerce.ecommerce_remake.feature.cart.model.Cart;
 import com.ecommerce.ecommerce_remake.feature.cart.model.CartItem;
 import com.ecommerce.ecommerce_remake.feature.cart.model.CartItemModel;
 import com.ecommerce.ecommerce_remake.feature.cart.repository.CartItemRepository;
+import com.ecommerce.ecommerce_remake.feature.product.model.Product;
 import com.ecommerce.ecommerce_remake.feature.user.model.User;
 import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import com.ecommerce.ecommerce_remake.web.exception.ResourceNotFoundException;
@@ -63,18 +64,20 @@ public class CartItemServiceImpl implements CartItemService{
 
     @Override
     public CartItem findCartItemById(Integer id) {
-        return cartItemRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format("Cart Item not found with ID: %s", id)));
+        return cartItemRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Cart Item not found with ID: %s", id)));
     }
 
     private Map<StoreInfo, List<CartItemModel>> groupCartItemsByStore(List<CartItem> cartItemList){
         Map<StoreInfo, List<CartItemModel>> cartItemMap = new HashMap<>();
         for(CartItem cartItem : cartItemList){
-            String storeName = cartItem.getInventory().getProduct().getStore().getStoreName();
-            Integer storeId = cartItem.getInventory().getProduct().getStore().getStoreId();
-            Integer productId = cartItem.getInventory().getProduct().getProductId();
-            String productName = cartItem.getInventory().getProduct().getProductName();
-            String productImage = cartItem.getInventory().getProduct().getProductImages().get(0).getProductImage();
-            String slug = cartItem.getInventory().getProduct().getSlug();
+            Product product = cartItem.getInventory().getProduct();
+            String storeName = product.getStore().getStoreName();
+            Integer storeId = product.getStore().getStoreId();
+            Integer productId = product.getProductId();
+            String productName = product.getProductName();
+            String productImage = product.getProductImages().get(0).getProductImage();
+            String slug = product.getSlug();
 
             CartItemModel cartItemModel = entityToModelMapper.map(cartItem);
             cartItemModel.setProductId(productId);
