@@ -25,7 +25,7 @@ public class StoreController {
             return new ResponseEntity<>(storeModel, HttpStatus.OK);
         } else {
             log.info("Get Response: 200 - Store data not found");
-            return new ResponseEntity<>(null, HttpStatus.OK);
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
 

@@ -3,15 +3,14 @@ package com.ecommerce.ecommerce_remake.config;
 import com.ecommerce.ecommerce_remake.common.factory.CrudServiceFactory;
 import com.ecommerce.ecommerce_remake.common.util.Pagination;
 import com.ecommerce.ecommerce_remake.feature.address.repository.AddressRepository;
-import com.ecommerce.ecommerce_remake.feature.address.service.AddressServiceImpl;
-import com.ecommerce.ecommerce_remake.feature.inventory.service.InventoryService;
+import com.ecommerce.ecommerce_remake.feature.address.service.AddressCrudFactoryService;
+import com.ecommerce.ecommerce_remake.feature.address.service.AddressService;
 import com.ecommerce.ecommerce_remake.feature.product.repository.ProductRepository;
-import com.ecommerce.ecommerce_remake.feature.product.service.ProductServiceImpl;
-import com.ecommerce.ecommerce_remake.feature.product_image.service.ProductImageService;
-import com.ecommerce.ecommerce_remake.feature.product_review.repository.ProductReviewRepository;
-import com.ecommerce.ecommerce_remake.feature.product_review.service.ProductReviewServiceImpl;
+import com.ecommerce.ecommerce_remake.feature.product.service.ProductCrudFactoryService;
+import com.ecommerce.ecommerce_remake.feature.product.service.ProductService;
 import com.ecommerce.ecommerce_remake.feature.store.repository.StoreRepository;
-import com.ecommerce.ecommerce_remake.feature.store.service.StoreServiceImpl;
+import com.ecommerce.ecommerce_remake.feature.store.service.StoreCrudFactoryService;
+import com.ecommerce.ecommerce_remake.feature.store.service.StoreService;
 import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import jakarta.validation.Validator;
 import org.springframework.context.ApplicationContext;
@@ -34,39 +33,29 @@ public class ServiceConfiguration {
     }
 
     @Bean (name = "storeService")
-    public StoreServiceImpl getStoreService(StoreRepository repository,
+    public StoreCrudFactoryService getStoreCrudService(StoreRepository repository,
                                             Validator validator,
                                             UserService userService,
                                             Pagination pagination,
-                                            ProductImageService productImageService){
-        return new StoreServiceImpl(repository, validator, userService, pagination, productImageService);
+                                            StoreService storeService){
+        return new StoreCrudFactoryService(repository, validator, userService, pagination, storeService);
     }
 
     @Bean (name = "productService")
-    public ProductServiceImpl getProductService(ProductRepository repository,
-                                                Validator validator,
-                                                UserService userService,
-                                                InventoryService inventoryService,
-                                                ProductImageService productImageService,
-                                                Pagination pagination){
-        return new ProductServiceImpl(repository, validator, userService, inventoryService, productImageService, pagination);
+    public ProductCrudFactoryService getProductService(ProductRepository repository,
+                                                       Validator validator,
+                                                       UserService userService,
+                                                       Pagination pagination,
+                                                       ProductService productService){
+        return new ProductCrudFactoryService(repository, validator, userService, pagination, productService);
     }
 
     @Bean (name = "addressService")
-    public AddressServiceImpl getAddressService(AddressRepository repository,
-                                                Validator validator,
-                                                UserService userService){
-        return new AddressServiceImpl(repository, validator, userService);
+    public AddressCrudFactoryService getAddressService(AddressRepository repository,
+                                                       Validator validator,
+                                                       UserService userService,
+                                                       AddressService addressService){
+        return new AddressCrudFactoryService(repository, validator, userService, addressService);
     }
-
-    @Bean (name = "productReviewService")
-    public ProductReviewServiceImpl getProductReviewService(UserService userService,
-                                                            ProductReviewRepository productReviewRepository,
-                                                            ProductRepository productRepository,
-                                                            Validator validator){
-        return new ProductReviewServiceImpl(userService, productReviewRepository, productRepository, validator);
-    }
-
-
 
 }
