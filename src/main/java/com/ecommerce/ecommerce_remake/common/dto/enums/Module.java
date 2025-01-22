@@ -4,7 +4,8 @@ public enum Module {
 //    user("userService", "user");
     store("storeService", "store"),
     product("productService", "product"),
-    address("addressService", "address");
+    address("addressService", "address"),
+    productReview("productReviewService", "productReview");
 
     private final String beanName;
     private final String moduleName;

@@ -8,6 +8,8 @@ import com.ecommerce.ecommerce_remake.feature.inventory.service.InventoryService
 import com.ecommerce.ecommerce_remake.feature.product.repository.ProductRepository;
 import com.ecommerce.ecommerce_remake.feature.product.service.ProductServiceImpl;
 import com.ecommerce.ecommerce_remake.feature.product_image.service.ProductImageService;
+import com.ecommerce.ecommerce_remake.feature.product_review.repository.ProductReviewRepository;
+import com.ecommerce.ecommerce_remake.feature.product_review.service.ProductReviewServiceImpl;
 import com.ecommerce.ecommerce_remake.feature.store.repository.StoreRepository;
 import com.ecommerce.ecommerce_remake.feature.store.service.StoreServiceImpl;
 import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
@@ -52,9 +54,17 @@ public class ServiceConfiguration {
 
     @Bean (name = "addressService")
     public AddressServiceImpl getAddressService(AddressRepository repository,
-                                              Validator validator,
-                                              UserService userService){
+                                                Validator validator,
+                                                UserService userService){
         return new AddressServiceImpl(repository, validator, userService);
+    }
+
+    @Bean (name = "productReviewService")
+    public ProductReviewServiceImpl getProductReviewService(UserService userService,
+                                                            ProductReviewRepository productReviewRepository,
+                                                            ProductRepository productRepository,
+                                                            Validator validator){
+        return new ProductReviewServiceImpl(userService, productReviewRepository, productRepository, validator);
     }
 
 
