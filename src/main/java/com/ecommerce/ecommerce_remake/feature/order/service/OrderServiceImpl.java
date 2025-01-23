@@ -21,6 +21,8 @@ import com.ecommerce.ecommerce_remake.feature.order.repository.OrderRepository;
 import com.ecommerce.ecommerce_remake.feature.payment.service.PaymentService;
 import com.ecommerce.ecommerce_remake.feature.product.model.Product;
 import com.ecommerce.ecommerce_remake.feature.product.repository.ProductRepository;
+import com.ecommerce.ecommerce_remake.feature.product_review.model.ProductReview;
+import com.ecommerce.ecommerce_remake.feature.product_review.service.ProductReviewService;
 import com.ecommerce.ecommerce_remake.feature.store.model.Store;
 import com.ecommerce.ecommerce_remake.feature.user.model.User;
 import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
@@ -35,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,6 +54,7 @@ public class OrderServiceImpl implements OrderService{
     private final InventoryRepository inventoryRepository;
     private final ProductRepository productRepository;
     private final PaymentService paymentService;
+    private final ProductReviewService productReviewService;
 
     @Override
     public PaymentResponse placeOrder(OrderRequest request) throws StripeException {
@@ -84,19 +88,11 @@ public class OrderServiceImpl implements OrderService{
         orderRepository.save(order);
 
         if(status.equals(OrderStatus.CANCELLED)){
-            List<OrderItem> orderItems = order.getOrderItems();
+            this.revertInventoryOnCancellation(order);
+        }
 
-            orderItems.forEach(orderItem -> {
-                int orderedProductQuantity = orderItem.getQuantity();
-                Inventory inventory = orderItem.getInventory();
-                Product product = inventory.getProduct();
-
-                log.info("Order cancellation initiated: adding {} quantity to inventory ID={}", orderedProductQuantity, inventory.getInventoryId());
-                inventoryRepository.addInventoryStockOnOrderCancellation(inventory.getInventoryId(), orderedProductQuantity);
-
-                log.info("Updating product sales: subtracting {} quantity from total sold for product ID={}", orderedProductQuantity, product.getProductId());
-                productRepository.subtractTotalProductSoldOnOrderCancellation(product.getProductId(), orderedProductQuantity);
-            });
+        if(status.equals(OrderStatus.COMPLETED)){
+            this.validateIfReviewAlreadyExistForUser(order);
         }
     }
 
@@ -165,6 +161,37 @@ public class OrderServiceImpl implements OrderService{
             log.info("Updating product sales: Adding {} to total sold for product ID={}", itemQuantity, product.getProductId());
             productRepository.addTotalProductSoldOnOrder(product.getProductId(), itemQuantity);
         }
+    }
+
+    private void revertInventoryOnCancellation(Order order){
+        List<OrderItem> orderItems = order.getOrderItems();
+
+        orderItems.forEach(orderItem -> {
+            int orderedProductQuantity = orderItem.getQuantity();
+            Inventory inventory = orderItem.getInventory();
+            Product product = inventory.getProduct();
+
+            log.info("Order cancellation initiated: adding {} quantity to inventory ID={}", orderedProductQuantity, inventory.getInventoryId());
+            inventoryRepository.addInventoryStockOnOrderCancellation(inventory.getInventoryId(), orderedProductQuantity);
+
+            log.info("Updating product sales: subtracting {} quantity from total sold for product ID={}", orderedProductQuantity, product.getProductId());
+            productRepository.subtractTotalProductSoldOnOrderCancellation(product.getProductId(), orderedProductQuantity);
+        });
+    }
+
+    private void validateIfReviewAlreadyExistForUser(Order order){
+        List<OrderItem> orderItems = order.getOrderItems();
+
+        orderItems.forEach(orderItem -> {
+            Integer productId = orderItem.getInventory().getProduct().getProductId();
+            Optional<ProductReview> productReview = productReviewService.findReviewByUserAndProduct(order.getUser().getUserId(), productId);
+
+            if(productReview.isPresent()){
+                log.info("Setting REVIEWED status for order item with ID={}", orderItem.getOrderItemId());
+                orderItem.setReviewStatus(ReviewStatus.REVIEWED);
+                orderItemRepository.save(orderItem);
+            }
+        });
     }
 }
 

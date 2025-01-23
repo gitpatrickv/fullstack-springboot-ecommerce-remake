@@ -95,4 +95,16 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), LocalDateTime.now()),
                 HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler (ReviewValidationException.class)
+    protected ResponseEntity<ErrorResponse> handleReviewValidationException(ReviewValidationException ex) {
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), LocalDateTime.now()),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler (InvalidRatingException.class)
+    protected ResponseEntity<ErrorResponse> handleInvalidRatingException(InvalidRatingException ex) {
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), LocalDateTime.now()),
+                HttpStatus.BAD_REQUEST);
+    }
 }
