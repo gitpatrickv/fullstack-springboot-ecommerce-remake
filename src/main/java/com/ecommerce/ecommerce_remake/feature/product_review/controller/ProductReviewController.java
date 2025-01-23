@@ -3,13 +3,9 @@ package com.ecommerce.ecommerce_remake.feature.product_review.controller;
 import com.ecommerce.ecommerce_remake.feature.product_review.dto.RateRequest;
 import com.ecommerce.ecommerce_remake.feature.product_review.service.ProductReviewService;
 import com.ecommerce.ecommerce_remake.web.exception.InvalidRatingException;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/product")
@@ -18,15 +14,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProductReviewController {
 
     private final ProductReviewService productReviewService;
-    @PostMapping("/rate")
-    public void rateProduct(@RequestBody @Valid RateRequest request){
-        log.info("Received request to Rate Product for ID={}", request.getProductId());
+    @PostMapping("/{productId}/rate")
+    public void rateProduct(@RequestBody RateRequest request, @PathVariable("productId") Integer productId){
+        log.info("Received request to Rate Product for ID={}", productId);
 
         if(request.getRating() < 1 || request.getRating() > 5){
-            log.error("Rate Product - Invalid rating received: {} for product ID={}", request.getRating(), request.getProductId());
+            log.error("Rate Product - Invalid rating received: {} for product ID={}", request.getRating(), productId);
             throw new InvalidRatingException();
         }
 
-       productReviewService.rateProduct(request);
+       productReviewService.rateProduct(request, productId);
     }
 }

@@ -25,13 +25,13 @@ public class ProductReviewServiceImpl implements ProductReviewService {
 
     @Transactional
     @Override
-    public void rateProduct(RateRequest request) {
+    public void rateProduct(RateRequest request, Integer productId) {
         User user = userService.getCurrentAuthenticatedUser();
 
-        this.validateProductReview(user.getUserId(), request.getProductId());
+        this.validateProductReview(user.getUserId(), productId);
 
         ProductReview productReview = ProductReview.builder()
-                .productId(request.getProductId())
+                .productId(productId)
                 .rating(request.getRating())
                 .customerReview(request.getCustomerReview())
                 .user(user)

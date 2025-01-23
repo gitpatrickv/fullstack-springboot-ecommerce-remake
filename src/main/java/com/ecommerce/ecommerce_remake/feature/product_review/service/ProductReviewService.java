@@ -7,6 +7,6 @@ import java.util.Optional;
 
 public interface ProductReviewService {
 
-    void rateProduct(RateRequest request);
+    void rateProduct(RateRequest request, Integer productId);
     Optional<ProductReview> findReviewByUserAndProduct(Integer userId, Integer productId);
 }
