@@ -4,7 +4,6 @@ import com.ecommerce.ecommerce_remake.common.dto.Model;
 import com.ecommerce.ecommerce_remake.common.dto.enums.Module;
 import com.ecommerce.ecommerce_remake.common.dto.enums.Status;
 import com.ecommerce.ecommerce_remake.common.dto.response.GetAllResponse;
-import com.ecommerce.ecommerce_remake.common.dto.response.PageResponse;
 import com.ecommerce.ecommerce_remake.common.service.CrudService;
 import com.ecommerce.ecommerce_remake.common.util.Pagination;
 import com.ecommerce.ecommerce_remake.common.util.mapper.EntityToModelMapper;
@@ -62,9 +61,7 @@ public class ProductCrudFactoryService extends CrudService {
         User user = userService.getCurrentAuthenticatedUser();
         Store store = user.getStore();
         Page<Product> products = productRepository.findByStoreAndStatusIn(store, statuses ,pageable);
-        PageResponse pageResponse = pagination.getPagination(products);
-        List<ProductModel> productModels = productService.getProducts(products);
-        return new GetAllResponse(productModels, pageResponse);
+        return productService.fetchAllProducts(products);
     }
     @Transactional
     @Override

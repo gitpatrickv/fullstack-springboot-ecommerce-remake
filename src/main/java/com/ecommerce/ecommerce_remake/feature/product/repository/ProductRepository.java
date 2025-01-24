@@ -1,6 +1,7 @@
 package com.ecommerce.ecommerce_remake.feature.product.repository;
 
 import com.ecommerce.ecommerce_remake.common.dto.enums.Status;
+import com.ecommerce.ecommerce_remake.feature.product.enums.Category;
 import com.ecommerce.ecommerce_remake.feature.product.model.Product;
 import com.ecommerce.ecommerce_remake.feature.store.model.Store;
 import org.springframework.data.domain.Page;
@@ -17,6 +18,8 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<Product, Integer> {
     Page<Product> findByStoreAndStatusIn(Store store, List<Status> statusList, Pageable pageable);
     Page<Product> findAllByStatus(Status status, Pageable pageable);
+    Page<Product> findAllByStatusAndStore_StoreId(Status status, Integer storeId, Pageable pageable);
+    Page<Product> findAllByStatusAndCategory(Status status, Category category, Pageable pageable);
     @Modifying
     @Query(nativeQuery = true,
             value = """

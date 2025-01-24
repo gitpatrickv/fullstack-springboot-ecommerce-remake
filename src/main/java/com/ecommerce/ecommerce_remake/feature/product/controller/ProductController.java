@@ -1,6 +1,7 @@
 package com.ecommerce.ecommerce_remake.feature.product.controller;
 
 import com.ecommerce.ecommerce_remake.common.dto.response.GetAllResponse;
+import com.ecommerce.ecommerce_remake.feature.product.enums.Category;
 import com.ecommerce.ecommerce_remake.feature.product.model.ProductModel;
 import com.ecommerce.ecommerce_remake.feature.product.service.ProductService;
 import jakarta.validation.Valid;
@@ -41,10 +42,40 @@ public class ProductController {
                                                          @RequestParam(defaultValue = "createdDate", required = false) String sortBy){
         GetAllResponse getAllResponse = productService.getAllProducts(pageNo,pageSize,sortBy);
         if(getAllResponse.getModels().isEmpty()){
-            log.warn("GET Response: 200 - No data found");
+            log.warn("GetAllProducts - No data found");
         }
-        log.info("GET Response: 200 - Returning {} product records", getAllResponse.getModels().size());
+        log.info("GetAllProducts - GET Response: 200 - Returning {} product records", getAllResponse.getModels().size());
         return new ResponseEntity<>(getAllResponse, HttpStatus.OK);
     }
+    @GetMapping("/{storeId}")
+    public ResponseEntity<GetAllResponse> getStoreProductsByStoreId(@RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+                                                    @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
+                                                    @RequestParam(defaultValue = "createdDate", required = false) String sortBy,
+                                                    @PathVariable("storeId") String storeId){
+        log.info("Received request to get all products for store with ID={}", storeId);
+        GetAllResponse getAllResponse = productService.getStoreProductsByStoreId(pageNo, pageSize, sortBy, storeId);
+        if(getAllResponse.getModels().isEmpty()){
+            log.warn("GetStoreProductsByStoreId - No data found");
+        }
+        log.info("GetStoreProductsByStoreId - GET Response: 200 - Returning {} product records", getAllResponse.getModels().size());
+        return new ResponseEntity<>(getAllResponse, HttpStatus.OK);
+    }
+    @GetMapping("/category/{category}")
+    public ResponseEntity<GetAllResponse> getAllProductsByCategory(@RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+                                                   @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
+                                                   @RequestParam(defaultValue = "createdDate", required = false) String sortBy,
+                                                   @PathVariable("category") Category category){
+
+        log.info("Received request to get all products for Category={}", category);
+        GetAllResponse getAllResponse = productService.getAllProductsByCategory(pageNo, pageSize, sortBy, category);
+        if(getAllResponse.getModels().isEmpty()){
+            log.warn("GetAllProductsByCategory - No data found");
+        }
+        log.info("GetAllProductsByCategory - GET Response: 200 - Returning {} product records", getAllResponse.getModels().size());
+        return new ResponseEntity<>(getAllResponse, HttpStatus.OK);
+
+    }
+
+
 
 }

@@ -8,12 +8,12 @@ import com.ecommerce.ecommerce_remake.feature.store_review.model.StoreReview;
 import com.ecommerce.ecommerce_remake.feature.store_review.repository.StoreReviewRepository;
 import com.ecommerce.ecommerce_remake.feature.user.model.User;
 import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
-import com.ecommerce.ecommerce_remake.web.exception.ResourceNotFoundException;
 import com.ecommerce.ecommerce_remake.web.exception.ReviewValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 @RequiredArgsConstructor
 @Service
@@ -40,10 +40,7 @@ public class StoreReviewServiceImpl implements StoreReviewService{
         storeRepository.updateStoreAverageRating(savedReview.getStoreId());
         storeRepository.updateStoreReviewsCount(savedReview.getStoreId());
 
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new ResourceNotFoundException("Order not found."));
-
-        this.updateOrderIfUserAlreadyRatedStore(order);
+        this.updateOrderIfUserAlreadyRatedStore(user.getUserId(), storeId);
     }
 
     @Override
@@ -57,10 +54,13 @@ public class StoreReviewServiceImpl implements StoreReviewService{
             throw new ReviewValidationException("You have already submitted a review for this store.");
         }
     }
-    @Override
-    public void updateOrderIfUserAlreadyRatedStore(Order order){
-        order.setIsStoreRated(true);
-        orderRepository.save(order);
+
+    public void updateOrderIfUserAlreadyRatedStore(int userId, int storeId){
+        List<Order> orders = orderRepository.findAllByUser_UserIdAndStore_StoreId(userId, storeId);
+        orders.forEach(order -> {
+            order.setIsStoreRated(true);
+            orderRepository.save(order);
+        });
     }
 
 }

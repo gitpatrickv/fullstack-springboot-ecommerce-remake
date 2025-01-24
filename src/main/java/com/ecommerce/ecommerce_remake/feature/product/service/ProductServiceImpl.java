@@ -7,6 +7,7 @@ import com.ecommerce.ecommerce_remake.common.util.Pagination;
 import com.ecommerce.ecommerce_remake.common.util.mapper.EntityToModelMapper;
 import com.ecommerce.ecommerce_remake.feature.inventory.model.Inventory;
 import com.ecommerce.ecommerce_remake.feature.inventory.service.InventoryService;
+import com.ecommerce.ecommerce_remake.feature.product.enums.Category;
 import com.ecommerce.ecommerce_remake.feature.product.model.Product;
 import com.ecommerce.ecommerce_remake.feature.product.model.ProductModel;
 import com.ecommerce.ecommerce_remake.feature.product.repository.ProductRepository;
@@ -70,12 +71,24 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public GetAllResponse getAllProducts(int pageNo, int pageSize, String sortBy) {
-        Sort sort = Sort.by("createdDate").descending();
-        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by("createdDate").descending());
         Page<Product> products = productRepository.findAllByStatus(Status.LISTED, pageable);
-        PageResponse pageResponse = pagination.getPagination(products);
-        List<ProductModel> productModels = this.getProducts(products);
-        return new GetAllResponse(productModels, pageResponse);
+        return this.fetchAllProducts(products);
+    }
+
+    @Override
+    public GetAllResponse getStoreProductsByStoreId(int pageNo, int pageSize, String sortBy, String storeId) {
+        int id = Integer.parseInt(storeId);
+        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by("createdDate").descending());
+        Page<Product> products = productRepository.findAllByStatusAndStore_StoreId(Status.LISTED, id, pageable);
+        return this.fetchAllProducts(products);
+    }
+
+    @Override
+    public GetAllResponse getAllProductsByCategory(int pageNo, int pageSize, String sortBy, Category category) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by("createdDate").descending());
+        Page<Product> products = productRepository.findAllByStatusAndCategory(Status.LISTED, category, pageable);
+        return this.fetchAllProducts(products);
     }
 
     @Override
@@ -83,6 +96,12 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findById(Integer.parseInt(id));
     }
 
+    @Override
+    public GetAllResponse fetchAllProducts(Page<Product> products) {
+        PageResponse pageResponse = pagination.getPagination(products);
+        List<ProductModel> productModels = this.getProducts(products);
+        return new GetAllResponse(productModels, pageResponse);
+    }
 
     @Override
     public List<ProductModel> getProducts(Page<Product> products) {

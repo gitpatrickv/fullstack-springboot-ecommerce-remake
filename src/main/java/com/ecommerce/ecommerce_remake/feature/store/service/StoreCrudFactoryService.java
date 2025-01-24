@@ -51,7 +51,7 @@ public class StoreCrudFactoryService extends CrudService {
         return entityToModelMapper.map(savedStore);
     }
 
-    @Override //TODO: Not yet implemented on the frontend
+    @Override
     protected Optional<StoreModel> getOne(String id) {
         return storeService.getStoreById(id).map(entityToModelMapper::map);
     }

@@ -204,7 +204,8 @@ public class OrderServiceImpl implements OrderService{
         Optional<StoreReview> storeReview = storeReviewService.findIfUserAlreadyRatedStore(order.getUser().getUserId(), order.getStore().getStoreId());
 
         if(storeReview.isPresent()){
-            storeReviewService.updateOrderIfUserAlreadyRatedStore(order);
+            order.setIsStoreRated(true);
+            orderRepository.save(order);
         }
     }
 

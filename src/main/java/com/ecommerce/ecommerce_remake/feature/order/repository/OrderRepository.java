@@ -10,10 +10,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Integer> {
 
     @Query("SELECT o FROM Order o WHERE o.user = :user AND (:status IS NULL OR o.orderStatus = :status)")
     Page<Order> findByUserAndStatus(@Param("user") User user, @Param("status") OrderStatus status, Pageable pageable);
-
+    List<Order> findAllByUser_UserIdAndStore_StoreId(Integer userId, Integer storeId);
 }
