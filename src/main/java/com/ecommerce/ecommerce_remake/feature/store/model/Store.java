@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +29,8 @@ public class Store extends AuditEntity {
     private String storeName;
     private String contactNumber;
     private String picture;
+    private BigDecimal averageRating;
+    private Integer reviewsCount;
     @Enumerated(EnumType.STRING)
     private Status status;
 

@@ -15,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_DEFAULT;
@@ -34,6 +35,8 @@ public class StoreModel extends Model {
     @NotNull(message = "{contact.number.required}")
     private String contactNumber;
     private String picture;
+    private BigDecimal averageRating;
+    private Integer reviewsCount;
     @Enumerated(EnumType.STRING)
     private Status status;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

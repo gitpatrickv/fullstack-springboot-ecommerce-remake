@@ -27,6 +27,7 @@ public class OrderModel extends Model {
     private Integer deliveryCost;
     private Integer storeId;
     private String storeName;
+    private Boolean isStoreRated;
 
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;

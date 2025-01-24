@@ -24,6 +24,8 @@ import com.ecommerce.ecommerce_remake.feature.product.repository.ProductReposito
 import com.ecommerce.ecommerce_remake.feature.product_review.model.ProductReview;
 import com.ecommerce.ecommerce_remake.feature.product_review.service.ProductReviewService;
 import com.ecommerce.ecommerce_remake.feature.store.model.Store;
+import com.ecommerce.ecommerce_remake.feature.store_review.model.StoreReview;
+import com.ecommerce.ecommerce_remake.feature.store_review.service.StoreReviewService;
 import com.ecommerce.ecommerce_remake.feature.user.model.User;
 import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import com.ecommerce.ecommerce_remake.web.exception.OutOfStockException;
@@ -55,6 +57,7 @@ public class OrderServiceImpl implements OrderService{
     private final ProductRepository productRepository;
     private final PaymentService paymentService;
     private final ProductReviewService productReviewService;
+    private final StoreReviewService storeReviewService;
 
     @Override
     public PaymentResponse placeOrder(OrderRequest request) throws StripeException {
@@ -93,6 +96,8 @@ public class OrderServiceImpl implements OrderService{
 
         if(status.equals(OrderStatus.COMPLETED)){
             this.validateIfReviewAlreadyExistForUser(order);
+            productReviewService.updateOrderStatus(order);
+            this.validateIfUserAlreadyRatedStore(order);
         }
     }
 
@@ -117,6 +122,7 @@ public class OrderServiceImpl implements OrderService{
                 .deliveryAddress(String.format("%s %s, %s", address.getStreetAddress(), address.getCity(), address.getPostCode()))
                 .totalAmount(CartServiceImpl.calculateTotalAmount(cartItems))
                 .deliveryCost(50)
+                .isStoreRated(false)
                 .paymentMethod(request.getPaymentMethod())
                 .orderStatus(request.getPaymentMethod().equals(PaymentMethod.STRIPE_PAYMENT) ? OrderStatus.TO_SHIP : OrderStatus.TO_PAY)
                 .user(user)
@@ -193,5 +199,15 @@ public class OrderServiceImpl implements OrderService{
             }
         });
     }
+
+    private void validateIfUserAlreadyRatedStore(Order order){
+        Optional<StoreReview> storeReview = storeReviewService.findIfUserAlreadyRatedStore(order.getUser().getUserId(), order.getStore().getStoreId());
+
+        if(storeReview.isPresent()){
+            storeReviewService.updateOrderIfUserAlreadyRatedStore(order);
+        }
+    }
+
+
 }
 

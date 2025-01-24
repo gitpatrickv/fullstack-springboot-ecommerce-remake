@@ -10,7 +10,9 @@ import java.util.Optional;
 
 @Repository
 public interface ProductReviewRepository extends JpaRepository<ProductReview, Integer> {
-    @Query(nativeQuery = true, value = "SELECT * FROM product_reviews WHERE user_id = :userId AND product_id = :productId")
+    //TODO NOTE: I've read an article that says using SELECT * is bad practice.
+    //@Query(nativeQuery = true, value = "SELECT * FROM product_reviews WHERE user_id = :userId AND product_id = :productId")
+    @Query("SELECT pr FROM ProductReview pr WHERE pr.user.userId = :userId AND pr.productId = :productId")
     Optional<ProductReview> findIfReviewAlreadyExistForUser(@Param("userId") Integer userId, @Param("productId") Integer productId);
 
 }

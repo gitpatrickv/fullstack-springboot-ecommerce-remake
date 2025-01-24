@@ -29,6 +29,7 @@ public class Order extends AuditEntity {
     private String deliveryAddress;
     private BigDecimal totalAmount;
     private Integer deliveryCost;
+    private Boolean isStoreRated;
 
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;

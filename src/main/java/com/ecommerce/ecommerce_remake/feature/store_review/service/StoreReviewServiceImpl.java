@@ -1,52 +1,66 @@
 package com.ecommerce.ecommerce_remake.feature.store_review.service;
 
-import com.ecommerce.ecommerce_remake.common.dto.Model;
-import com.ecommerce.ecommerce_remake.common.dto.enums.Status;
-import com.ecommerce.ecommerce_remake.common.dto.response.GetAllResponse;
-import com.ecommerce.ecommerce_remake.common.service.CrudService;
-import jakarta.validation.Validator;
+import com.ecommerce.ecommerce_remake.feature.order.model.Order;
+import com.ecommerce.ecommerce_remake.feature.order.repository.OrderRepository;
+import com.ecommerce.ecommerce_remake.feature.product_review.dto.RateRequest;
+import com.ecommerce.ecommerce_remake.feature.store.repository.StoreRepository;
+import com.ecommerce.ecommerce_remake.feature.store_review.model.StoreReview;
+import com.ecommerce.ecommerce_remake.feature.store_review.repository.StoreReviewRepository;
+import com.ecommerce.ecommerce_remake.feature.user.model.User;
+import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
+import com.ecommerce.ecommerce_remake.web.exception.ResourceNotFoundException;
+import com.ecommerce.ecommerce_remake.web.exception.ReviewValidationException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 @RequiredArgsConstructor
-public class StoreReviewServiceImpl extends CrudService {
+@Service
+@Transactional
+public class StoreReviewServiceImpl implements StoreReviewService{
+
+    private final UserService userService;
+    private final StoreReviewRepository storeReviewRepository;
+    private final StoreRepository storeRepository;
+    private final OrderRepository orderRepository;
+
     @Override
-    protected <T extends Model> Model save(T model) {
-        return null;
+    public void rateStore(RateRequest request, Integer storeId, Integer orderId) {
+        User user = userService.getCurrentAuthenticatedUser();
+
+        this.validateStoreReview(user.getUserId(), storeId);
+
+        StoreReview storeReview = StoreReview.builder()
+                .rating(request.getRating())
+                .storeId(storeId)
+                .user(user)
+                .build();
+        StoreReview savedReview = storeReviewRepository.saveAndFlush(storeReview);
+        storeRepository.updateStoreAverageRating(savedReview.getStoreId());
+        storeRepository.updateStoreReviewsCount(savedReview.getStoreId());
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found."));
+
+        this.updateOrderIfUserAlreadyRatedStore(order);
     }
 
     @Override
-    protected <T extends Model> Optional<Model> getOne(String id) {
-        return Optional.empty();
+    public Optional<StoreReview> findIfUserAlreadyRatedStore(Integer userId, Integer storeId) {
+        return storeReviewRepository.findIfUserAlreadyRatedStore(userId, storeId);
     }
 
+    private void validateStoreReview(int userId, int storeId){
+        Optional<StoreReview> storeReview = this.findIfUserAlreadyRatedStore(userId, storeId);
+        if(storeReview.isPresent()){
+            throw new ReviewValidationException("You have already submitted a review for this store.");
+        }
+    }
     @Override
-    protected GetAllResponse getAll(int pageNo, int pageSize, String sortBy) {
-        return null;
+    public void updateOrderIfUserAlreadyRatedStore(Order order){
+        order.setIsStoreRated(true);
+        orderRepository.save(order);
     }
 
-    @Override
-    protected <T extends Model> Model updateOne(T model) {
-        return null;
-    }
-
-    @Override
-    protected void changeStatus(String id, Status status) {
-
-    }
-
-    @Override
-    protected String moduleName() {
-        return null;
-    }
-
-    @Override
-    protected Class modelClass() {
-        return null;
-    }
-
-    @Override
-    protected Validator validator() {
-        return null;
-    }
 }

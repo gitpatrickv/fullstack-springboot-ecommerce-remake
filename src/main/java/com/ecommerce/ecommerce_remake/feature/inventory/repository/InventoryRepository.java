@@ -17,18 +17,24 @@ public interface InventoryRepository extends JpaRepository<Inventory, Integer> {
 
     @Modifying
     @Query(nativeQuery = true,
-            value = "UPDATE inventory i " +
-                    "SET quantity = CASE " +
-                    "WHEN quantity >= :quantityToSubtract THEN quantity - :quantityToSubtract " +
-                    "ELSE quantity END " +
-                    "WHERE i.inventory_id = :inventoryId")
-    void subtractInventoryStockOnOrder(@Param("inventoryId") Integer inventoryId, @Param("quantityToSubtract") int quantityToSubtract);
+            value = """
+                    UPDATE inventory i
+                    SET quantity = CASE
+                    WHEN quantity >= :quantityToSubtract THEN quantity - :quantityToSubtract
+                    ELSE quantity END
+                    WHERE i.inventory_id = :inventoryId
+                    """)
+    void subtractInventoryStockOnOrder(@Param("inventoryId") Integer inventoryId,
+                                       @Param("quantityToSubtract") int quantityToSubtract);
 
     @Modifying
     @Query(nativeQuery = true,
-        value = "UPDATE inventory i " +
-                "SET quantity = quantity + :quantityToAdd " +
-                "WHERE i.inventory_id = :inventoryId")
-    void addInventoryStockOnOrderCancellation(@Param("inventoryId") Integer inventoryId, @Param("quantityToAdd") int quantityToAdd);
+            value = """
+                    UPDATE inventory i
+                    SET quantity = quantity + :quantityToAdd
+                    WHERE i.inventory_id = :inventoryId
+                    """)
+    void addInventoryStockOnOrderCancellation(@Param("inventoryId") Integer inventoryId,
+                                              @Param("quantityToAdd") int quantityToAdd);
 
 }

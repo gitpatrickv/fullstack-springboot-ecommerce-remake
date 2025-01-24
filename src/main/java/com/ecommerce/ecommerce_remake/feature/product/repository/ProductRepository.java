@@ -19,38 +19,46 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     Page<Product> findAllByStatus(Status status, Pageable pageable);
     @Modifying
     @Query(nativeQuery = true,
-            value = "UPDATE products p " +
-                    "SET total_sold = total_sold + :quantityToAdd " +
-                    "WHERE p.product_id = :productId")
+            value = """
+                    UPDATE products p
+                    SET total_sold = total_sold + :quantityToAdd
+                    WHERE p.product_id = :productId
+                    """)
     void addTotalProductSoldOnOrder(@Param("productId") Integer productId, @Param("quantityToAdd") int quantityToAdd);
 
     @Modifying
     @Query(nativeQuery = true,
-            value = "UPDATE products p " +
-                    "SET total_sold = CASE " +
-                    "WHEN total_sold >= :quantityToSubtract THEN total_sold - :quantityToSubtract " +
-                    "ELSE total_sold END " +
-                    "WHERE p.product_id = :productId")
+            value = """
+                    UPDATE products p
+                    SET total_sold = CASE
+                    WHEN total_sold >= :quantityToSubtract THEN total_sold - :quantityToSubtract
+                    ELSE total_sold END
+                    WHERE p.product_id = :productId
+                    """)
     void subtractTotalProductSoldOnOrderCancellation(@Param("productId") Integer productId, @Param("quantityToSubtract") int quantityToSubtract);
 
     @Modifying
     @Query(nativeQuery = true,
-            value = "UPDATE products p " +
-                    "SET p.average_rating = COALESCE((SELECT AVG(pr.rating) " +
-                    "FROM product_reviews pr " +
-                    "WHERE pr.product_id = p.product_id), 0) " +
-                    "WHERE p.product_id = :productId")
+            value = """
+                    UPDATE products p
+                    SET p.average_rating = COALESCE((SELECT AVG(pr.rating)
+                                         FROM product_reviews pr
+                                         WHERE pr.product_id = p.product_id), 0)
+                    WHERE p.product_id = :productId
+                    """)
     void updateProductAverageRating(@Param("productId") Integer productId);
 
     @Modifying
     @Query(nativeQuery = true,
-            value = "UPDATE products p " +
-                    "SET p.reviews_count = (" +
-                    "SELECT COUNT(pr.product_id) " +
-                    "FROM product_reviews pr " +
-                    "WHERE pr.product_id = p.product_id " +
-                    ") " +
-                    "WHERE p.product_id = :productId")
+            value = """
+                    UPDATE products p
+                    SET p.reviews_count = (
+                    SELECT COUNT(pr.product_id)
+                    FROM product_reviews pr
+                    WHERE pr.product_id = p.product_id
+                    )
+                    WHERE p.product_id = :productId
+                    """)
     void updateProductReviewsCount(@Param("productId") Integer productId);
 
 }

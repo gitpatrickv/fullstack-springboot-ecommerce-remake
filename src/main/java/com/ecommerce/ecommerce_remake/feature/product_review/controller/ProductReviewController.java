@@ -14,15 +14,17 @@ import org.springframework.web.bind.annotation.*;
 public class ProductReviewController {
 
     private final ProductReviewService productReviewService;
-    @PostMapping("/{productId}/rate")
-    public void rateProduct(@RequestBody RateRequest request, @PathVariable("productId") Integer productId){
-        log.info("Received request to Rate Product for ID={}", productId);
+    @PostMapping("/{productId}/{orderId}/rate")
+    public void rateProduct(@RequestBody RateRequest request,
+                            @PathVariable("productId") Integer productId,
+                            @PathVariable("orderId") Integer orderId){
 
+        log.info("Received request to Rate Product for ID={}", productId);
         if(request.getRating() < 1 || request.getRating() > 5){
             log.error("Rate Product - Invalid rating received: {} for product ID={}", request.getRating(), productId);
             throw new InvalidRatingException();
         }
 
-       productReviewService.rateProduct(request, productId);
+       productReviewService.rateProduct(request, productId, orderId);
     }
 }

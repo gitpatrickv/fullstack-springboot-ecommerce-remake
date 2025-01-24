@@ -18,6 +18,8 @@ CREATE TABLE IF NOT EXISTS stores (
     `store_name` VARCHAR(100) UNIQUE NOT NULL,
     `contact_number` VARCHAR(20) UNIQUE NOT NULL,
     `picture` VARCHAR(255) DEFAULT NULL,
+    `average_rating` DECIMAL(3,1) DEFAULT 0 CHECK (average_rating >= 0) NOT NULL,
+    `reviews_count` INT DEFAULT 0 CHECK (reviews_count >= 0) NOT NULL,
     `created_date` TIMESTAMP,
     `last_modified` TIMESTAMP
 );
@@ -103,6 +105,7 @@ CREATE TABLE IF NOT EXISTS orders (
     `order_id` INT AUTO_INCREMENT PRIMARY KEY,
     `user_id` INT NOT NULL,
     `store_id` INT NOT NULL,
+    `is_store_rated` BOOLEAN DEFAULT FALSE,
     `recipient_name` VARCHAR(255) NOT NULL,
     `contact_number` VARCHAR(20) NOT NULL,
     `delivery_address` VARCHAR(255) NOT NULL,
@@ -145,7 +148,6 @@ CREATE TABLE IF NOT EXISTS store_reviews (
     `store_id` INT NOT NULL,
     `user_id` INT NOT NULL,
     `rating` INT NOT NULL CHECK (rating > 0 AND rating <= 5),
-    `customer_review` VARCHAR(255) DEFAULT NULL,
     `created_date` TIMESTAMP,
     `last_modified` TIMESTAMP
 );
