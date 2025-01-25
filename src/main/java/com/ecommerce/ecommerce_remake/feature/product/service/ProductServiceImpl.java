@@ -92,6 +92,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public GetAllResponse searchProduct(int pageNo, int pageSize, String sortBy, String search) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize, getSortBy(sortBy));
+        Page<Product> products = productRepository.searchProduct(search, Status.LISTED, pageable);
+        return this.fetchAllProducts(products);
+    }
+
+    @Override
     public Optional<Product> getProductById(String id) {
         return productRepository.findById(Integer.parseInt(id));
     }
@@ -108,6 +115,14 @@ public class ProductServiceImpl implements ProductService {
         return products.stream()
                 .map(entityToModelMapper::map)
                 .toList();
+    }
+
+    public static Sort getSortBy(String sortBy){
+        return switch (sortBy) {
+            case "totalSold" -> Sort.by("totalSold").descending();
+            case "createdDate" -> Sort.by("createdDate").descending();
+            default -> Sort.by("productName").ascending();
+        };
     }
 
 

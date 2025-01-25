@@ -45,7 +45,7 @@ public class ProductController {
             log.warn("GetAllProducts - No data found");
         }
         log.info("GetAllProducts - GET Response: 200 - Returning {} product records", getAllResponse.getModels().size());
-        return new ResponseEntity<>(getAllResponse, HttpStatus.OK);
+        return ResponseEntity.ok(getAllResponse);
     }
     @GetMapping("/{storeId}")
     public ResponseEntity<GetAllResponse> getStoreProductsByStoreId(@RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
@@ -58,7 +58,7 @@ public class ProductController {
             log.warn("GetStoreProductsByStoreId - No data found");
         }
         log.info("GetStoreProductsByStoreId - GET Response: 200 - Returning {} product records", getAllResponse.getModels().size());
-        return new ResponseEntity<>(getAllResponse, HttpStatus.OK);
+        return ResponseEntity.ok(getAllResponse);
     }
     @GetMapping("/category/{category}")
     public ResponseEntity<GetAllResponse> getAllProductsByCategory(@RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
@@ -72,10 +72,17 @@ public class ProductController {
             log.warn("GetAllProductsByCategory - No data found");
         }
         log.info("GetAllProductsByCategory - GET Response: 200 - Returning {} product records", getAllResponse.getModels().size());
-        return new ResponseEntity<>(getAllResponse, HttpStatus.OK);
+        return ResponseEntity.ok(getAllResponse);
 
     }
-
-
-
+    @GetMapping("/search")
+    public ResponseEntity<GetAllResponse> searchProduct(@RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+                                        @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
+                                        @RequestParam(defaultValue = "productName", required = false) String sortBy,
+                                        @RequestParam(value = "keyword") String search){
+        log.info("Received request to search products. Search keyword: '{}'", search);
+        GetAllResponse getAllResponse = productService.searchProduct(pageNo, pageSize, sortBy, search);
+        log.info("SearchProduct - GET Response: 200 - Returning {} product records", getAllResponse.getModels().size());
+        return ResponseEntity.ok(getAllResponse);
+    }
 }

@@ -16,6 +16,7 @@ public interface ProductService {
     GetAllResponse getAllProducts(int pageNo, int pageSize, String sortBy);
     GetAllResponse getStoreProductsByStoreId(int pageNo, int pageSize, String sortBy, String storeId);
     GetAllResponse getAllProductsByCategory(int pageNo, int pageSize, String sortBy, Category category);
+    GetAllResponse searchProduct(int pageNo, int pageSize, String sortBy, String search);
     Optional<Product> getProductById(String id);
     GetAllResponse fetchAllProducts(Page<Product> products);
     List<ProductModel> getProducts(Page<Product> products);

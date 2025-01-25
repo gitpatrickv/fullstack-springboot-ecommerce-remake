@@ -20,6 +20,16 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     Page<Product> findAllByStatus(Status status, Pageable pageable);
     Page<Product> findAllByStatusAndStore_StoreId(Status status, Integer storeId, Pageable pageable);
     Page<Product> findAllByStatusAndCategory(Status status, Category category, Pageable pageable);
+    @Query("""
+       SELECT p
+       FROM Product p
+       WHERE LOWER(p.productName) LIKE LOWER(CONCAT('%', :search, '%'))
+       AND p.status = :status
+       """)
+    Page<Product> searchProduct(@Param("search") String search,
+                                @Param("status") Status status,
+                                Pageable pageable);
+
     @Modifying
     @Query(nativeQuery = true,
             value = """

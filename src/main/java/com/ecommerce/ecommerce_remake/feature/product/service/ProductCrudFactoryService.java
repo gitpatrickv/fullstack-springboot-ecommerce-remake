@@ -48,19 +48,11 @@ public class ProductCrudFactoryService extends CrudService {
 
     @Override //Get All Store Product
     protected GetAllResponse getAll(int pageNo, int pageSize, String sortBy) {
-        Sort sort = switch (sortBy) {
-            case "totalSold" -> Sort.by("totalSold").descending();
-            case "lowProductSold" -> Sort.by("totalSold").ascending();
-            case "productName" -> Sort.by("productName").ascending();
-            case null, default -> Sort.by("createdDate").descending();
-        };
-
-        List<Status> statuses = List.of(Status.LISTED, Status.SUSPENDED);
-
-        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        List<Status> statusList = List.of(Status.LISTED, Status.SUSPENDED);
+        Pageable pageable = PageRequest.of(pageNo, pageSize, ProductServiceImpl.getSortBy(sortBy));
         User user = userService.getCurrentAuthenticatedUser();
         Store store = user.getStore();
-        Page<Product> products = productRepository.findByStoreAndStatusIn(store, statuses ,pageable);
+        Page<Product> products = productRepository.findByStoreAndStatusIn(store, statusList ,pageable);
         return productService.fetchAllProducts(products);
     }
     @Transactional
