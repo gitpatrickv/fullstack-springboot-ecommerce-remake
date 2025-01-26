@@ -23,13 +23,20 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("""
        SELECT p
        FROM Product p
+       JOIN p.inventories inv
        WHERE LOWER(p.productName) LIKE LOWER(CONCAT('%', :search, '%'))
        AND p.status = :status
        AND (:ratingFilter IS NULL OR :ratingFilter <= p.averageRating)
+       AND (:minPrice IS NULL AND :maxPrice IS NULL) OR
+       (:minPrice IS NULL AND :maxPrice >= inv.price) OR
+       (:maxPrice IS NULL AND :minPrice <= inv.price) OR
+       (inv.price BETWEEN :minPrice AND :maxPrice)
        """)
     Page<Product> searchProduct(@Param("search") String search,
                                 @Param("status") Status status,
                                 @Param("ratingFilter") Integer ratingFilter,
+                                @Param("minPrice") Integer minPrice,
+                                @Param("maxPrice") Integer maxPrice,
                                 Pageable pageable);
 
     @Modifying

@@ -92,10 +92,15 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public GetAllResponse searchProduct(int pageNo, int pageSize, String sortBy, String search, Integer ratingFilter) {
-
+    public GetAllResponse searchProduct(int pageNo,
+                                        int pageSize,
+                                        String sortBy,
+                                        String search,
+                                        Integer ratingFilter,
+                                        Integer minPrice,
+                                        Integer maxPrice) {
         Pageable pageable = PageRequest.of(pageNo, pageSize, getSortBy(sortBy));
-        Page<Product> products = productRepository.searchProduct(search, Status.LISTED, ratingFilter, pageable);
+        Page<Product> products = productRepository.searchProduct(search, Status.LISTED, ratingFilter, minPrice ,maxPrice, pageable);
         return this.fetchAllProducts(products);
     }
 

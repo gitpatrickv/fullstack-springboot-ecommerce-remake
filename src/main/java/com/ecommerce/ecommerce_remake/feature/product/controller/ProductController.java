@@ -49,9 +49,9 @@ public class ProductController {
     }
     @GetMapping("/{storeId}")
     public ResponseEntity<GetAllResponse> getStoreProductsByStoreId(@RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
-                                                    @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
-                                                    @RequestParam(defaultValue = "createdDate", required = false) String sortBy,
-                                                    @PathVariable("storeId") String storeId){
+                                                                    @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
+                                                                    @RequestParam(defaultValue = "createdDate", required = false) String sortBy,
+                                                                    @PathVariable("storeId") String storeId){
         log.info("Received request to get all products for store with ID={}", storeId);
         GetAllResponse getAllResponse = productService.getStoreProductsByStoreId(pageNo, pageSize, sortBy, storeId);
         if(getAllResponse.getModels().isEmpty()){
@@ -62,9 +62,9 @@ public class ProductController {
     }
     @GetMapping("/category/{category}")
     public ResponseEntity<GetAllResponse> getAllProductsByCategory(@RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
-                                                   @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
-                                                   @RequestParam(defaultValue = "createdDate", required = false) String sortBy,
-                                                   @PathVariable("category") Category category){
+                                                                   @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
+                                                                   @RequestParam(defaultValue = "createdDate", required = false) String sortBy,
+                                                                   @PathVariable("category") Category category){
 
         log.info("Received request to get all products for Category={}", category);
         GetAllResponse getAllResponse = productService.getAllProductsByCategory(pageNo, pageSize, sortBy, category);
@@ -77,12 +77,16 @@ public class ProductController {
     }
     @GetMapping("/search")
     public ResponseEntity<GetAllResponse> searchProduct(@RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
-                                        @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
-                                        @RequestParam(defaultValue = "productName", required = false) String sortBy,
-                                        @RequestParam(value = "keyword") String search,
-                                        @RequestParam(value = "ratingFilter", required = false) Integer ratingFilter){
-        log.info("Received request to search products. Search keyword: '{}', Sort By: {}, Filter Avg. Rating By: {}", search, sortBy, ratingFilter);
-        GetAllResponse getAllResponse = productService.searchProduct(pageNo, pageSize, sortBy, search, ratingFilter);
+                                                        @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
+                                                        @RequestParam(defaultValue = "productName", required = false) String sortBy,
+                                                        @RequestParam(value = "keyword") String search,
+                                                        @RequestParam(value = "ratingFilter", required = false) Integer ratingFilter,
+                                                        @RequestParam(value = "minPrice", required = false) Integer minPrice,
+                                                        @RequestParam(value = "maxPrice", required = false) Integer maxPrice){
+        log.info("Received request to search products. Search keyword: '{}', Sort By: {}, Filter Avg. Rating By: {}, Min Price: {}, Max Price: {}",
+                search, sortBy, ratingFilter, minPrice, maxPrice);
+
+        GetAllResponse getAllResponse = productService.searchProduct(pageNo,pageSize,sortBy,search,ratingFilter,minPrice,maxPrice);
         log.info("SearchProduct - GET Response: 200 - Returning {} product records", getAllResponse.getModels().size());
         return ResponseEntity.ok(getAllResponse);
     }
