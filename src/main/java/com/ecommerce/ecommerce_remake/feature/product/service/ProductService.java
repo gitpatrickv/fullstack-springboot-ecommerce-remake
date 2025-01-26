@@ -7,7 +7,6 @@ import com.ecommerce.ecommerce_remake.feature.product.model.ProductModel;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface ProductService {
@@ -16,8 +15,7 @@ public interface ProductService {
     GetAllResponse getAllProducts(int pageNo, int pageSize, String sortBy);
     GetAllResponse getStoreProductsByStoreId(int pageNo, int pageSize, String sortBy, String storeId);
     GetAllResponse getAllProductsByCategory(int pageNo, int pageSize, String sortBy, Category category);
-    GetAllResponse searchProduct(int pageNo, int pageSize, String sortBy, String search);
+    GetAllResponse searchProduct(int pageNo, int pageSize, String sortBy, String search, Integer ratingFilter);
     Optional<Product> getProductById(String id);
     GetAllResponse fetchAllProducts(Page<Product> products);
-    List<ProductModel> getProducts(Page<Product> products);
 }

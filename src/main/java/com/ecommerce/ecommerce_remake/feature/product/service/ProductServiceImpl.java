@@ -92,9 +92,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public GetAllResponse searchProduct(int pageNo, int pageSize, String sortBy, String search) {
+    public GetAllResponse searchProduct(int pageNo, int pageSize, String sortBy, String search, Integer ratingFilter) {
+
         Pageable pageable = PageRequest.of(pageNo, pageSize, getSortBy(sortBy));
-        Page<Product> products = productRepository.searchProduct(search, Status.LISTED, pageable);
+        Page<Product> products = productRepository.searchProduct(search, Status.LISTED, ratingFilter, pageable);
         return this.fetchAllProducts(products);
     }
 
@@ -110,7 +111,6 @@ public class ProductServiceImpl implements ProductService {
         return new GetAllResponse(productModels, pageResponse);
     }
 
-    @Override
     public List<ProductModel> getProducts(Page<Product> products) {
         return products.stream()
                 .map(entityToModelMapper::map)

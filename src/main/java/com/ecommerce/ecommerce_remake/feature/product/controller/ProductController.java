@@ -79,9 +79,10 @@ public class ProductController {
     public ResponseEntity<GetAllResponse> searchProduct(@RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
                                         @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
                                         @RequestParam(defaultValue = "productName", required = false) String sortBy,
-                                        @RequestParam(value = "keyword") String search){
-        log.info("Received request to search products. Search keyword: '{}'", search);
-        GetAllResponse getAllResponse = productService.searchProduct(pageNo, pageSize, sortBy, search);
+                                        @RequestParam(value = "keyword") String search,
+                                        @RequestParam(value = "ratingFilter", required = false) Integer ratingFilter){
+        log.info("Received request to search products. Search keyword: '{}', Sort By: {}, Filter Avg. Rating By: {}", search, sortBy, ratingFilter);
+        GetAllResponse getAllResponse = productService.searchProduct(pageNo, pageSize, sortBy, search, ratingFilter);
         log.info("SearchProduct - GET Response: 200 - Returning {} product records", getAllResponse.getModels().size());
         return ResponseEntity.ok(getAllResponse);
     }

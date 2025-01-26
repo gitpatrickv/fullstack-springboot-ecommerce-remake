@@ -25,9 +25,11 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
        FROM Product p
        WHERE LOWER(p.productName) LIKE LOWER(CONCAT('%', :search, '%'))
        AND p.status = :status
+       AND (:ratingFilter IS NULL OR :ratingFilter <= p.averageRating)
        """)
     Page<Product> searchProduct(@Param("search") String search,
                                 @Param("status") Status status,
+                                @Param("ratingFilter") Integer ratingFilter,
                                 Pageable pageable);
 
     @Modifying
