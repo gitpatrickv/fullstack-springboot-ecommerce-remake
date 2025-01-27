@@ -45,9 +45,8 @@ public class ServiceConfiguration {
     public ProductCrudFactoryService getProductService(ProductRepository repository,
                                                        Validator validator,
                                                        UserService userService,
-                                                       Pagination pagination,
                                                        ProductService productService){
-        return new ProductCrudFactoryService(repository, validator, userService, pagination, productService);
+        return new ProductCrudFactoryService(repository, validator, userService, productService);
     }
 
     @Bean (name = "addressService")

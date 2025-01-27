@@ -5,6 +5,7 @@ import com.ecommerce.ecommerce_remake.feature.product.enums.Category;
 import com.ecommerce.ecommerce_remake.feature.product.model.Product;
 import com.ecommerce.ecommerce_remake.feature.product.model.ProductModel;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
@@ -15,7 +16,7 @@ public interface ProductService {
     GetAllResponse getAllProducts(int pageNo, int pageSize, String sortBy);
     GetAllResponse getStoreProductsByStoreId(int pageNo, int pageSize, String sortBy, String storeId);
     GetAllResponse getAllProductsByCategory(int pageNo, int pageSize, String sortBy, Category category);
-    GetAllResponse searchProduct(int pageNo, int pageSize, String sortBy, String search, Integer ratingFilter, Integer minPrice, Integer maxPrice);
+    GetAllResponse searchProduct(String search, Integer ratingFilter, Integer minPrice, Integer maxPrice, Pageable pageable);
     Optional<Product> getProductById(String id);
     GetAllResponse fetchAllProducts(Page<Product> products);
 }

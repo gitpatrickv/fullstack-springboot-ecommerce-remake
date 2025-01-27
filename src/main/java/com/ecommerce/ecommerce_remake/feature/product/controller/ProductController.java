@@ -7,11 +7,15 @@ import com.ecommerce.ecommerce_remake.feature.product.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import static com.ecommerce.ecommerce_remake.common.util.PageableUtils.createPaginationAndSorting;
+
 @RestController
 @RequestMapping("/api/product")
 @RequiredArgsConstructor
@@ -76,17 +80,18 @@ public class ProductController {
 
     }
     @GetMapping("/search")
-    public ResponseEntity<GetAllResponse> searchProduct(@RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
-                                                        @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
-                                                        @RequestParam(defaultValue = "productName", required = false) String sortBy,
+    public ResponseEntity<GetAllResponse> searchProduct(@RequestParam(value = "pageNo", defaultValue = "0") Integer pageNo,
+                                                        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
+                                                        @RequestParam(value = "sortBy", defaultValue = "productName") String sortBy,
+                                                        @RequestParam(value = "sortDirection", defaultValue = "ASC") String sortDirection,
                                                         @RequestParam(value = "keyword") String search,
                                                         @RequestParam(value = "ratingFilter", required = false) Integer ratingFilter,
                                                         @RequestParam(value = "minPrice", required = false) Integer minPrice,
                                                         @RequestParam(value = "maxPrice", required = false) Integer maxPrice){
-        log.info("Received request to search products. Search keyword: '{}', Sort By: {}, Filter Avg. Rating By: {}, Min Price: {}, Max Price: {}",
-                search, sortBy, ratingFilter, minPrice, maxPrice);
-
-        GetAllResponse getAllResponse = productService.searchProduct(pageNo,pageSize,sortBy,search,ratingFilter,minPrice,maxPrice);
+        log.info("Received request to search products. Search keyword: '{}', Sort By: {}, Sort Dir: {}, Rating: {}, Min Price: {}, Max Price: {}",
+                search, sortBy, sortDirection, ratingFilter, minPrice, maxPrice);
+        Pageable pageable = createPaginationAndSorting(pageNo, pageSize, sortBy, sortDirection);
+        GetAllResponse getAllResponse = productService.searchProduct(search,ratingFilter,minPrice,maxPrice, pageable);
         log.info("SearchProduct - GET Response: 200 - Returning {} product records", getAllResponse.getModels().size());
         return ResponseEntity.ok(getAllResponse);
     }
