@@ -19,7 +19,25 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     Page<Product> findByStoreAndStatusIn(Store store, List<Status> statusList, Pageable pageable);
     Page<Product> findAllByStatus(Status status, Pageable pageable);
     Page<Product> findAllByStatusAndStore_StoreId(Status status, Integer storeId, Pageable pageable);
-    Page<Product> findAllByStatusAndCategory(Status status, Category category, Pageable pageable);
+    @Query("""
+           SELECT DISTINCT p
+           FROM Product p
+           JOIN p.inventories inv
+           WHERE p.category = :category AND p.status = :status
+           AND (:ratingFilter IS NULL OR :ratingFilter <= p.averageRating)
+           AND (
+               (:minPrice IS NULL AND :maxPrice IS NULL) OR
+               (:minPrice IS NULL AND :maxPrice >= inv.price) OR
+               (:maxPrice IS NULL AND :minPrice <= inv.price) OR
+               (inv.price BETWEEN :minPrice AND :maxPrice)
+               )
+           """)
+    Page<Product> findProductsByCategory(@Param("category") Category category,
+                                         @Param("status") Status status,
+                                         @Param("ratingFilter") Integer ratingFilter,
+                                         @Param("minPrice") Integer minPrice,
+                                         @Param("maxPrice") Integer maxPrice,
+                                         Pageable pageable);
     @Query("""
             SELECT DISTINCT p
             FROM Product p

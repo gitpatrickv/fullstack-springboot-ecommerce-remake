@@ -71,12 +71,16 @@ public class ProductController {
     @GetMapping("/category/{category}")
     public ResponseEntity<GetAllResponse> getAllProductsByCategory(@RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
                                                                    @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
-                                                                   @RequestParam(value = "sortBy", defaultValue = "createdDate") String sortBy,
-                                                                   @RequestParam(value = "sortDirection", defaultValue = "DESC") String sortDirection,
+                                                                   @RequestParam(value = "sortBy", defaultValue = "productName") String sortBy,
+                                                                   @RequestParam(value = "sortDirection", defaultValue = "ASC") String sortDirection,
+                                                                   @RequestParam(value = "ratingFilter", required = false) Integer ratingFilter,
+                                                                   @RequestParam(value = "minPrice", required = false) Integer minPrice,
+                                                                   @RequestParam(value = "maxPrice", required = false) Integer maxPrice,
                                                                    @PathVariable("category") Category category){
-        log.info("Received request to get all products for Category={}", category);
+        log.info("Received request to get products by category. Category: '{}', Sort By: {}, Sort Dir: {}, Rating: {}, Min Price: {}, Max Price: {}",
+                category, sortBy, sortDirection, ratingFilter, minPrice, maxPrice);
         Pageable pageable = createPaginationAndSorting(pageNo, pageSize, sortBy, sortDirection);
-        GetAllResponse getAllResponse = productService.getAllProductsByCategory(pageable, category);
+        GetAllResponse getAllResponse = productService.getAllProductsByCategory(pageable, category, ratingFilter, minPrice, maxPrice);
         if(getAllResponse.getModels().isEmpty()){
             log.warn("GetAllProductsByCategory - No data found");
         }

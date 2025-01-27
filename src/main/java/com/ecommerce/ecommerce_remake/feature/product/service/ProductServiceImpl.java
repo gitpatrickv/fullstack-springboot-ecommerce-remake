@@ -81,8 +81,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public GetAllResponse getAllProductsByCategory(Pageable pageable, Category category) {
-        Page<Product> products = productRepository.findAllByStatusAndCategory(Status.LISTED, category, pageable);
+    public GetAllResponse getAllProductsByCategory(Pageable pageable, Category category, Integer ratingFilter, Integer minPrice, Integer maxPrice) {
+        Page<Product> products = productRepository.findProductsByCategory(category, Status.LISTED, ratingFilter, minPrice, maxPrice, pageable);
         return this.fetchAllProducts(products);
     }
 

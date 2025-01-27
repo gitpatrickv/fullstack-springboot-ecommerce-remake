@@ -15,7 +15,7 @@ public interface ProductService {
     void saveProduct(ProductModel model, MultipartFile[] files);
     GetAllResponse getAllProducts(Pageable pageable);
     GetAllResponse getStoreProductsByStoreId(Pageable pageable, String storeId);
-    GetAllResponse getAllProductsByCategory(Pageable pageable, Category category);
+    GetAllResponse getAllProductsByCategory(Pageable pageable, Category category, Integer ratingFilter, Integer minPrice, Integer maxPrice);
     GetAllResponse searchProduct(String search, Integer ratingFilter, Integer minPrice, Integer maxPrice, Pageable pageable);
     Optional<Product> getProductById(String id);
     GetAllResponse fetchAllProducts(Page<Product> products);
