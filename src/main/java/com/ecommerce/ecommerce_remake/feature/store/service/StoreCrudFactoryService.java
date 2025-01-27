@@ -18,9 +18,7 @@ import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -57,9 +55,7 @@ public class StoreCrudFactoryService extends CrudService {
     }
 
     @Override //TODO: Not yet implemented on the frontend //Get All Stores
-    protected GetAllResponse getAll(int pageNo, int pageSize, String sortBy) {
-        Sort sort = Sort.by("createdDate").descending();
-        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+    protected GetAllResponse getAll(Pageable pageable) {
         Page<Store> stores = storeRepository.findAll(pageable);
         PageResponse pageResponse = pagination.getPagination(stores);
         List<StoreModel> storeModels = stores.stream()

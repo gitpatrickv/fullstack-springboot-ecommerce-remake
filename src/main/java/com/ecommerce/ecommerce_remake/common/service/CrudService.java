@@ -13,6 +13,7 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -25,7 +26,7 @@ public abstract class CrudService {
     private static final Logger log = LoggerFactory.getLogger(CrudService.class);
     protected abstract <T extends Model> Model save(T model);
     protected abstract <T extends Model> Optional<Model> getOne(String id);
-    protected abstract GetAllResponse getAll(int pageNo, int pageSize, String sortBy);
+    protected abstract GetAllResponse getAll(Pageable pageable);
     protected abstract  <T extends Model> Model updateOne(T model);
     protected abstract void changeStatus(String id, Status status);
     protected abstract String moduleName();
@@ -52,9 +53,9 @@ public abstract class CrudService {
         }
     }
 
-    public final Response retrieveAll(int pageNo, int pageSize, String sortBy){
+    public final Response retrieveAll(Pageable pageable){
         log.info("retrieving all {}(s)", this.moduleName());
-        GetAllResponse found = this.getAll(pageNo, pageSize, sortBy);
+        GetAllResponse found = this.getAll(pageable);
         if (found.getModels().isEmpty()) {
             return new Response(ResponseCode.RESP_NOT_FOUND, "No {} record found", this.moduleName());
         } else {

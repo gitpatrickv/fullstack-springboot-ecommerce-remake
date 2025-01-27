@@ -13,9 +13,9 @@ import java.util.Optional;
 public interface ProductService {
 
     void saveProduct(ProductModel model, MultipartFile[] files);
-    GetAllResponse getAllProducts(int pageNo, int pageSize, String sortBy);
-    GetAllResponse getStoreProductsByStoreId(int pageNo, int pageSize, String sortBy, String storeId);
-    GetAllResponse getAllProductsByCategory(int pageNo, int pageSize, String sortBy, Category category);
+    GetAllResponse getAllProducts(Pageable pageable);
+    GetAllResponse getStoreProductsByStoreId(Pageable pageable, String storeId);
+    GetAllResponse getAllProductsByCategory(Pageable pageable, Category category);
     GetAllResponse searchProduct(String search, Integer ratingFilter, Integer minPrice, Integer maxPrice, Pageable pageable);
     Optional<Product> getProductById(String id);
     GetAllResponse fetchAllProducts(Page<Product> products);

@@ -16,6 +16,7 @@ import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import com.ecommerce.ecommerce_remake.web.exception.NotImplementedException;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
@@ -50,7 +51,7 @@ public class AddressCrudFactoryService extends CrudService {
     }
 
     @Override
-    protected GetAllResponse getAll(int pageNo, int pageSize, String sortBy) {
+    protected GetAllResponse getAll(Pageable pageable) {
         User user = userService.getCurrentAuthenticatedUser();
         List<Address> addresses = user.getAddresses();
         List<AddressModel> addressModels = addresses.stream()

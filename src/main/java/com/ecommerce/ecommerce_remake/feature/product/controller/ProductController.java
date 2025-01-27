@@ -41,10 +41,12 @@ public class ProductController {
         }
     }
     @GetMapping
-    public ResponseEntity<GetAllResponse> getAllProducts(@RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
-                                                         @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
-                                                         @RequestParam(defaultValue = "createdDate", required = false) String sortBy){
-        GetAllResponse getAllResponse = productService.getAllProducts(pageNo,pageSize,sortBy);
+    public ResponseEntity<GetAllResponse> getAllProducts(@RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
+                                                         @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+                                                         @RequestParam(value = "sortBy", defaultValue = "createdDate") String sortBy,
+                                                         @RequestParam(value = "sortDirection", defaultValue = "DESC") String sortDirection){
+        Pageable pageable = createPaginationAndSorting(pageNo, pageSize, sortBy, sortDirection);
+        GetAllResponse getAllResponse = productService.getAllProducts(pageable);
         if(getAllResponse.getModels().isEmpty()){
             log.warn("GetAllProducts - No data found");
         }
@@ -52,12 +54,14 @@ public class ProductController {
         return ResponseEntity.ok(getAllResponse);
     }
     @GetMapping("/{storeId}")
-    public ResponseEntity<GetAllResponse> getStoreProductsByStoreId(@RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
-                                                                    @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
-                                                                    @RequestParam(defaultValue = "createdDate", required = false) String sortBy,
+    public ResponseEntity<GetAllResponse> getStoreProductsByStoreId(@RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
+                                                                    @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+                                                                    @RequestParam(value = "sortBy", defaultValue = "createdDate") String sortBy,
+                                                                    @RequestParam(value = "sortDirection", defaultValue = "DESC") String sortDirection,
                                                                     @PathVariable("storeId") String storeId){
         log.info("Received request to get all products for store with ID={}", storeId);
-        GetAllResponse getAllResponse = productService.getStoreProductsByStoreId(pageNo, pageSize, sortBy, storeId);
+        Pageable pageable = createPaginationAndSorting(pageNo, pageSize, sortBy, sortDirection);
+        GetAllResponse getAllResponse = productService.getStoreProductsByStoreId(pageable, storeId);
         if(getAllResponse.getModels().isEmpty()){
             log.warn("GetStoreProductsByStoreId - No data found");
         }
@@ -65,13 +69,14 @@ public class ProductController {
         return ResponseEntity.ok(getAllResponse);
     }
     @GetMapping("/category/{category}")
-    public ResponseEntity<GetAllResponse> getAllProductsByCategory(@RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
-                                                                   @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
-                                                                   @RequestParam(defaultValue = "createdDate", required = false) String sortBy,
+    public ResponseEntity<GetAllResponse> getAllProductsByCategory(@RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
+                                                                   @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+                                                                   @RequestParam(value = "sortBy", defaultValue = "createdDate") String sortBy,
+                                                                   @RequestParam(value = "sortDirection", defaultValue = "DESC") String sortDirection,
                                                                    @PathVariable("category") Category category){
-
         log.info("Received request to get all products for Category={}", category);
-        GetAllResponse getAllResponse = productService.getAllProductsByCategory(pageNo, pageSize, sortBy, category);
+        Pageable pageable = createPaginationAndSorting(pageNo, pageSize, sortBy, sortDirection);
+        GetAllResponse getAllResponse = productService.getAllProductsByCategory(pageable, category);
         if(getAllResponse.getModels().isEmpty()){
             log.warn("GetAllProductsByCategory - No data found");
         }

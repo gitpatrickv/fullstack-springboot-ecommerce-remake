@@ -11,11 +11,14 @@ import com.ecommerce.ecommerce_remake.common.factory.CrudServiceFactory;
 import com.ecommerce.ecommerce_remake.common.service.CrudService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
+
+import static com.ecommerce.ecommerce_remake.common.util.PageableUtils.createPaginationAndSorting;
 
 @RestController
 @RequestMapping("/api/factory")
@@ -46,11 +49,13 @@ public class CrudController {
 
     @GetMapping("/{module}")
     public ResponseEntity<GetAllResponse> getAllResources(@PathVariable Module module,
-                                                 @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
-                                                 @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
-                                                 @RequestParam(defaultValue = "createdDate", required = false) String sortBy){
+                                                          @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
+                                                          @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+                                                          @RequestParam(value = "sortBy", defaultValue = "createdDate") String sortBy,
+                                                          @RequestParam(value = "sortDirection", defaultValue = "DESC") String sortDirection){
+        Pageable pageable = createPaginationAndSorting(pageNo, pageSize, sortBy, sortDirection);
         CrudService service = getService(module);
-        Response response = service.retrieveAll(pageNo, pageSize, sortBy);
+        Response response = service.retrieveAll(pageable);
         log.info("CrudService.retrieve() response code={}", response.getResponseCode());
         if (response.getResponseCode().equals(ResponseCode.RESP_SUCCESS)) {
             GetAllResponse getAllResponse;

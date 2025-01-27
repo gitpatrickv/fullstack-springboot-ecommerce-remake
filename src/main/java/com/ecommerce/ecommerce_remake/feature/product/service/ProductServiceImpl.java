@@ -17,9 +17,7 @@ import com.ecommerce.ecommerce_remake.feature.user.model.User;
 import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -70,23 +68,20 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public GetAllResponse getAllProducts(int pageNo, int pageSize, String sortBy) {
-        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by("createdDate").descending());
+    public GetAllResponse getAllProducts(Pageable pageable) {
         Page<Product> products = productRepository.findAllByStatus(Status.LISTED, pageable);
         return this.fetchAllProducts(products);
     }
 
     @Override
-    public GetAllResponse getStoreProductsByStoreId(int pageNo, int pageSize, String sortBy, String storeId) {
+    public GetAllResponse getStoreProductsByStoreId(Pageable pageable, String storeId) {
         int id = Integer.parseInt(storeId);
-        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by("createdDate").descending());
         Page<Product> products = productRepository.findAllByStatusAndStore_StoreId(Status.LISTED, id, pageable);
         return this.fetchAllProducts(products);
     }
 
     @Override
-    public GetAllResponse getAllProductsByCategory(int pageNo, int pageSize, String sortBy, Category category) {
-        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by("createdDate").descending());
+    public GetAllResponse getAllProductsByCategory(Pageable pageable, Category category) {
         Page<Product> products = productRepository.findAllByStatusAndCategory(Status.LISTED, category, pageable);
         return this.fetchAllProducts(products);
     }
@@ -118,14 +113,4 @@ public class ProductServiceImpl implements ProductService {
                 .map(entityToModelMapper::map)
                 .toList();
     }
-
-    public static Sort getSortBy(String sortBy){
-        return switch (sortBy) {
-            case "totalSold" -> Sort.by("totalSold").descending();
-            case "createdDate" -> Sort.by("createdDate").descending();
-            default -> Sort.by("productName").ascending();
-        };
-    }
-
-
 }

@@ -16,7 +16,6 @@ import com.ecommerce.ecommerce_remake.web.exception.NotImplementedException;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,13 +42,12 @@ public class ProductCrudFactoryService extends CrudService {
         return productService.getProductById(id).map(entityToModelMapper::map);
     }
 
-    @Override //Get All Store Product
-    protected GetAllResponse getAll(int pageNo, int pageSize, String sortBy) {
+    @Override //Get All Store Product (Seller Page)
+    protected GetAllResponse getAll(Pageable pageable) {
         List<Status> statusList = List.of(Status.LISTED, Status.SUSPENDED);
-        Pageable pageable = PageRequest.of(pageNo, pageSize, ProductServiceImpl.getSortBy(sortBy));
         User user = userService.getCurrentAuthenticatedUser();
         Store store = user.getStore();
-        Page<Product> products = productRepository.findByStoreAndStatusIn(store, statusList ,pageable);
+        Page<Product> products = productRepository.findByStoreAndStatusIn(store, statusList, pageable);
         return productService.fetchAllProducts(products);
     }
     @Transactional
