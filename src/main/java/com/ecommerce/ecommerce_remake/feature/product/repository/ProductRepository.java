@@ -20,6 +20,13 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     Page<Product> findAllByStatus(Status status, Pageable pageable);
 
     @Query("""
+           SELECT DISTINCT p.category
+           FROM Product p
+           WHERE p.store.storeId = :storeId
+           """)
+    List<Category> findStoreCategories(@Param("storeId") Integer storeId);
+
+    @Query("""
            SELECT DISTINCT p
            FROM Product p
            JOIN p.inventories inv

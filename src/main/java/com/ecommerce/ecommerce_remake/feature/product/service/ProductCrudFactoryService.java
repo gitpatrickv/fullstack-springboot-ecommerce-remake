@@ -50,7 +50,7 @@ public class ProductCrudFactoryService extends CrudService {
         User user = userService.getCurrentAuthenticatedUser();
         Store store = user.getStore();
         Page<Product> products = productRepository.findByStoreAndStatusIn(store, statusList, pageable);
-        return this.fetchAllProducts(products);
+        return this.getAllProductsWithPagination(products);
     }
     @Transactional
     @Override
@@ -89,7 +89,7 @@ public class ProductCrudFactoryService extends CrudService {
         return validator;
     }
 
-    private GetAllResponse fetchAllProducts(Page<Product> products) {
+    private GetAllResponse getAllProductsWithPagination(Page<Product> products) {
         PageResponse pageResponse = pagination.getPagination(products);
         List<ProductModel> productModels = this.getAllProductInfo(products);
         return new GetAllResponse(productModels, pageResponse);

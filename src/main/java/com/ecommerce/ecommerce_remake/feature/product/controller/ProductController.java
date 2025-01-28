@@ -1,6 +1,7 @@
 package com.ecommerce.ecommerce_remake.feature.product.controller;
 
 import com.ecommerce.ecommerce_remake.common.dto.response.GetAllResponse;
+import com.ecommerce.ecommerce_remake.feature.product.dto.StoreCategory;
 import com.ecommerce.ecommerce_remake.feature.product.enums.Category;
 import com.ecommerce.ecommerce_remake.feature.product.model.ProductModel;
 import com.ecommerce.ecommerce_remake.feature.product.service.ProductService;
@@ -13,6 +14,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 import static com.ecommerce.ecommerce_remake.common.util.PageableUtils.createPaginationAndSorting;
 
@@ -108,5 +111,9 @@ public class ProductController {
         GetAllResponse getAllResponse = productService.searchProduct(search,ratingFilter,minPrice,maxPrice, pageable);
         log.info("SearchProduct - GET Response: 200 - Returning {} product records", getAllResponse.getModels().size());
         return ResponseEntity.ok(getAllResponse);
+    }
+    @GetMapping("/{storeId}/categories")
+    public List<StoreCategory> getUniqueProductCategoriesForStore(@PathVariable("storeId") String storeId){
+        return productService.getUniqueProductCategoriesForStore(storeId);
     }
 }

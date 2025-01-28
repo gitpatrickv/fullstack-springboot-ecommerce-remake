@@ -8,6 +8,7 @@ import com.ecommerce.ecommerce_remake.common.util.mapper.EntityToModelMapper;
 import com.ecommerce.ecommerce_remake.feature.inventory.model.Inventory;
 import com.ecommerce.ecommerce_remake.feature.inventory.service.InventoryService;
 import com.ecommerce.ecommerce_remake.feature.product.dto.ProductInfoResponse;
+import com.ecommerce.ecommerce_remake.feature.product.dto.StoreCategory;
 import com.ecommerce.ecommerce_remake.feature.product.enums.Category;
 import com.ecommerce.ecommerce_remake.feature.product.model.Product;
 import com.ecommerce.ecommerce_remake.feature.product.model.ProductModel;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 @Service
@@ -70,34 +72,49 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public GetAllResponse getAllProducts(Pageable pageable) {
         Page<Product> products = productRepository.findAllByStatus(Status.LISTED, pageable);
-        return this.fetchAllProducts(products);
+        return this.getAllProductsWithPagination(products);
     }
 
     @Override
     public GetAllResponse getStoreProductsByStoreId(Pageable pageable, String storeId, Category category, Integer ratingFilter, Integer minPrice, Integer maxPrice) {
         int id = Integer.parseInt(storeId);
         Page<Product> products = productRepository.findStoreProducts(Status.LISTED, id, category, ratingFilter, minPrice, maxPrice, pageable);
-        return this.fetchAllProducts(products);
+        return this.getAllProductsWithPagination(products);
     }
 
     @Override
     public GetAllResponse getAllProductsByCategory(Pageable pageable, Category category, Integer ratingFilter, Integer minPrice, Integer maxPrice) {
         Page<Product> products = productRepository.findProductsByCategory(category, Status.LISTED, ratingFilter, minPrice, maxPrice, pageable);
-        return this.fetchAllProducts(products);
+        return this.getAllProductsWithPagination(products);
     }
 
     @Override
     public GetAllResponse searchProduct(String search, Integer ratingFilter, Integer minPrice, Integer maxPrice, Pageable pageable) {
         Page<Product> products = productRepository.searchProduct(search, Status.LISTED, ratingFilter, minPrice ,maxPrice, pageable);
-        return this.fetchAllProducts(products);
+        return this.getAllProductsWithPagination(products);
     }
 
-    private GetAllResponse fetchAllProducts(Page<Product> products) {
+    @Override //gets all unique product categories used for filtering on the store page
+    public List<StoreCategory> getUniqueProductCategoriesForStore(String storeId) {
+        int id = Integer.parseInt(storeId);
+        List<Category> categories = productRepository.findStoreCategories(id);
+        List<StoreCategory> categoryList = new ArrayList<>();
+
+        categories.forEach(category -> {
+            StoreCategory storeCategory = new StoreCategory(category);
+            categoryList.add(storeCategory);
+        });
+        return categoryList;
+    }
+
+
+    private GetAllResponse getAllProductsWithPagination(Page<Product> products) {
         PageResponse pageResponse = pagination.getPagination(products);
         List<ProductInfoResponse> productModels = this.getProductInfo(products);
         return new GetAllResponse(productModels, pageResponse);
     }
 
+    //only retrieves the necessary data for the Product Card on the frontend
     public List<ProductInfoResponse> getProductInfo(Page<Product> products) {
         return products.stream()
                 .map(product -> {
