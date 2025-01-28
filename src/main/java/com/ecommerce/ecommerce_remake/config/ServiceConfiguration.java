@@ -7,7 +7,6 @@ import com.ecommerce.ecommerce_remake.feature.address.service.AddressCrudFactory
 import com.ecommerce.ecommerce_remake.feature.address.service.AddressService;
 import com.ecommerce.ecommerce_remake.feature.product.repository.ProductRepository;
 import com.ecommerce.ecommerce_remake.feature.product.service.ProductCrudFactoryService;
-import com.ecommerce.ecommerce_remake.feature.product.service.ProductService;
 import com.ecommerce.ecommerce_remake.feature.store.repository.StoreRepository;
 import com.ecommerce.ecommerce_remake.feature.store.service.StoreCrudFactoryService;
 import com.ecommerce.ecommerce_remake.feature.store.service.StoreService;
@@ -45,8 +44,8 @@ public class ServiceConfiguration {
     public ProductCrudFactoryService getProductService(ProductRepository repository,
                                                        Validator validator,
                                                        UserService userService,
-                                                       ProductService productService){
-        return new ProductCrudFactoryService(repository, validator, userService, productService);
+                                                       Pagination pagination){
+        return new ProductCrudFactoryService(repository, validator, userService, pagination);
     }
 
     @Bean (name = "addressService")

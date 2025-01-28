@@ -4,7 +4,9 @@ import com.ecommerce.ecommerce_remake.common.dto.Model;
 import com.ecommerce.ecommerce_remake.common.dto.enums.Module;
 import com.ecommerce.ecommerce_remake.common.dto.enums.Status;
 import com.ecommerce.ecommerce_remake.common.dto.response.GetAllResponse;
+import com.ecommerce.ecommerce_remake.common.dto.response.PageResponse;
 import com.ecommerce.ecommerce_remake.common.service.CrudService;
+import com.ecommerce.ecommerce_remake.common.util.Pagination;
 import com.ecommerce.ecommerce_remake.common.util.mapper.EntityToModelMapper;
 import com.ecommerce.ecommerce_remake.feature.product.model.Product;
 import com.ecommerce.ecommerce_remake.feature.product.model.ProductModel;
@@ -28,7 +30,7 @@ public class ProductCrudFactoryService extends CrudService {
     private final ProductRepository productRepository;
     private final Validator validator;
     private final UserService userService;
-    private final ProductService productService;
+    private final Pagination pagination;
 
     private EntityToModelMapper<Product, ProductModel> entityToModelMapper = new EntityToModelMapper<>(ProductModel.class);
 
@@ -39,7 +41,7 @@ public class ProductCrudFactoryService extends CrudService {
 
     @Override
     protected Optional<ProductModel> getOne(String id) {
-        return productService.getProductById(id).map(entityToModelMapper::map);
+        return this.getProductById(id).map(entityToModelMapper::map);
     }
 
     @Override //Get All Store Product (Seller Page)
@@ -48,13 +50,13 @@ public class ProductCrudFactoryService extends CrudService {
         User user = userService.getCurrentAuthenticatedUser();
         Store store = user.getStore();
         Page<Product> products = productRepository.findByStoreAndStatusIn(store, statusList, pageable);
-        return productService.fetchAllProducts(products);
+        return this.fetchAllProducts(products);
     }
     @Transactional
     @Override
     protected  <T extends Model> Model updateOne(T model) {
         ProductModel productModel = (ProductModel) model;
-        return productService.getProductById(productModel.getProductId().toString())
+        return this.getProductById(productModel.getProductId().toString())
                 .map( product -> {
                     Optional.ofNullable(productModel.getProductName())
                             .ifPresent(product::setProductName);
@@ -69,7 +71,7 @@ public class ProductCrudFactoryService extends CrudService {
 
     @Override
     protected void changeStatus(String id, Status status) {
-        productService.getProductById(id).ifPresent(product -> {
+        this.getProductById(id).ifPresent(product -> {
             product.setStatus(status);
             productRepository.save(product);
         });
@@ -85,5 +87,21 @@ public class ProductCrudFactoryService extends CrudService {
     @Override
     protected Validator validator() {
         return validator;
+    }
+
+    private GetAllResponse fetchAllProducts(Page<Product> products) {
+        PageResponse pageResponse = pagination.getPagination(products);
+        List<ProductModel> productModels = this.getAllProductInfo(products);
+        return new GetAllResponse(productModels, pageResponse);
+    }
+
+    private List<ProductModel> getAllProductInfo(Page<Product> products) {
+        return products.stream()
+                .map(entityToModelMapper::map)
+                .toList();
+    }
+
+    private Optional<Product> getProductById(String id) {
+        return productRepository.findById(Integer.parseInt(id));
     }
 }

@@ -56,12 +56,17 @@ public class ProductController {
     @GetMapping("/{storeId}")
     public ResponseEntity<GetAllResponse> getStoreProductsByStoreId(@RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
                                                                     @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
-                                                                    @RequestParam(value = "sortBy", defaultValue = "createdDate") String sortBy,
-                                                                    @RequestParam(value = "sortDirection", defaultValue = "DESC") String sortDirection,
+                                                                    @RequestParam(value = "sortBy", defaultValue = "productName") String sortBy,
+                                                                    @RequestParam(value = "sortDirection", defaultValue = "ASC") String sortDirection,
+                                                                    @RequestParam(value = "ratingFilter", required = false) Integer ratingFilter,
+                                                                    @RequestParam(value = "minPrice", required = false) Integer minPrice,
+                                                                    @RequestParam(value = "maxPrice", required = false) Integer maxPrice,
+                                                                    @RequestParam(value = "category", required = false) Category category,
                                                                     @PathVariable("storeId") String storeId){
-        log.info("Received request to get all products for store with ID={}", storeId);
+        log.info("Received request to get products by Store. StoreId: '{}', Sort By: {}, Sort Dir: {}, Rating: {}, Min Price: {}, Max Price: {}, Category: {}",
+                storeId, sortBy, sortDirection, ratingFilter, minPrice, maxPrice, category);
         Pageable pageable = createPaginationAndSorting(pageNo, pageSize, sortBy, sortDirection);
-        GetAllResponse getAllResponse = productService.getStoreProductsByStoreId(pageable, storeId);
+        GetAllResponse getAllResponse = productService.getStoreProductsByStoreId(pageable, storeId, category, ratingFilter, minPrice, maxPrice);
         if(getAllResponse.getModels().isEmpty()){
             log.warn("GetStoreProductsByStoreId - No data found");
         }

@@ -7,6 +7,7 @@ import com.ecommerce.ecommerce_remake.common.util.Pagination;
 import com.ecommerce.ecommerce_remake.common.util.mapper.EntityToModelMapper;
 import com.ecommerce.ecommerce_remake.feature.inventory.model.Inventory;
 import com.ecommerce.ecommerce_remake.feature.inventory.service.InventoryService;
+import com.ecommerce.ecommerce_remake.feature.product.dto.ProductInfoResponse;
 import com.ecommerce.ecommerce_remake.feature.product.enums.Category;
 import com.ecommerce.ecommerce_remake.feature.product.model.Product;
 import com.ecommerce.ecommerce_remake.feature.product.model.ProductModel;
@@ -24,7 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 @Service
 @RequiredArgsConstructor
@@ -36,7 +36,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductImageService productImageService;
     private final Pagination pagination;
 
-    private EntityToModelMapper<Product, ProductModel> entityToModelMapper = new EntityToModelMapper<>(ProductModel.class);
+    private EntityToModelMapper<Product, ProductInfoResponse> entityToModelMapper = new EntityToModelMapper<>(ProductInfoResponse.class);
 
     @Transactional
     @Override
@@ -74,9 +74,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public GetAllResponse getStoreProductsByStoreId(Pageable pageable, String storeId) {
+    public GetAllResponse getStoreProductsByStoreId(Pageable pageable, String storeId, Category category, Integer ratingFilter, Integer minPrice, Integer maxPrice) {
         int id = Integer.parseInt(storeId);
-        Page<Product> products = productRepository.findAllByStatusAndStore_StoreId(Status.LISTED, id, pageable);
+        Page<Product> products = productRepository.findStoreProducts(Status.LISTED, id, category, ratingFilter, minPrice, maxPrice, pageable);
         return this.fetchAllProducts(products);
     }
 
@@ -87,30 +87,25 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public GetAllResponse searchProduct(String search,
-                                        Integer ratingFilter,
-                                        Integer minPrice,
-                                        Integer maxPrice,
-                                        Pageable pageable) {
+    public GetAllResponse searchProduct(String search, Integer ratingFilter, Integer minPrice, Integer maxPrice, Pageable pageable) {
         Page<Product> products = productRepository.searchProduct(search, Status.LISTED, ratingFilter, minPrice ,maxPrice, pageable);
         return this.fetchAllProducts(products);
     }
 
-    @Override
-    public Optional<Product> getProductById(String id) {
-        return productRepository.findById(Integer.parseInt(id));
-    }
-
-    @Override
-    public GetAllResponse fetchAllProducts(Page<Product> products) {
+    private GetAllResponse fetchAllProducts(Page<Product> products) {
         PageResponse pageResponse = pagination.getPagination(products);
-        List<ProductModel> productModels = this.getProducts(products);
+        List<ProductInfoResponse> productModels = this.getProductInfo(products);
         return new GetAllResponse(productModels, pageResponse);
     }
 
-    public List<ProductModel> getProducts(Page<Product> products) {
+    public List<ProductInfoResponse> getProductInfo(Page<Product> products) {
         return products.stream()
-                .map(entityToModelMapper::map)
+                .map(product -> {
+                    ProductInfoResponse productInfoResponse = entityToModelMapper.map(product);
+                    productInfoResponse.setProductImage(product.getProductImages().get(0).getProductImage());
+                    productInfoResponse.setPrice(product.getInventories().iterator().next().getPrice());
+                    return productInfoResponse;
+                })
                 .toList();
     }
 }
