@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.ecommerce</groupId>
 	<artifactId>ecommerce-remake</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0</version>
 	<name>ecommerce-remake</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
@@ -97,7 +97,11 @@
 			<artifactId>modelmapper</artifactId>
 			<version>3.2.0</version>
 		</dependency>
-
+		<dependency>
+			<groupId>com.stripe</groupId>
+			<artifactId>stripe-java</artifactId>
+			<version>20.62.0</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>

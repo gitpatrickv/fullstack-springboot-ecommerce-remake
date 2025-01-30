@@ -1,0 +1,32 @@
+services:
+  ecommerce:
+    container_name: ecommerce
+    image: mysql:latest
+    environment:
+      MYSQL_DATABASE: ecommerce-db
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - "3309:3306"
+    volumes:
+      - ecommerce:/var/lib/mysql
+    networks:
+      - ecommerce-network
+  ecommerce-api:
+    container_name: ecommerce-remake
+    image: gitpatrickv/ecommerce-remake:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - ecommerce-network
+    depends_on:
+      - ecommerce
+
+volumes:
+  ecommerce:
+
+networks:
+  ecommerce-network:
+    driver: bridge

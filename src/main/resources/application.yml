@@ -1,12 +1,15 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://ecommerce:3306/ecommerce-db
     username: root
-    password: patrick
-    url: jdbc:mysql://localhost:3306/ecommerce
+    password: password
+
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
+  flyway:
+    enabled: true
 application:
   security:
     jwt:
@@ -15,3 +18,7 @@ application:
 stripe:
   api:
     key: sk_test_51PchJnKrNg4CjtgGgbUYj56kZ2rKeWpFUnmUEPTLtJofgGDavpJO9t0RrLeNSUeNPWa5VmNWrdJOsbobNr4dyw1c00HSTVxG2m
+  servlet:
+    multipart:
+      max-file-size: 1MB
+      max-request-size: 5MB
