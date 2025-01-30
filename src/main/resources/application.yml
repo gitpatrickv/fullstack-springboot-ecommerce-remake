@@ -1,9 +1,12 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/ecommerce
+    url: jdbc:mysql://ecommerce:3306/ecommerce-db
     username: root
-    password: patrick
-    url: jdbc:mysql://localhost:3306/ecommerce
+    password: password
+#    password: patrick
+
   jpa:
     hibernate:
       ddl-auto: validate
