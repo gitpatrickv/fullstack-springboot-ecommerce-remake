@@ -14,7 +14,6 @@ public class ProductInfoResponse extends Model {
 
     private Integer productId;
     private String productName;
-    private String slug;
     private Integer totalSold;
     private BigDecimal averageRating;
     private BigDecimal price;

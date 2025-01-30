@@ -77,13 +77,11 @@ public class CartItemServiceImpl implements CartItemService{
             Integer productId = product.getProductId();
             String productName = product.getProductName();
             String productImage = product.getProductImages().get(0).getProductImage();
-            String slug = product.getSlug();
 
             CartItemModel cartItemModel = entityToModelMapper.map(cartItem);
             cartItemModel.setProductId(productId);
             cartItemModel.setProductName(productName);
             cartItemModel.setProductImage(productImage);
-            cartItemModel.setSlug(slug);
 
             StoreInfo storeInfo = new StoreInfo(storeName, storeId);
             cartItemMap.computeIfAbsent(storeInfo, k -> new ArrayList<>()).add(cartItemModel);

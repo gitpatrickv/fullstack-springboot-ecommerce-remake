@@ -62,9 +62,7 @@ public class ProductCrudFactoryService extends CrudService {
                             .ifPresent(product::setProductName);
                     Optional.ofNullable(productModel.getDescription())
                             .ifPresent(product::setDescription);
-                    product.setSlug(null);
                     Product savedProduct = productRepository.save(product);
-
                     return entityToModelMapper.map(savedProduct);
                 }).orElse(null);
     }

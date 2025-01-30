@@ -48,7 +48,6 @@ CREATE TABLE IF NOT EXISTS products (
     `average_rating` DECIMAL(3,1) DEFAULT 0 CHECK (average_rating >= 0) NOT NULL,
     `reviews_count` INT DEFAULT 0 CHECK (reviews_count >= 0) NOT NULL,
     `product_name` VARCHAR(100) NOT NULL,
-    `slug` VARCHAR(100) NOT NULL,
     `description` VARCHAR(255) NOT NULL,
     `created_date` TIMESTAMP,
     `last_modified` TIMESTAMP

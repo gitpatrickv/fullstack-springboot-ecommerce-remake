@@ -38,7 +38,6 @@ public class ProductModel extends Model {
     private Integer productId;
     @NotNull(message = "{product.name.required}")
     private String productName;
-    private String slug;
     @NotNull(message = "{product.description.required}")
     private String description;
     private Integer totalSold;

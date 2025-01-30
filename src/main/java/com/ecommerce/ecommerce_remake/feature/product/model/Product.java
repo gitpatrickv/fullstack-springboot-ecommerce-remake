@@ -28,7 +28,6 @@ public class Product extends AuditEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer productId;
     private String productName;
-    private String slug;
     private String description;
     private Integer totalSold;
     private BigDecimal averageRating;
@@ -48,19 +47,6 @@ public class Product extends AuditEntity {
     @OneToMany(mappedBy = "product",  cascade = CascadeType.ALL)
     private List<ProductImage> productImages = new ArrayList<>();
 
-    @PrePersist
-    @PreUpdate
-    public void generateSlug() {
-        if (productName != null && (slug == null || slug.isEmpty())) {
-            this.slug = toSlug(productName);
-        }
-    }
 
-    private String toSlug(String input) {
-        return input.toLowerCase()
-                .replaceAll("[^a-z0-9\\s]", "")
-                .trim()
-                .replaceAll("\\s+", "-");
-    }
 }
 

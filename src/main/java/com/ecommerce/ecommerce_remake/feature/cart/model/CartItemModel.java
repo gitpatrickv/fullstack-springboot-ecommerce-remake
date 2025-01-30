@@ -15,6 +15,5 @@ public class CartItemModel extends Model {
     private InventoryModel inventory;
     private Integer productId;
     private String productName;
-    private String slug;
     private String productImage;
 }

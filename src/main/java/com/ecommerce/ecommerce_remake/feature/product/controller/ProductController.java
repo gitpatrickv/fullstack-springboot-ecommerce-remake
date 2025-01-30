@@ -113,7 +113,9 @@ public class ProductController {
         return ResponseEntity.ok(getAllResponse);
     }
     @GetMapping("/{storeId}/categories")
-    public List<StoreCategory> getUniqueProductCategoriesForStore(@PathVariable("storeId") String storeId){
-        return productService.getUniqueProductCategoriesForStore(storeId);
+    public ResponseEntity<List<StoreCategory>> getUniqueProductCategoriesForStore(@PathVariable("storeId") String storeId){
+        List<StoreCategory> storeCategories = productService.getUniqueProductCategoriesForStore(storeId);
+        log.info("Retrieved {} unique product categories for store with ID: {}", storeCategories.size(), storeId);
+        return ResponseEntity.ok(storeCategories);
     }
 }
