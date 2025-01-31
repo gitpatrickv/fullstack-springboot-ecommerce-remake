@@ -28,4 +28,9 @@ public class CartItem extends AuditEntity {
     @JoinColumn(name = "inventory_id")
     private Inventory inventory;
 
+    public CartItem(Integer quantity, Cart cart, Inventory inventory) {
+        this.quantity = quantity;
+        this.cart = cart;
+        this.inventory = inventory;
+    }
 }

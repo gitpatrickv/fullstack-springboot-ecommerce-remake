@@ -79,8 +79,8 @@ public class CartServiceImpl implements CartService{
         this.validateStock(request.getQuantity(), availableStock);
 
         if(existingCartItem.isEmpty()){
-            cartItem = new CartItem();
-            this.createNewCartItem(request.getQuantity(), cart, inventory, cartItem);
+            cartItem = new CartItem(request.getQuantity(), cart, inventory);
+            cartItemRepository.save(cartItem);
         } else {
             cartItem = existingCartItem.get();
             if(cartItem.getQuantity() + request.getQuantity() > availableStock){
@@ -90,13 +90,6 @@ public class CartServiceImpl implements CartService{
                 cartItemRepository.save(cartItem);
             }
         }
-    }
-    @Override
-    public void createNewCartItem(int quantity, Cart cart, Inventory inventory, CartItem cartItem){
-        cartItem.setQuantity(quantity);
-        cartItem.setCart(cart);
-        cartItem.setInventory(inventory);
-        cartItemRepository.save(cartItem);
     }
 
     private void validateStock(int requestQuantity, int availableStock){

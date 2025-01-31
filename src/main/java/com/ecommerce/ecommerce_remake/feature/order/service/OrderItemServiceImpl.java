@@ -6,7 +6,6 @@ import com.ecommerce.ecommerce_remake.common.util.mapper.EntityToModelMapper;
 import com.ecommerce.ecommerce_remake.feature.cart.model.Cart;
 import com.ecommerce.ecommerce_remake.feature.cart.model.CartItem;
 import com.ecommerce.ecommerce_remake.feature.cart.repository.CartItemRepository;
-import com.ecommerce.ecommerce_remake.feature.cart.service.CartService;
 import com.ecommerce.ecommerce_remake.feature.inventory.model.Inventory;
 import com.ecommerce.ecommerce_remake.feature.order.dto.OrderItemResponse;
 import com.ecommerce.ecommerce_remake.feature.order.enums.OrderStatus;
@@ -34,7 +33,6 @@ public class OrderItemServiceImpl implements OrderItemService{
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final CartItemRepository cartItemRepository;
-    private final CartService cartService;
     private final Pagination pagination;
 
     private EntityToModelMapper<Order, OrderModel> entityToModelMapper = new EntityToModelMapper<>(OrderModel.class);
@@ -64,8 +62,8 @@ public class OrderItemServiceImpl implements OrderItemService{
                 cartItem = existingCartItem.get();
                 cartItemRepository.save(cartItem);
             }else {
-                cartItem = new CartItem();
-                cartService.createNewCartItem(1, cart, inventory, cartItem);
+                cartItem = new CartItem(1, cart, inventory);
+                cartItemRepository.save(cartItem);
             }
         }
     }
