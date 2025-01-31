@@ -37,9 +37,8 @@ public class OrderItemServiceImpl implements OrderItemService{
 
     private EntityToModelMapper<Order, OrderModel> entityToModelMapper = new EntityToModelMapper<>(OrderModel.class);
     @Override
-    public OrderItemResponse getUserOrders(Pageable pageable, OrderStatus status) {
-        User user = userService.getCurrentAuthenticatedUser();
-        Page<Order> orders = orderRepository.findByUserAndStatus(user, status, pageable);
+    public OrderItemResponse getUserOrders(Pageable pageable, OrderStatus status, Integer userId) {
+        Page<Order> orders = orderRepository.findByUserAndStatus(userId, status, pageable);
         PageResponse pageResponse = pagination.getPagination(orders);
         List<OrderModel> orderModelList = this.getOrderItems(orders);
         return new OrderItemResponse(orderModelList, pageResponse);
