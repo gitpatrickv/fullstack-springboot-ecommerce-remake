@@ -17,6 +17,7 @@ import com.ecommerce.ecommerce_remake.feature.product_image.service.ProductImage
 import com.ecommerce.ecommerce_remake.feature.store.model.Store;
 import com.ecommerce.ecommerce_remake.feature.user.model.User;
 import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
+import com.ecommerce.ecommerce_remake.web.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -105,6 +106,12 @@ public class ProductServiceImpl implements ProductService {
             categoryList.add(storeCategory);
         });
         return categoryList;
+    }
+
+    @Override
+    public Product getProductById(Integer productId) {
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found."));
     }
 
 

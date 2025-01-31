@@ -4,7 +4,7 @@ import com.ecommerce.ecommerce_remake.common.dto.AuditEntity;
 import com.ecommerce.ecommerce_remake.common.dto.enums.Status;
 import com.ecommerce.ecommerce_remake.feature.address.model.Address;
 import com.ecommerce.ecommerce_remake.feature.cart.model.Cart;
-import com.ecommerce.ecommerce_remake.feature.features.model.Favorites;
+import com.ecommerce.ecommerce_remake.feature.favorites.model.Favorites;
 import com.ecommerce.ecommerce_remake.feature.order.model.Order;
 import com.ecommerce.ecommerce_remake.feature.store.model.Store;
 import com.ecommerce.ecommerce_remake.feature.user.enums.Gender;

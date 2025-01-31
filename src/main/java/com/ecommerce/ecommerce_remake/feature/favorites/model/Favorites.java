@@ -1,4 +1,4 @@
-package com.ecommerce.ecommerce_remake.feature.features.model;
+package com.ecommerce.ecommerce_remake.feature.favorites.model;
 
 import com.ecommerce.ecommerce_remake.common.dto.AuditEntity;
 import com.ecommerce.ecommerce_remake.feature.product.model.Product;
@@ -26,4 +26,9 @@ public class Favorites extends AuditEntity {
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
+
+    public Favorites(User user, Product product) {
+        this.user = user;
+        this.product = product;
+    }
 }
