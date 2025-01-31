@@ -122,14 +122,18 @@ public class ProductServiceImpl implements ProductService {
     }
 
     //only retrieves the necessary data for the Product Card on the frontend
-    public List<ProductInfoResponse> getProductInfo(Page<Product> products) {
+    private List<ProductInfoResponse> getProductInfo(Page<Product> products) {
         return products.stream()
-                .map(product -> {
-                    ProductInfoResponse productInfoResponse = entityToModelMapper.map(product);
-                    productInfoResponse.setProductImage(product.getProductImages().get(0).getProductImage());
-                    productInfoResponse.setPrice(product.getInventories().iterator().next().getPrice());
-                    return productInfoResponse;
-                })
+                .map(this::mapProductInfo)
                 .toList();
     }
+    @Override
+    public ProductInfoResponse mapProductInfo(Product product){
+        ProductInfoResponse productInfoResponse = entityToModelMapper.map(product);
+        productInfoResponse.setProductImage(product.getProductImages().get(0).getProductImage());
+        productInfoResponse.setPrice(product.getInventories().iterator().next().getPrice());
+        return productInfoResponse;
+    }
 }
+
+
