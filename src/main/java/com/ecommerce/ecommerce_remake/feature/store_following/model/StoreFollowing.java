@@ -19,10 +19,16 @@ public class StoreFollowing {
     private Integer storeFollowingId;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne
     @JoinColumn(name = "store_id")
     private Store store;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+
+    public StoreFollowing(User user, Store store) {
+        this.user = user;
+        this.store = store;
+    }
 }
