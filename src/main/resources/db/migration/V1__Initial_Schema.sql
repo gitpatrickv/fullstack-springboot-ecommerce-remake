@@ -159,6 +159,12 @@ CREATE TABLE IF NOT EXISTS favorites (
     `last_modified` TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS store_following (
+    `store_following_id` INT AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT NOT NULL,
+    `store_id` INT NOT NULL
+);
+
 
 
 
