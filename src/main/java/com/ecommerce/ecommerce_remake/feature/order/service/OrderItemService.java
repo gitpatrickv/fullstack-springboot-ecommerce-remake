@@ -6,5 +6,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface OrderItemService {
     OrderItemResponse getUserOrders(Pageable pageable, OrderStatus status, Integer userId);
-    void buyAgain(Integer orderId);
+    void buyAgain(Integer orderId, Integer cartId);
 }

@@ -19,11 +19,11 @@ import java.util.List;
 public class CartItemController {
     private final CartItemService cartItemService;
 
-    @GetMapping
+    @GetMapping("/{cartId}/cart-items")
     @ResponseStatus(HttpStatus.OK)
-    public List<CartItemsResponse> getAllCartItems(){
-        log.info("fetching cart items");
-        return cartItemService.getAllCartItems();
+    public List<CartItemsResponse> getAllCartItems(@PathVariable("cartId") Integer cartId){
+        log.info("fetching cart items for CartId={}", cartId);
+        return cartItemService.getAllCartItems(cartId);
     }
 
     @PutMapping("/{cartItemId}/{newQuantity}/quantity")

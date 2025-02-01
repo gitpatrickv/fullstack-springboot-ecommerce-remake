@@ -28,9 +28,9 @@ public class OrderItemController {
         Pageable pageable = createPaginationAndSorting(pageNo, pageSize, sortBy, sortDirection);
         return orderItemService.getUserOrders(pageable, status, userId);
     }
-    @PostMapping("/{orderId}/add")
-    public void buyAgain(@PathVariable("orderId") Integer orderId){
+    @PostMapping("/{orderId}/{cartId}/add")
+    public void buyAgain(@PathVariable("orderId") Integer orderId, @PathVariable("cartId") Integer cartId){
         log.info("User initiated a repurchase request.");
-        orderItemService.buyAgain(orderId);
+        orderItemService.buyAgain(orderId, cartId);
     }
 }

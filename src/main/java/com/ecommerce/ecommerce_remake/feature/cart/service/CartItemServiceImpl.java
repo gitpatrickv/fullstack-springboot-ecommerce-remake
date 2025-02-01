@@ -4,12 +4,10 @@ import com.ecommerce.ecommerce_remake.common.util.mapper.EntityToModelMapper;
 import com.ecommerce.ecommerce_remake.feature.cart.dto.CartItemsResponse;
 import com.ecommerce.ecommerce_remake.feature.cart.dto.IdSetRequest;
 import com.ecommerce.ecommerce_remake.feature.cart.dto.StoreInfo;
-import com.ecommerce.ecommerce_remake.feature.cart.model.Cart;
 import com.ecommerce.ecommerce_remake.feature.cart.model.CartItem;
 import com.ecommerce.ecommerce_remake.feature.cart.model.CartItemModel;
 import com.ecommerce.ecommerce_remake.feature.cart.repository.CartItemRepository;
 import com.ecommerce.ecommerce_remake.feature.product.model.Product;
-import com.ecommerce.ecommerce_remake.feature.user.model.User;
 import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import com.ecommerce.ecommerce_remake.web.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -36,10 +34,8 @@ public class CartItemServiceImpl implements CartItemService{
     }
 
     @Override
-    public List<CartItemsResponse> getAllCartItems() {
-        User user = userService.getCurrentAuthenticatedUser();
-        Cart cart = user.getCart();
-        List<CartItem> cartItemList = cartItemRepository.findByCart(cart);
+    public List<CartItemsResponse> getAllCartItems(Integer cartId) {
+        List<CartItem> cartItemList = cartItemRepository.findAllByCart_CartId(cartId);
         Map<StoreInfo, List<CartItemModel>> cartItemMap = this.groupCartItemsByStore(cartItemList);
         return this.fetchAllCartItems(cartItemMap);
     }

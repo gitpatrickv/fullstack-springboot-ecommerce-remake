@@ -65,7 +65,7 @@ public class OrderServiceImpl implements OrderService{
         Cart cart = user.getCart();
         Address address = addressService.findAddressByStatusAndUser(Status.ACTIVE, user.getUserId());
 
-        List<CartItem> cartItemList = cartItemRepository.findByCartAndCartItemIdIn(cart, request.getIds());
+        List<CartItem> cartItemList = cartItemRepository.findByCart_CartIdAndCartItemIdIn(cart.getCartId(), request.getIds());
 
         Map<Store, List<CartItem>> cartItemMap = this.groupItemsByStore(cartItemList);
 

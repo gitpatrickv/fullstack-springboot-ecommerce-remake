@@ -53,7 +53,7 @@ public class FavoritesServiceImpl implements FavoritesService{
         User user = userService.getCurrentAuthenticatedUser();
         Cart cart = user.getCart();
 
-        List<CartItem> cartItems = cartItemRepository.findByCartAndCartItemIdIn(cart, request.getIds());
+        List<CartItem> cartItems = cartItemRepository.findByCart_CartIdAndCartItemIdIn(cart.getCartId(), request.getIds());
 
         cartItems.forEach(cartItem -> {
             Integer productId = cartItem.getInventory().getProduct().getProductId();

@@ -6,9 +6,9 @@ import com.ecommerce.ecommerce_remake.feature.cart.dto.CartTotalResponse;
 import com.ecommerce.ecommerce_remake.feature.cart.model.Cart;
 import com.ecommerce.ecommerce_remake.feature.cart.model.CartItem;
 import com.ecommerce.ecommerce_remake.feature.cart.repository.CartItemRepository;
+import com.ecommerce.ecommerce_remake.feature.cart.repository.CartRepository;
 import com.ecommerce.ecommerce_remake.feature.inventory.model.Inventory;
 import com.ecommerce.ecommerce_remake.feature.inventory.service.InventoryService;
-import com.ecommerce.ecommerce_remake.feature.user.model.User;
 import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import com.ecommerce.ecommerce_remake.web.exception.OutOfStockException;
 import com.ecommerce.ecommerce_remake.web.exception.ResourceNotFoundException;
@@ -26,10 +26,10 @@ import java.util.Set;
 @Transactional
 public class CartServiceImpl implements CartService{
 
-    private final UserService userService;
     private final CartItemService cartItemService;
     private final InventoryService inventoryService;
     private final CartItemRepository cartItemRepository;
+    private final CartRepository cartRepository;
 
     @Override
     public void addToCart(AddToCartRequest request) {
@@ -57,18 +57,21 @@ public class CartServiceImpl implements CartService{
 
 
     @Override
-    public CartTotalResponse getCartTotal(Set<Integer> ids) {
-        User user = userService.getCurrentAuthenticatedUser();
-        Cart cart = user.getCart();
-        List<CartItem> cartItemList = cartItemRepository.findByCartAndCartItemIdIn(cart, ids);
+    public CartTotalResponse getCartTotal(Set<Integer> ids, Integer cartId) {
+        List<CartItem> cartItemList = cartItemRepository.findByCart_CartIdAndCartItemIdIn(cartId, ids);
         BigDecimal totalAmount = calculateTotalAmount(cartItemList);
         Integer totalItems = this.calculateTotalProducts(cartItemList);
         return new CartTotalResponse(totalAmount,totalItems);
     }
 
+    @Override
+    public Cart getCartById(Integer cartId) {
+        return cartRepository.findById(cartId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cart not found."));
+    }
+
     private void addProductsToCart(AddToCartRequest request, Inventory inventory){
-        User user = userService.getCurrentAuthenticatedUser();
-        Cart cart = user.getCart();
+        Cart cart = this.getCartById(request.getCartId());
 
         Optional<CartItem> existingCartItem = cartItemService.findExistingCartItem(inventory.getInventoryId(), cart.getCartId());
 
