@@ -151,6 +151,20 @@ CREATE TABLE IF NOT EXISTS store_reviews (
     `last_modified` TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS favorites (
+    `favorite_id` INT AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT NOT NULL,
+    `product_id` INT NOT NULL,
+    `created_date` TIMESTAMP,
+    `last_modified` TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS store_following (
+    `store_following_id` INT AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT NOT NULL,
+    `store_id` INT NOT NULL
+);
+
 
 
 

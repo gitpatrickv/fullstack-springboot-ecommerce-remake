@@ -18,6 +18,7 @@ public class UserController {
     private final UserService userService;
     @GetMapping
     public ResponseEntity<UserModel> getCurrentUserInfo() {
+        log.info("fetching current user info");
         return ResponseEntity.ok(userService.getCurrentUserInfo());
     }
     @PostMapping("/upload")

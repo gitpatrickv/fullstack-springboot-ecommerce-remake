@@ -17,6 +17,7 @@ import com.ecommerce.ecommerce_remake.feature.product_image.service.ProductImage
 import com.ecommerce.ecommerce_remake.feature.store.model.Store;
 import com.ecommerce.ecommerce_remake.feature.user.model.User;
 import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
+import com.ecommerce.ecommerce_remake.web.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -107,6 +108,12 @@ public class ProductServiceImpl implements ProductService {
         return categoryList;
     }
 
+    @Override
+    public Product getProductById(Integer productId) {
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found."));
+    }
+
 
     private GetAllResponse getAllProductsWithPagination(Page<Product> products) {
         PageResponse pageResponse = pagination.getPagination(products);
@@ -115,14 +122,18 @@ public class ProductServiceImpl implements ProductService {
     }
 
     //only retrieves the necessary data for the Product Card on the frontend
-    public List<ProductInfoResponse> getProductInfo(Page<Product> products) {
+    private List<ProductInfoResponse> getProductInfo(Page<Product> products) {
         return products.stream()
-                .map(product -> {
-                    ProductInfoResponse productInfoResponse = entityToModelMapper.map(product);
-                    productInfoResponse.setProductImage(product.getProductImages().get(0).getProductImage());
-                    productInfoResponse.setPrice(product.getInventories().iterator().next().getPrice());
-                    return productInfoResponse;
-                })
+                .map(this::mapProductInfo)
                 .toList();
     }
+    @Override
+    public ProductInfoResponse mapProductInfo(Product product){
+        ProductInfoResponse productInfoResponse = entityToModelMapper.map(product);
+        productInfoResponse.setProductImage(product.getProductImages().get(0).getProductImage());
+        productInfoResponse.setPrice(product.getInventories().iterator().next().getPrice());
+        return productInfoResponse;
+    }
 }
+
+

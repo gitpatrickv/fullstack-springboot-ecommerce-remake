@@ -5,6 +5,6 @@ import com.ecommerce.ecommerce_remake.feature.order.enums.OrderStatus;
 import org.springframework.data.domain.Pageable;
 
 public interface OrderItemService {
-    OrderItemResponse getUserOrders(Pageable pageable, OrderStatus status);
-    void buyAgain(Integer orderId);
+    OrderItemResponse getUserOrders(Pageable pageable, OrderStatus status, Integer userId);
+    void buyAgain(Integer orderId, Integer cartId);
 }

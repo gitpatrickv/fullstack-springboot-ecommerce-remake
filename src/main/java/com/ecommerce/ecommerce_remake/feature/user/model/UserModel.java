@@ -51,4 +51,5 @@ public class UserModel extends Model {
     @NotNull
     @Enumerated(EnumType.STRING)
     private Gender gender;
+    private Integer cartId;
 }

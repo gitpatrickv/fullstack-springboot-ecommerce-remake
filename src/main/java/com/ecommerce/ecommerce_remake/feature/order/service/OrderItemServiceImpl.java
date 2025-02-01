@@ -15,8 +15,6 @@ import com.ecommerce.ecommerce_remake.feature.order.model.OrderItem;
 import com.ecommerce.ecommerce_remake.feature.order.model.OrderModel;
 import com.ecommerce.ecommerce_remake.feature.order.repository.OrderItemRepository;
 import com.ecommerce.ecommerce_remake.feature.order.repository.OrderRepository;
-import com.ecommerce.ecommerce_remake.feature.user.model.User;
-import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,33 +28,30 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OrderItemServiceImpl implements OrderItemService{
 
-    private final UserService userService;
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final CartItemRepository cartItemRepository;
-    private final CartService cartService;
     private final Pagination pagination;
+    private final CartService cartService;
 
     private EntityToModelMapper<Order, OrderModel> entityToModelMapper = new EntityToModelMapper<>(OrderModel.class);
     @Override
-    public OrderItemResponse getUserOrders(Pageable pageable, OrderStatus status) {
-        User user = userService.getCurrentAuthenticatedUser();
-        Page<Order> orders = orderRepository.findByUserAndStatus(user, status, pageable);
+    public OrderItemResponse getUserOrders(Pageable pageable, OrderStatus status, Integer userId) {
+        Page<Order> orders = orderRepository.findByUserAndStatus(userId, status, pageable);
         PageResponse pageResponse = pagination.getPagination(orders);
         List<OrderModel> orderModelList = this.getOrderItems(orders);
         return new OrderItemResponse(orderModelList, pageResponse);
     }
     @Transactional
     @Override
-    public void buyAgain(Integer orderId) {
-        User user = userService.getCurrentAuthenticatedUser();
-        Cart cart = user.getCart();
+    public void buyAgain(Integer orderId, Integer cartId) {
+        Cart cart = cartService.getCartById(cartId);
 
         List<OrderItem> orderItems = orderItemRepository.findAllByOrder_OrderId(orderId);
 
-        for(OrderItem orderItem : orderItems){
+        orderItems.forEach(orderItem -> {
             Inventory inventory = orderItem.getInventory();
-            Optional<CartItem> existingCartItem = cartItemRepository.findByCartAndInventory(cart, inventory);
+            Optional<CartItem> existingCartItem = cartItemRepository.findByCart_CartIdAndInventory(cart.getCartId(), inventory);
 
             CartItem cartItem;
 
@@ -64,10 +59,10 @@ public class OrderItemServiceImpl implements OrderItemService{
                 cartItem = existingCartItem.get();
                 cartItemRepository.save(cartItem);
             }else {
-                cartItem = new CartItem();
-                cartService.createNewCartItem(1, cart, inventory, cartItem);
+                cartItem = new CartItem(1, cart, inventory);
+                cartItemRepository.save(cartItem);
             }
-        }
+        });
     }
 
     private List<OrderModel> getOrderItems(Page<Order> orders){

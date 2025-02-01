@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface CartItemService {
 
     Optional<CartItem> findExistingCartItem(Integer inventoryId, Integer cartId);
-    List<CartItemsResponse> getAllCartItems();
+    List<CartItemsResponse> getAllCartItems(Integer cartId);
     void updateQuantity(Integer cartItemId, Integer newQuantity);
     void deleteCartItemById(Integer cartItemId);
     void deleteAllSelectedCartItem(IdSetRequest request);

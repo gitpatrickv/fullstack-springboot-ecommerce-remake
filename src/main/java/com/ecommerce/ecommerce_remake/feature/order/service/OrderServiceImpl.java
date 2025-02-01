@@ -63,9 +63,9 @@ public class OrderServiceImpl implements OrderService{
     public PaymentResponse placeOrder(OrderRequest request) throws StripeException {
         User user = userService.getCurrentAuthenticatedUser();
         Cart cart = user.getCart();
-        Address address = addressService.findAddressByStatusAndUser(Status.ACTIVE, user);
+        Address address = addressService.findAddressByStatusAndUser(Status.ACTIVE, user.getUserId());
 
-        List<CartItem> cartItemList = cartItemRepository.findByCartAndCartItemIdIn(cart, request.getIds());
+        List<CartItem> cartItemList = cartItemRepository.findByCart_CartIdAndCartItemIdIn(cart.getCartId(), request.getIds());
 
         Map<Store, List<CartItem>> cartItemMap = this.groupItemsByStore(cartItemList);
 

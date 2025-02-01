@@ -11,7 +11,6 @@ import com.ecommerce.ecommerce_remake.common.util.mapper.EntityToModelMapper;
 import com.ecommerce.ecommerce_remake.feature.product.model.Product;
 import com.ecommerce.ecommerce_remake.feature.product.model.ProductModel;
 import com.ecommerce.ecommerce_remake.feature.product.repository.ProductRepository;
-import com.ecommerce.ecommerce_remake.feature.store.model.Store;
 import com.ecommerce.ecommerce_remake.feature.user.model.User;
 import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import com.ecommerce.ecommerce_remake.web.exception.NotImplementedException;
@@ -48,8 +47,7 @@ public class ProductCrudFactoryService extends CrudService {
     protected GetAllResponse getAll(Pageable pageable) {
         List<Status> statusList = List.of(Status.LISTED, Status.SUSPENDED);
         User user = userService.getCurrentAuthenticatedUser();
-        Store store = user.getStore();
-        Page<Product> products = productRepository.findByStoreAndStatusIn(store, statusList, pageable);
+        Page<Product> products = productRepository.findByStore_StoreIdAndStatusIn(user.getStore().getStoreId(), statusList, pageable);
         return this.getAllProductsWithPagination(products);
     }
     @Transactional

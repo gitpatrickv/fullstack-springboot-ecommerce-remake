@@ -13,4 +13,6 @@ public class AddToCartRequest {
     private String productId;
     @NotNull
     private Integer quantity;
+    @NotNull
+    private Integer cartId;
 }
