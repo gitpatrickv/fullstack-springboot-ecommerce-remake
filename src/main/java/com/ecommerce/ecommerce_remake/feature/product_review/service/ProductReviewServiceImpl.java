@@ -7,7 +7,9 @@ import com.ecommerce.ecommerce_remake.feature.order.model.OrderItem;
 import com.ecommerce.ecommerce_remake.feature.order.repository.OrderItemRepository;
 import com.ecommerce.ecommerce_remake.feature.order.repository.OrderRepository;
 import com.ecommerce.ecommerce_remake.feature.product.repository.ProductRepository;
+import com.ecommerce.ecommerce_remake.feature.product_review.dto.ProductRatingCount;
 import com.ecommerce.ecommerce_remake.feature.product_review.dto.RateRequest;
+import com.ecommerce.ecommerce_remake.feature.product_review.dto.RatingCount;
 import com.ecommerce.ecommerce_remake.feature.product_review.model.ProductReview;
 import com.ecommerce.ecommerce_remake.feature.product_review.repository.ProductReviewRepository;
 import com.ecommerce.ecommerce_remake.feature.user.model.User;
@@ -89,5 +91,40 @@ public class ProductReviewServiceImpl implements ProductReviewService {
         }
     }
 
+    @Override
+    public RatingCount getProductRatingStarCount(Integer productId) {
+        List<ProductRatingCount> productRating = productReviewRepository.getRatingCountByProductId(productId);
+        if(productRating == null){
+            return new RatingCount(0,0,0,0,0);
+        }
+        return this.getProductRatingMap(productRating);
+    }
 
+    private RatingCount getProductRatingMap(List<ProductRatingCount> productRatingList) {
+        RatingCount ratingCount = new RatingCount(0,0,0,0,0);
+
+        productRatingList.forEach(productRatingCount -> {
+            int productRating = productRatingCount.getRating();
+            long count = productRatingCount.getCount();
+
+            switch (productRating) {
+                case 1:
+                    ratingCount.setStar1((int) count);
+                    break;
+                case 2:
+                    ratingCount.setStar2((int) count);
+                    break;
+                case 3:
+                    ratingCount.setStar3((int) count);
+                    break;
+                case 4:
+                    ratingCount.setStar4((int) count);
+                    break;
+                case 5:
+                    ratingCount.setStar5((int) count);
+                    break;
+            }
+        });
+        return ratingCount;
+    }
 }
