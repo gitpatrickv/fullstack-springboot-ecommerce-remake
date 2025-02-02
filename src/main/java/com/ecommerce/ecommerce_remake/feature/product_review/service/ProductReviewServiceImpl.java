@@ -1,5 +1,9 @@
 package com.ecommerce.ecommerce_remake.feature.product_review.service;
 
+import com.ecommerce.ecommerce_remake.common.dto.response.GetAllResponse;
+import com.ecommerce.ecommerce_remake.common.dto.response.PageResponse;
+import com.ecommerce.ecommerce_remake.common.util.Pagination;
+import com.ecommerce.ecommerce_remake.common.util.mapper.EntityToModelMapper;
 import com.ecommerce.ecommerce_remake.feature.order.enums.OrderStatus;
 import com.ecommerce.ecommerce_remake.feature.order.enums.ReviewStatus;
 import com.ecommerce.ecommerce_remake.feature.order.model.Order;
@@ -11,12 +15,15 @@ import com.ecommerce.ecommerce_remake.feature.product_review.dto.ProductRatingCo
 import com.ecommerce.ecommerce_remake.feature.product_review.dto.RateRequest;
 import com.ecommerce.ecommerce_remake.feature.product_review.dto.RatingCount;
 import com.ecommerce.ecommerce_remake.feature.product_review.model.ProductReview;
+import com.ecommerce.ecommerce_remake.feature.product_review.model.ProductReviewModel;
 import com.ecommerce.ecommerce_remake.feature.product_review.repository.ProductReviewRepository;
 import com.ecommerce.ecommerce_remake.feature.user.model.User;
 import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import com.ecommerce.ecommerce_remake.web.exception.ResourceNotFoundException;
 import com.ecommerce.ecommerce_remake.web.exception.ReviewValidationException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +40,9 @@ public class ProductReviewServiceImpl implements ProductReviewService {
     private final ProductRepository productRepository;
     private final OrderItemRepository orderItemRepository;
     private final OrderRepository orderRepository;
+    private final Pagination pagination;
 
+    private EntityToModelMapper<ProductReview, ProductReviewModel> entityToModelMapper = new EntityToModelMapper<>(ProductReviewModel.class);
 
     @Override
     public void rateProduct(RateRequest request, Integer productId, Integer orderId) {
@@ -98,6 +107,25 @@ public class ProductReviewServiceImpl implements ProductReviewService {
             return new RatingCount(0,0,0,0,0);
         }
         return this.getProductRatingMap(productRating);
+    }
+
+    @Override
+    public GetAllResponse getProductReviews(Integer productId, Integer rating, Pageable pageable) {
+        Page<ProductReview> productReviews = productReviewRepository.findAllByProductIdAndRating(productId, rating, pageable);
+        PageResponse pageResponse = pagination.getPagination(productReviews);
+        List<ProductReviewModel> productReviewModels = this.productReviewModelList(productReviews);
+        return new GetAllResponse(productReviewModels, pageResponse);
+    }
+
+    private List<ProductReviewModel> productReviewModelList(Page<ProductReview> productReviews) {
+        return productReviews.stream()
+                .map(productReview -> {
+                    ProductReviewModel productReviewModel = entityToModelMapper.map(productReview);
+                    productReviewModel.setName(productReview.getUser().getName());
+                    productReviewModel.setPicture(productReview.getUser().getPicture());
+                    return productReviewModel;
+                })
+                .toList();
     }
 
     private RatingCount getProductRatingMap(List<ProductRatingCount> productRatingList) {

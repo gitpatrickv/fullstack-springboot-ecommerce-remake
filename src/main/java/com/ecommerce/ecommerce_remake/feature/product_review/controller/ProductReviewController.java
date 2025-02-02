@@ -1,13 +1,17 @@
 package com.ecommerce.ecommerce_remake.feature.product_review.controller;
 
+import com.ecommerce.ecommerce_remake.common.dto.response.GetAllResponse;
 import com.ecommerce.ecommerce_remake.feature.product_review.dto.RateRequest;
 import com.ecommerce.ecommerce_remake.feature.product_review.dto.RatingCount;
 import com.ecommerce.ecommerce_remake.feature.product_review.service.ProductReviewService;
 import com.ecommerce.ecommerce_remake.web.exception.InvalidRatingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import static com.ecommerce.ecommerce_remake.common.util.PageableUtils.createPaginationAndSorting;
 
 @RestController
 @RequestMapping("/api/product")
@@ -35,5 +39,21 @@ public class ProductReviewController {
         RatingCount ratingCount =  productReviewService.getProductRatingStarCount(productId);
         log.info("Product Id={}, {} ", productId, ratingCount);
         return ResponseEntity.ok().body(ratingCount);
+    }
+
+    @GetMapping("/{productId}/{rating}/reviews")
+    public ResponseEntity<GetAllResponse> getProductReviews(@PathVariable("productId") Integer productId,
+                                            @PathVariable("rating") Integer rating,
+                                            @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
+                                            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+                                            @RequestParam(value = "sortBy", defaultValue = "createdDate") String sortBy,
+                                            @RequestParam(value = "sortDirection", defaultValue = "DESC") String sortDirection){
+        Pageable pageable = createPaginationAndSorting(pageNo, pageSize, sortBy, sortDirection);
+        GetAllResponse getAllResponse = productReviewService.getProductReviews(productId, rating, pageable);
+
+        if(getAllResponse.getModels().isEmpty()){
+            log.info("GetProductReviews - ProductId={} - No reviews found", productId);
+        }
+        return ResponseEntity.ok().body(getAllResponse);
     }
 }
