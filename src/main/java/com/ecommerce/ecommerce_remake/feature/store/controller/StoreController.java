@@ -1,5 +1,6 @@
 package com.ecommerce.ecommerce_remake.feature.store.controller;
 
+import com.ecommerce.ecommerce_remake.common.dto.response.CountResponse;
 import com.ecommerce.ecommerce_remake.feature.store.model.StoreModel;
 import com.ecommerce.ecommerce_remake.feature.store.service.StoreService;
 import lombok.RequiredArgsConstructor;
@@ -35,5 +36,12 @@ public class StoreController {
         log.info("Received the request to upload the store avatar.");
         storeService.uploadStoreAvatar(file);
         log.info("The request to upload the store's avatar was handled.");
+    }
+
+    @GetMapping("/{storeId}/store-metrics")
+    public ResponseEntity<CountResponse> getStoreMetrics(@PathVariable("storeId") Integer storeId){
+        CountResponse countResponse = storeService.getStoreMetrics(storeId);
+        log.info("Store ID {} has {} followers and {} products", storeId, countResponse.getFollowerCount(), countResponse.getProductCount());
+        return ResponseEntity.ok().body(countResponse);
     }
 }
