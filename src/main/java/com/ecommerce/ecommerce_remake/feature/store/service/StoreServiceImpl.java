@@ -1,6 +1,6 @@
 package com.ecommerce.ecommerce_remake.feature.store.service;
 
-import com.ecommerce.ecommerce_remake.common.dto.response.CountResponse;
+import com.ecommerce.ecommerce_remake.feature.store.dto.CountResponse;
 import com.ecommerce.ecommerce_remake.common.util.mapper.EntityToModelMapper;
 import com.ecommerce.ecommerce_remake.feature.product.repository.ProductRepository;
 import com.ecommerce.ecommerce_remake.feature.product_image.service.ProductImageService;

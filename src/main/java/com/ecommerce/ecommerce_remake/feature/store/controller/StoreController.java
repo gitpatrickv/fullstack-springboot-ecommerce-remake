@@ -1,6 +1,6 @@
 package com.ecommerce.ecommerce_remake.feature.store.controller;
 
-import com.ecommerce.ecommerce_remake.common.dto.response.CountResponse;
+import com.ecommerce.ecommerce_remake.feature.store.dto.CountResponse;
 import com.ecommerce.ecommerce_remake.feature.store.model.StoreModel;
 import com.ecommerce.ecommerce_remake.feature.store.service.StoreService;
 import lombok.RequiredArgsConstructor;

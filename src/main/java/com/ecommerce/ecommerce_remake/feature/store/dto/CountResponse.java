@@ -1,4 +1,4 @@
-package com.ecommerce.ecommerce_remake.common.dto.response;
+package com.ecommerce.ecommerce_remake.feature.store.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

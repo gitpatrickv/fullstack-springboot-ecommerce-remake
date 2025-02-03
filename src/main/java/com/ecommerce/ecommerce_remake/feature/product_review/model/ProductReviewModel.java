@@ -25,6 +25,6 @@ public class ProductReviewModel extends Model {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime createdDate;
     private String name;
-    private String picture;
+    private String imageUrl;
 
 }

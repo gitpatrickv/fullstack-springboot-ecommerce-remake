@@ -31,29 +31,26 @@ public class ProductReviewController {
             throw new InvalidRatingException();
         }
 
-       productReviewService.rateProduct(request, productId, orderId);
+        productReviewService.rateProduct(request, productId, orderId);
     }
 
     @GetMapping("/{productId}/rating-count")
-    public ResponseEntity<RatingCount> getProductRatingStarCount(@PathVariable("productId") Integer productId){
+    public ResponseEntity<RatingCount> getProductRatingStarCount(@PathVariable("productId") String productId){
         RatingCount ratingCount =  productReviewService.getProductRatingStarCount(productId);
         log.info("Product Id={}, {} ", productId, ratingCount);
         return ResponseEntity.ok().body(ratingCount);
     }
 
-    @GetMapping("/{productId}/{rating}/reviews")
-    public ResponseEntity<GetAllResponse> getProductReviews(@PathVariable("productId") Integer productId,
-                                            @PathVariable("rating") Integer rating,
-                                            @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
-                                            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
-                                            @RequestParam(value = "sortBy", defaultValue = "createdDate") String sortBy,
-                                            @RequestParam(value = "sortDirection", defaultValue = "DESC") String sortDirection){
+    @GetMapping("/{productId}/reviews")
+    public ResponseEntity<GetAllResponse> getProductReviews(@PathVariable("productId") String productId,
+                                                            @RequestParam(value = "rating", required = false) Integer rating,
+                                                            @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
+                                                            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+                                                            @RequestParam(value = "sortBy", defaultValue = "createdDate") String sortBy,
+                                                            @RequestParam(value = "sortDirection", defaultValue = "DESC") String sortDirection){
         Pageable pageable = createPaginationAndSorting(pageNo, pageSize, sortBy, sortDirection);
         GetAllResponse getAllResponse = productReviewService.getProductReviews(productId, rating, pageable);
-
-        if(getAllResponse.getModels().isEmpty()){
-            log.info("GetProductReviews - ProductId={} - No reviews found", productId);
-        }
+        log.info("GetProductReviews - Product ID: {}, Rating: {} stars, Reviews Found: {}", productId, rating != null ? rating : "ALL", getAllResponse.getModels().size());
         return ResponseEntity.ok().body(getAllResponse);
     }
 }

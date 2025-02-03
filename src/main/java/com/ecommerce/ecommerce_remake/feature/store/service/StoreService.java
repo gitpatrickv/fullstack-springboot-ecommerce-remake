@@ -1,6 +1,6 @@
 package com.ecommerce.ecommerce_remake.feature.store.service;
 
-import com.ecommerce.ecommerce_remake.common.dto.response.CountResponse;
+import com.ecommerce.ecommerce_remake.feature.store.dto.CountResponse;
 import com.ecommerce.ecommerce_remake.feature.store.model.Store;
 import com.ecommerce.ecommerce_remake.feature.store.model.StoreModel;
 import org.springframework.web.multipart.MultipartFile;

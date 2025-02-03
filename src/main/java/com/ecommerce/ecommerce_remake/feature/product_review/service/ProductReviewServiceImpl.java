@@ -101,8 +101,9 @@ public class ProductReviewServiceImpl implements ProductReviewService {
     }
 
     @Override
-    public RatingCount getProductRatingStarCount(Integer productId) {
-        List<ProductRatingCount> productRating = productReviewRepository.getRatingCountByProductId(productId);
+    public RatingCount getProductRatingStarCount(String productId) {
+        Integer id = Integer.parseInt(productId);
+        List<ProductRatingCount> productRating = productReviewRepository.getRatingCountByProductId(id);
         if(productRating == null){
             return new RatingCount(0,0,0,0,0);
         }
@@ -110,8 +111,9 @@ public class ProductReviewServiceImpl implements ProductReviewService {
     }
 
     @Override
-    public GetAllResponse getProductReviews(Integer productId, Integer rating, Pageable pageable) {
-        Page<ProductReview> productReviews = productReviewRepository.findAllByProductIdAndRating(productId, rating, pageable);
+    public GetAllResponse getProductReviews(String productId, Integer rating, Pageable pageable) {
+        Integer id = Integer.parseInt(productId);
+        Page<ProductReview> productReviews = productReviewRepository.getProductReviews(id, rating, pageable);
         PageResponse pageResponse = pagination.getPagination(productReviews);
         List<ProductReviewModel> productReviewModels = this.productReviewModelList(productReviews);
         return new GetAllResponse(productReviewModels, pageResponse);
@@ -122,7 +124,7 @@ public class ProductReviewServiceImpl implements ProductReviewService {
                 .map(productReview -> {
                     ProductReviewModel productReviewModel = entityToModelMapper.map(productReview);
                     productReviewModel.setName(productReview.getUser().getName());
-                    productReviewModel.setPicture(productReview.getUser().getPicture());
+                    productReviewModel.setImageUrl(productReview.getUser().getPicture());
                     return productReviewModel;
                 })
                 .toList();
@@ -137,19 +139,19 @@ public class ProductReviewServiceImpl implements ProductReviewService {
 
             switch (productRating) {
                 case 1:
-                    ratingCount.setStar1((int) count);
+                    ratingCount.setStar1(count);
                     break;
                 case 2:
-                    ratingCount.setStar2((int) count);
+                    ratingCount.setStar2(count);
                     break;
                 case 3:
-                    ratingCount.setStar3((int) count);
+                    ratingCount.setStar3(count);
                     break;
                 case 4:
-                    ratingCount.setStar4((int) count);
+                    ratingCount.setStar4(count);
                     break;
                 case 5:
-                    ratingCount.setStar5((int) count);
+                    ratingCount.setStar5(count);
                     break;
             }
         });

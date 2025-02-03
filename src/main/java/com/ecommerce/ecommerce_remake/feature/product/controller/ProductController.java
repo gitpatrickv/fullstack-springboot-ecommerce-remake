@@ -50,9 +50,6 @@ public class ProductController {
                                                          @RequestParam(value = "sortDirection", defaultValue = "DESC") String sortDirection){
         Pageable pageable = createPaginationAndSorting(pageNo, pageSize, sortBy, sortDirection);
         GetAllResponse getAllResponse = productService.getAllProducts(pageable);
-        if(getAllResponse.getModels().isEmpty()){
-            log.warn("GetAllProducts - No data found");
-        }
         log.info("GetAllProducts - GET Response: 200 - Returning {} product records", getAllResponse.getModels().size());
         return ResponseEntity.ok(getAllResponse);
     }
@@ -70,9 +67,6 @@ public class ProductController {
                 storeId, sortBy, sortDirection, ratingFilter, minPrice, maxPrice, category);
         Pageable pageable = createPaginationAndSorting(pageNo, pageSize, sortBy, sortDirection);
         GetAllResponse getAllResponse = productService.getStoreProductsByStoreId(pageable, storeId, category, ratingFilter, minPrice, maxPrice);
-        if(getAllResponse.getModels().isEmpty()){
-            log.warn("GetStoreProductsByStoreId - No data found");
-        }
         log.info("GetStoreProductsByStoreId - GET Response: 200 - Returning {} product records", getAllResponse.getModels().size());
         return ResponseEntity.ok(getAllResponse);
     }
@@ -89,9 +83,6 @@ public class ProductController {
                 category, sortBy, sortDirection, ratingFilter, minPrice, maxPrice);
         Pageable pageable = createPaginationAndSorting(pageNo, pageSize, sortBy, sortDirection);
         GetAllResponse getAllResponse = productService.getAllProductsByCategory(pageable, category, ratingFilter, minPrice, maxPrice);
-        if(getAllResponse.getModels().isEmpty()){
-            log.warn("GetAllProductsByCategory - No data found");
-        }
         log.info("GetAllProductsByCategory - GET Response: 200 - Returning {} product records", getAllResponse.getModels().size());
         return ResponseEntity.ok(getAllResponse);
 

@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RatingCount {
 
-    private int star1;
-    private int star2;
-    private int star3;
-    private int star4;
-    private int star5;
+    private long star1;
+    private long star2;
+    private long star3;
+    private long star4;
+    private long star5;
 
 }

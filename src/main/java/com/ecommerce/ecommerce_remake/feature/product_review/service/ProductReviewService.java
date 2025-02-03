@@ -14,6 +14,6 @@ public interface ProductReviewService {
     void rateProduct(RateRequest request, Integer productId, Integer orderId);
     Optional<ProductReview> findReviewByUserAndProduct(Integer userId, Integer productId);
     void updateOrderStatus(Order order);
-    RatingCount getProductRatingStarCount(Integer productId);
-    GetAllResponse getProductReviews(Integer productId, Integer rating, Pageable pageable);
+    RatingCount getProductRatingStarCount(String productId);
+    GetAllResponse getProductReviews(String productId, Integer rating, Pageable pageable);
 }

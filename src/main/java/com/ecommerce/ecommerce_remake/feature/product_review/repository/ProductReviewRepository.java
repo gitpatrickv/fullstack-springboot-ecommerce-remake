@@ -26,7 +26,9 @@ public interface ProductReviewRepository extends JpaRepository<ProductReview, In
            GROUP BY pr.rating
            """)
     List<ProductRatingCount> getRatingCountByProductId(@Param("productId") Integer productId);
-
-    Page<ProductReview> findAllByProductIdAndRating(Integer productId, Integer rating, Pageable pageable);
+    @Query("SELECT pr FROM ProductReview pr WHERE pr.productId = :productId AND (:rating IS NULL OR pr.rating = :rating)")
+    Page<ProductReview> getProductReviews(@Param("productId") Integer productId,
+                                          @Param("rating") Integer rating,
+                                          Pageable pageable);
 
 }
