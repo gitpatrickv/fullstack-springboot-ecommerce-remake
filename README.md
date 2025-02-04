@@ -8,6 +8,10 @@
 - **Store Page**
 ![Image](https://github.com/user-attachments/assets/18259c98-124f-4bb7-8a72-190463ad20bf)
 
+
+- **Product Detail Page**
+![Image](https://github.com/user-attachments/assets/611aaab8-4ee8-400e-af4b-abcb24014e38)
+
 ## Table of Contents
 - [Project Status](#project-status)
 - [Project Overview](#project-overview)
@@ -21,7 +25,11 @@ This project is a work in progress!
 More features are being added.
 
 ## Project Overview
-This is a personal project focused on creating an online shopping platform similar to Shopee.
+This personal project is focused on creating an online shopping platform similar to Shopee.
+The goal is to enhance my skills in both backend and frontend development, explore different techniques
+and refactor [My First Full-Stack Project](https://github.com/gitpatrickv/Fullstack-Ecommerce-Backend-Springboot), which has messy and unstructured code.
+Additionally, this project serves as a reference for when I use different backend or frontend frameworks, 
+helping me easily recall key concepts and techniques.
 
 ## Tech Stack
 

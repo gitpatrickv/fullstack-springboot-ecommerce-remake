@@ -54,7 +54,7 @@ public class StoreReviewServiceImpl implements StoreReviewService{
             throw new ReviewValidationException("You have already submitted a review for this store.");
         }
     }
-
+    //marks all orders from the specified store as rated, including past orders, if the user has rated the store.
     public void updateOrderIfUserAlreadyRatedStore(int userId, int storeId){
         List<Order> orders = orderRepository.findAllByUser_UserIdAndStore_StoreId(userId, storeId);
         orders.forEach(order -> {

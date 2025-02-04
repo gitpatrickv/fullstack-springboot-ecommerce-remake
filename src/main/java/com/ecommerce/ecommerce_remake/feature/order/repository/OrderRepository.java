@@ -15,6 +15,8 @@ import java.util.List;
 public interface OrderRepository extends JpaRepository<Order, Integer> {
 
     @Query("SELECT o FROM Order o WHERE o.user.userId = :userId AND (:status IS NULL OR o.orderStatus = :status)")
-    Page<Order> findByUserAndStatus(@Param("userId") Integer userId, @Param("status") OrderStatus status, Pageable pageable);
+    Page<Order> getOrdersByUserAndStatus (@Param("userId") Integer userId, @Param("status") OrderStatus status, Pageable pageable);
+    @Query("SELECT o FROM Order o WHERE o.store.storeId = :storeId AND (:status IS NULL OR o.orderStatus = :status)")
+    Page<Order> getOrdersByStoreAndStatus(@Param("storeId") Integer storeId, @Param("status") OrderStatus status, Pageable pageable);
     List<Order> findAllByUser_UserIdAndStore_StoreId(Integer userId, Integer storeId);
 }

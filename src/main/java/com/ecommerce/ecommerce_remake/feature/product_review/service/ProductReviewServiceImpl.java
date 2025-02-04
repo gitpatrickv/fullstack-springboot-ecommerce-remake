@@ -89,8 +89,7 @@ public class ProductReviewServiceImpl implements ProductReviewService {
     //if all order items are already reviewed, the order status will be changed to RATED
     @Override
     public void updateOrderStatus(Order order){
-        boolean isAllReviewed = order
-                .getOrderItems()
+        boolean isAllReviewed = order.getOrderItems()
                 .stream()
                 .allMatch(orderItem -> orderItem.getReviewStatus().equals(ReviewStatus.REVIEWED));
 

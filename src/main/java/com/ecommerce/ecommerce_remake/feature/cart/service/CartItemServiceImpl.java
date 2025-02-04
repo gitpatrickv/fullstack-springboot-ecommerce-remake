@@ -84,7 +84,7 @@ public class CartItemServiceImpl implements CartItemService{
         }
         return cartItemMap;
     }
-
+    // converts the Map to a List because i prefer working with lists over maps for easier frontend iteration and access.
     private List<CartItemsResponse> fetchAllCartItems(Map<StoreInfo, List<CartItemModel>> cartItemMap){
         return cartItemMap
                 .entrySet()

@@ -1,5 +1,6 @@
 package com.ecommerce.ecommerce_remake.feature.order.service;
 
+import com.ecommerce.ecommerce_remake.common.dto.response.GetAllResponse;
 import com.ecommerce.ecommerce_remake.common.dto.response.PageResponse;
 import com.ecommerce.ecommerce_remake.common.util.Pagination;
 import com.ecommerce.ecommerce_remake.common.util.mapper.EntityToModelMapper;
@@ -8,7 +9,6 @@ import com.ecommerce.ecommerce_remake.feature.cart.model.CartItem;
 import com.ecommerce.ecommerce_remake.feature.cart.repository.CartItemRepository;
 import com.ecommerce.ecommerce_remake.feature.cart.service.CartService;
 import com.ecommerce.ecommerce_remake.feature.inventory.model.Inventory;
-import com.ecommerce.ecommerce_remake.feature.order.dto.OrderItemResponse;
 import com.ecommerce.ecommerce_remake.feature.order.enums.OrderStatus;
 import com.ecommerce.ecommerce_remake.feature.order.model.Order;
 import com.ecommerce.ecommerce_remake.feature.order.model.OrderItem;
@@ -36,12 +36,17 @@ public class OrderItemServiceImpl implements OrderItemService{
 
     private EntityToModelMapper<Order, OrderModel> entityToModelMapper = new EntityToModelMapper<>(OrderModel.class);
     @Override
-    public OrderItemResponse getUserOrders(Pageable pageable, OrderStatus status, Integer userId) {
-        Page<Order> orders = orderRepository.findByUserAndStatus(userId, status, pageable);
-        PageResponse pageResponse = pagination.getPagination(orders);
-        List<OrderModel> orderModelList = this.getOrderItems(orders);
-        return new OrderItemResponse(orderModelList, pageResponse);
+    public GetAllResponse getUserOrders(Pageable pageable, OrderStatus status, Integer userId) {
+        Page<Order> orders = orderRepository.getOrdersByUserAndStatus(userId, status, pageable);
+        return this.getAllOrdersWithPagination(orders);
     }
+
+    @Override
+    public GetAllResponse getStoreOrders(Pageable pageable, OrderStatus status, Integer storeId) {
+        Page<Order> orders = orderRepository.getOrdersByStoreAndStatus(storeId, status, pageable);
+        return this.getAllOrdersWithPagination(orders);
+    }
+
     @Transactional
     @Override
     public void buyAgain(Integer orderId, Integer cartId) {
@@ -63,6 +68,12 @@ public class OrderItemServiceImpl implements OrderItemService{
                 cartItemRepository.save(cartItem);
             }
         });
+    }
+
+    private GetAllResponse getAllOrdersWithPagination(Page<Order> orders){
+        PageResponse pageResponse = pagination.getPagination(orders);
+        List<OrderModel> orderModelList = this.getOrderItems(orders);
+        return new GetAllResponse(orderModelList, pageResponse);
     }
 
     private List<OrderModel> getOrderItems(Page<Order> orders){
