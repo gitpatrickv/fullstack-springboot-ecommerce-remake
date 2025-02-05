@@ -25,9 +25,9 @@ This project is a work in progress!
 More features are being added.
 
 ## Project Overview
-This personal project is focused on creating an online shopping platform similar to Shopee.
-The goal is to enhance my skills in both backend and frontend development, explore different techniques
-and refactor [My First Full-Stack Project](https://github.com/gitpatrickv/Fullstack-Ecommerce-Backend-Springboot), which has messy and unstructured code.
+This personal project focuses on creating an online shopping platform similar to Shopee.
+The goal is to enhance my skills in both backend and frontend development, explore different techniques (such as the Factory Pattern)
+and refactor [my first full-stack project](https://github.com/gitpatrickv/Fullstack-Ecommerce-Backend-Springboot), which has messy and unstructured code.
 Additionally, this project serves as a reference for when I use different backend or frontend frameworks, 
 helping me easily recall key concepts and techniques.
 

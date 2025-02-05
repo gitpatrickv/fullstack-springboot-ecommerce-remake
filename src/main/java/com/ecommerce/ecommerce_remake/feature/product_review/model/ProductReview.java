@@ -18,6 +18,7 @@ public class ProductReview extends AuditEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer productReviewId;
     private Integer productId;
+    private Integer storeId;
     private Integer rating;
     private String customerReview;
     private String sellerResponse;

@@ -11,9 +11,10 @@ import java.util.Optional;
 
 public interface ProductReviewService {
 
-    void rateProduct(RateRequest request, Integer productId, Integer orderId);
+    void rateProduct(RateRequest request, Integer productId, Integer orderId, Integer storeId);
     Optional<ProductReview> findReviewByUserAndProduct(Integer userId, Integer productId);
     void updateOrderStatus(Order order);
     RatingCount getProductRatingStarCount(String productId);
     GetAllResponse getProductReviews(String productId, Integer rating, Pageable pageable);
+    GetAllResponse getProductReviewsByStore(Integer storeId, Pageable pageable);
 }

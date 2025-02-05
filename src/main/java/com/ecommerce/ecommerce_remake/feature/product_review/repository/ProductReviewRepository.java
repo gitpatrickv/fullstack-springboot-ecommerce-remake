@@ -31,4 +31,6 @@ public interface ProductReviewRepository extends JpaRepository<ProductReview, In
                                           @Param("rating") Integer rating,
                                           Pageable pageable);
 
+    Page<ProductReview> findAllByStoreId(Integer storeId, Pageable pageable);
+
 }

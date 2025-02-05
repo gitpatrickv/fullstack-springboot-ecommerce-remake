@@ -134,6 +134,7 @@ CREATE TABLE IF NOT EXISTS order_items (
 CREATE TABLE IF NOT EXISTS product_reviews (
     `product_review_id` INT AUTO_INCREMENT PRIMARY KEY,
     `product_id` INT NOT NULL,
+    `store_id` INT NOT NULL,
     `user_id` INT NOT NULL,
     `rating` INT NOT NULL CHECK (rating > 0 AND rating <= 5),
     `customer_review` VARCHAR(255) DEFAULT NULL,

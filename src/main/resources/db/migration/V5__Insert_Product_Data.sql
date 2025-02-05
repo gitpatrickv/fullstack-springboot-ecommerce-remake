@@ -162,7 +162,7 @@ INSERT INTO products (
     last_modified
 )
 SELECT
-    1,
+    2,
     'LISTED',
     'Motors',
     'Motors',
@@ -176,7 +176,7 @@ WHERE NOT EXISTS (
     SELECT 1
     FROM products
     WHERE product_name = 'Motors'
-      AND store_id = 1
+      AND store_id = 2
 );
 
 INSERT INTO products (
@@ -192,7 +192,7 @@ INSERT INTO products (
     last_modified
 )
 SELECT
-    1,
+    2,
     'LISTED',
     'Home_Appliances',
     'Home Appliance',
@@ -206,7 +206,7 @@ WHERE NOT EXISTS (
     SELECT 1
     FROM products
     WHERE product_name = 'Home Appliance'
-      AND store_id = 1
+      AND store_id = 2
 );
 
 INSERT INTO products (
@@ -252,7 +252,7 @@ INSERT INTO products (
     last_modified
 )
 SELECT
-    1,
+    3,
     'LISTED',
     'Toys_And_Games',
     'Toys And Games',
@@ -266,7 +266,7 @@ WHERE NOT EXISTS (
     SELECT 1
     FROM products
     WHERE product_name = 'Toys And Games'
-      AND store_id = 1
+      AND store_id = 3
 );
 
 INSERT INTO products (
@@ -282,7 +282,7 @@ INSERT INTO products (
     last_modified
 )
 SELECT
-    1,
+    3,
     'LISTED',
     'Groceries',
     'Groceries',
@@ -296,7 +296,7 @@ WHERE NOT EXISTS (
     SELECT 1
     FROM products
     WHERE product_name = 'Groceries'
-      AND store_id = 1
+      AND store_id = 3
 );
 
 INSERT INTO products (
@@ -312,7 +312,7 @@ INSERT INTO products (
     last_modified
 )
 SELECT
-    1,
+    3,
     'LISTED',
     'Mobiles',
     'Mobiles',
@@ -326,7 +326,7 @@ WHERE NOT EXISTS (
     SELECT 1
     FROM products
     WHERE product_name = 'Mobiles'
-      AND store_id = 1
+      AND store_id = 3
 );
 
 INSERT INTO products (
@@ -402,7 +402,7 @@ INSERT INTO products (
     last_modified
 )
 SELECT
-    1,
+    2,
     'LISTED',
     'Accessories',
     'Accessories',
@@ -416,7 +416,7 @@ WHERE NOT EXISTS (
     SELECT 1
     FROM products
     WHERE product_name = 'Accessories'
-      AND store_id = 1
+      AND store_id = 2
 );
 
 INSERT INTO products (
@@ -432,7 +432,7 @@ INSERT INTO products (
     last_modified
 )
 SELECT
-    1,
+    2,
     'LISTED',
     'Computers',
     'Computers',
@@ -446,7 +446,7 @@ WHERE NOT EXISTS (
     SELECT 1
     FROM products
     WHERE product_name = 'Computers'
-      AND store_id = 1
+      AND store_id = 2
 );
 
 INSERT INTO products (

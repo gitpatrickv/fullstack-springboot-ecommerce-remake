@@ -46,8 +46,8 @@ public class ProductController {
     @GetMapping
     public ResponseEntity<GetAllResponse> getAllProducts(@RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
                                                          @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
-                                                         @RequestParam(value = "sortBy", defaultValue = "createdDate") String sortBy,
-                                                         @RequestParam(value = "sortDirection", defaultValue = "DESC") String sortDirection){
+                                                         @RequestParam(value = "sortBy", defaultValue = "productId") String sortBy,
+                                                         @RequestParam(value = "sortDirection", defaultValue = "ASC") String sortDirection){
         Pageable pageable = createPaginationAndSorting(pageNo, pageSize, sortBy, sortDirection);
         GetAllResponse getAllResponse = productService.getAllProducts(pageable);
         log.info("GetAllProducts - GET Response: 200 - Returning {} product records", getAllResponse.getModels().size());

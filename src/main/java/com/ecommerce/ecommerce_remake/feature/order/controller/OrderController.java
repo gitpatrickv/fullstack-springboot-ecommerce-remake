@@ -45,7 +45,7 @@ public class OrderController {
     @PostMapping("/{orderId}/{status}")
     public void updateOrderStatus(@PathVariable("orderId") Integer orderId,
                                   @PathVariable("status") OrderStatus status){
-        log.info("Received request to update status for Order ID={}, Setting status to = {}", orderId, status);
+        log.info("UpdateOrderStatus: Order ID={}, Order Status to = {}", orderId, status);
         orderService.updateOrderStatus(orderId, status);
     }
 

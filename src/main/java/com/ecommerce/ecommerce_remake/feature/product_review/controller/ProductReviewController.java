@@ -20,18 +20,19 @@ import static com.ecommerce.ecommerce_remake.common.util.PageableUtils.createPag
 public class ProductReviewController {
 
     private final ProductReviewService productReviewService;
-    @PostMapping("/{productId}/{orderId}/rate")
+    @PostMapping("/{productId}/{orderId}/{storeId}/rate")
     public void rateProduct(@RequestBody RateRequest request,
                             @PathVariable("productId") Integer productId,
-                            @PathVariable("orderId") Integer orderId){
+                            @PathVariable("orderId") Integer orderId,
+                            @PathVariable("storeId") Integer storeId){
 
-        log.info("Received request to Rate Product for ID={}", productId);
+        log.info("Rate Product - ID: {}, Rating: {}, Review: {}", productId, request.getRating(), request.getCustomerReview());
         if(request.getRating() < 1 || request.getRating() > 5){
             log.error("Rate Product - Invalid rating received: {} for product ID={}", request.getRating(), productId);
             throw new InvalidRatingException();
         }
 
-        productReviewService.rateProduct(request, productId, orderId);
+        productReviewService.rateProduct(request, productId, orderId, storeId);
     }
 
     @GetMapping("/{productId}/rating-count")
@@ -41,7 +42,7 @@ public class ProductReviewController {
         return ResponseEntity.ok().body(ratingCount);
     }
 
-    @GetMapping("/{productId}/reviews")
+    @GetMapping("/{productId}/product-reviews")
     public ResponseEntity<GetAllResponse> getProductReviews(@PathVariable("productId") String productId,
                                                             @RequestParam(value = "rating", required = false) Integer rating,
                                                             @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
@@ -51,6 +52,19 @@ public class ProductReviewController {
         Pageable pageable = createPaginationAndSorting(pageNo, pageSize, sortBy, sortDirection);
         GetAllResponse getAllResponse = productReviewService.getProductReviews(productId, rating, pageable);
         log.info("GetProductReviews - Product ID: {}, Rating: {} stars, Reviews Found: {}", productId, rating != null ? rating : "ALL", getAllResponse.getModels().size());
+        return ResponseEntity.ok().body(getAllResponse);
+    }
+
+    @GetMapping("/{storeId}/reviews")
+    public ResponseEntity<GetAllResponse> getProductReviewsByStore(@PathVariable("storeId") Integer storeId,
+                                                   @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
+                                                   @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+                                                   @RequestParam(value = "sortBy", defaultValue = "createdDate") String sortBy,
+                                                   @RequestParam(value = "sortDirection", defaultValue = "DESC") String sortDirection) {
+        Pageable pageable = createPaginationAndSorting(pageNo, pageSize, sortBy, sortDirection);
+        GetAllResponse getAllResponse = productReviewService.getProductReviewsByStore(storeId, pageable);
+        log.info("GetProductReviewsByStore - Store ID: {}, Reviews Found: {}, Sort By: {}, Sort Dir: {}",
+                storeId ,getAllResponse.getModels().size() ,sortBy, sortDirection);
         return ResponseEntity.ok().body(getAllResponse);
     }
 }
