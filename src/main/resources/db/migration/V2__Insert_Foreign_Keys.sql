@@ -21,8 +21,7 @@ ADD CONSTRAINT fk_cart_item_cart_id FOREIGN KEY (cart_id) REFERENCES cart(cart_i
 ADD CONSTRAINT fk_cart_item_inventory_id FOREIGN KEY (inventory_id) REFERENCES inventory(inventory_id);
 
 ALTER TABLE orders
-ADD CONSTRAINT fk_orders_store_id FOREIGN KEY (store_id) REFERENCES stores(store_id),
-ADD CONSTRAINT fk_orders_user_id FOREIGN KEY (user_id) REFERENCES users(user_id);
+ADD CONSTRAINT fk_orders_store_id FOREIGN KEY (store_id) REFERENCES stores(store_id);
 
 ALTER TABLE order_items
 ADD CONSTRAINT fk_order_item_order_id FOREIGN KEY (order_id) REFERENCES orders(order_id);

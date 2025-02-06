@@ -3,7 +3,6 @@ package com.ecommerce.ecommerce_remake.feature.order.service;
 import com.ecommerce.ecommerce_remake.common.dto.enums.Status;
 import com.ecommerce.ecommerce_remake.feature.address.model.Address;
 import com.ecommerce.ecommerce_remake.feature.address.service.AddressService;
-import com.ecommerce.ecommerce_remake.feature.cart.model.Cart;
 import com.ecommerce.ecommerce_remake.feature.cart.model.CartItem;
 import com.ecommerce.ecommerce_remake.feature.cart.repository.CartItemRepository;
 import com.ecommerce.ecommerce_remake.feature.cart.service.CartServiceImpl;
@@ -26,8 +25,6 @@ import com.ecommerce.ecommerce_remake.feature.product_review.service.ProductRevi
 import com.ecommerce.ecommerce_remake.feature.store.model.Store;
 import com.ecommerce.ecommerce_remake.feature.store_review.model.StoreReview;
 import com.ecommerce.ecommerce_remake.feature.store_review.service.StoreReviewService;
-import com.ecommerce.ecommerce_remake.feature.user.model.User;
-import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import com.ecommerce.ecommerce_remake.web.exception.OutOfStockException;
 import com.ecommerce.ecommerce_remake.web.exception.ResourceNotFoundException;
 import com.stripe.exception.StripeException;
@@ -49,7 +46,6 @@ import java.util.stream.Collectors;
 public class OrderServiceImpl implements OrderService{
 
     private final CartItemRepository cartItemRepository;
-    private final UserService userService;
     private final AddressService addressService;
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
@@ -60,19 +56,17 @@ public class OrderServiceImpl implements OrderService{
     private final StoreReviewService storeReviewService;
 
     @Override
-    public PaymentResponse placeOrder(OrderRequest request) throws StripeException {
-        User user = userService.getCurrentAuthenticatedUser();
-        Cart cart = user.getCart();
-        Address address = addressService.findAddressByStatusAndUser(Status.ACTIVE, user.getUserId());
+    public PaymentResponse placeOrder(OrderRequest request, Integer userId, Integer cartId) throws StripeException {
+        Address address = addressService.findAddressByStatusAndUser(Status.ACTIVE, userId);
 
-        List<CartItem> cartItemList = cartItemRepository.findByCart_CartIdAndCartItemIdIn(cart.getCartId(), request.getIds());
+        List<CartItem> cartItemList = cartItemRepository.findByCart_CartIdAndCartItemIdIn(cartId, request.getIds());
 
         Map<Store, List<CartItem>> cartItemMap = this.groupItemsByStore(cartItemList);
 
         for (Map.Entry<Store, List<CartItem>> cartItem : cartItemMap.entrySet()) {
             List<CartItem> cartItems = cartItem.getValue();
             Store store = cartItem.getKey();
-            Order savedOrder = this.createNewOrder(cartItems, address, user, request, store);
+            Order savedOrder = this.createNewOrder(cartItems, address, userId, request, store);
             List<OrderItem> orderItems = this.createAndSaveOrderItems(cartItems, savedOrder);
             savedOrder.setOrderItems(orderItems);
         }
@@ -114,7 +108,7 @@ public class OrderServiceImpl implements OrderService{
                 ));
     }
 
-    private Order createNewOrder(List<CartItem> cartItems, Address address, User user, OrderRequest request, Store store){
+    private Order createNewOrder(List<CartItem> cartItems, Address address, Integer userId, OrderRequest request, Store store){
         Order order = Order.builder()
                 .itemQuantity(cartItems.size())
                 .recipientName(address.getFullName())
@@ -125,7 +119,7 @@ public class OrderServiceImpl implements OrderService{
                 .isStoreRated(false)
                 .paymentMethod(request.getPaymentMethod())
                 .orderStatus(request.getPaymentMethod().equals(PaymentMethod.STRIPE_PAYMENT) ? OrderStatus.TO_SHIP : OrderStatus.TO_PAY)
-                .user(user)
+                .userId(userId)
                 .store(store)
                 .build();
         return orderRepository.save(order);
@@ -190,7 +184,7 @@ public class OrderServiceImpl implements OrderService{
 
         orderItems.forEach(orderItem -> {
             Integer productId = orderItem.getInventory().getProduct().getProductId();
-            Optional<ProductReview> productReview = productReviewService.findReviewByUserAndProduct(order.getUser().getUserId(), productId);
+            Optional<ProductReview> productReview = productReviewService.findReviewByUserAndProduct(order.getUserId(), productId);
 
             if(productReview.isPresent()){
                 log.info("Setting REVIEWED status for order item with ID={}", orderItem.getOrderItemId());
@@ -201,7 +195,7 @@ public class OrderServiceImpl implements OrderService{
     }
 
     private void validateIfUserAlreadyRatedStore(Order order){
-        Optional<StoreReview> storeReview = storeReviewService.findIfUserAlreadyRatedStore(order.getUser().getUserId(), order.getStore().getStoreId());
+        Optional<StoreReview> storeReview = storeReviewService.findIfUserAlreadyRatedStore(order.getUserId(), order.getStore().getStoreId());
 
         if(storeReview.isPresent()){
             order.setIsStoreRated(true);
