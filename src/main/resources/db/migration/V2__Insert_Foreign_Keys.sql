@@ -34,7 +34,6 @@ ALTER TABLE store_reviews
 ADD CONSTRAINT fk_store_reviews_user_id FOREIGN KEY (user_id) REFERENCES users(user_id);
 
 ALTER TABLE favorites
-ADD CONSTRAINT fk_favorites_user_id FOREIGN KEY (user_id) REFERENCES users(user_id),
 ADD CONSTRAINT fk_favorites_product_id FOREIGN KEY (product_id) REFERENCES products(product_id);
 
 ALTER TABLE store_following

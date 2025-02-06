@@ -52,8 +52,7 @@ public class AddressCrudFactoryService extends CrudService {
 
     @Override
     protected GetAllResponse getAll(Pageable pageable) {
-        User user = userService.getCurrentAuthenticatedUser();
-        List<Address> addresses = user.getAddresses();
+        List<Address> addresses = addressRepository.findAllByUser_UserId(userService.getUserId());
         List<AddressModel> addressModels = addresses.stream()
                 .map(address -> entityToModelMapper.map(address))
                 .sorted(Comparator.comparing(AddressModel::getStatus))
@@ -87,8 +86,7 @@ public class AddressCrudFactoryService extends CrudService {
     @Transactional
     @Override
     protected void changeStatus(String id, Status status) {
-        User user = userService.getCurrentAuthenticatedUser();
-        List<Address> addresses = user.getAddresses();
+        List<Address> addresses = addressRepository.findAllByUser_UserId(userService.getUserId());
 
         addresses.forEach(address -> address.setStatus(Status.INACTIVE));
 

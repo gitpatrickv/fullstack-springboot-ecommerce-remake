@@ -26,13 +26,16 @@ public class FavoritesController {
     @PutMapping("/{productId}/favorite-add")
     @ResponseStatus(HttpStatus.OK)
     public void addProductToFavorites(@PathVariable("productId") String productId){
-        favoritesService.addProductToFavorites(productId);
+        Integer userId = userService.getUserId();
+        favoritesService.addProductToFavorites(productId, userId);
     }
     @PostMapping("/favorite-add")
     @ResponseStatus(HttpStatus.OK)
     public void addProductsToFavorites(@RequestBody IdSetRequest request){
-        log.info("Received request to add cart items to favorites. IDs: {}", request.getIds());
-        favoritesService.addProductsToFavorites(request);
+        Integer userId = userService.getUserId();
+        Integer cartId = userService.getUserCartId();
+        log.info("AddProductToFavorites - UserId : {}, CartId: {}, ProductIds: {}", userId, cartId, request.getIds());
+        favoritesService.addProductsToFavorites(request, userId, cartId);
     }
     @GetMapping("/{productId}/favorite-status")
     @ResponseStatus(HttpStatus.OK)
@@ -49,11 +52,7 @@ public class FavoritesController {
         Integer userId = userService.getUserId();
         Pageable pageable = createPaginationAndSorting(pageNo, pageSize, sortBy, sortDirection);
         GetAllResponse getAllResponse = favoritesService.getFavorites(userId, pageable);
-
-        if(getAllResponse.getModels().isEmpty()){
-            log.warn("GetFavorites - No data found");
-        }
-        log.info("GetFavorites - GET Response: 200 - Returning {} product records", getAllResponse.getModels().size());
+        log.info("GetFavorites - GET Response: 200 - UserId: {}, Favorite Products : {}", userId, getAllResponse.getModels().size());
         return ResponseEntity.ok(getAllResponse);
 
     }

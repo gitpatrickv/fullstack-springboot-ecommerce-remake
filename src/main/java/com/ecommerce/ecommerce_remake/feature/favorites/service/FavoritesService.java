@@ -9,8 +9,8 @@ import org.springframework.data.domain.Pageable;
 import java.util.Optional;
 
 public interface FavoritesService {
-    void addProductToFavorites(String productId);
-    void addProductsToFavorites(IdSetRequest request);
+    void addProductToFavorites(String productId, Integer userId);
+    void addProductsToFavorites(IdSetRequest request, Integer userId, Integer cartId);
     FavoriteResponse getFavoriteStatus(String productId, Integer userId);
     Optional<Favorites> findFavoriteProduct(Integer productId, Integer userId);
     GetAllResponse getFavorites(Integer userId, Pageable pageable);
