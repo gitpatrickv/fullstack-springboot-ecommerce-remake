@@ -24,8 +24,6 @@ public class UserController {
     @PostMapping("/upload")
     @ResponseStatus(HttpStatus.OK)
     public void uploadUserAvatar(@RequestParam(value = "file") MultipartFile file){
-        log.info("Received the request to upload the user avatar.");
         userService.uploadUserAvatar(file);
-        log.info("The request to upload the user's avatar was handled.");
     }
 }

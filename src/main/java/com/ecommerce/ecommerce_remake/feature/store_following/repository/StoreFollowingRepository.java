@@ -12,9 +12,9 @@ import java.util.Optional;
 @Repository
 public interface StoreFollowingRepository extends JpaRepository<StoreFollowing, Integer> {
 
-    Optional<StoreFollowing> findByUser_UserIdAndStore_StoreId(Integer userId, Integer storeId);
-    void deleteByUser_UserIdAndStore_StoreId(Integer userId, Integer storeId);
-    List<StoreFollowing> findAllByUser_UserId(Integer userId);
+    Optional<StoreFollowing> findByUserIdAndStore_StoreId(Integer userId, Integer storeId);
+    void deleteByUserIdAndStore_StoreId(Integer userId, Integer storeId);
+    List<StoreFollowing> findAllByUserId(Integer userId);
     @Query("SELECT COUNT(sf) FROM StoreFollowing sf WHERE sf.store.storeId = :storeId")
     Integer countStoreFollowers(@Param("storeId") Integer storeId);
 }

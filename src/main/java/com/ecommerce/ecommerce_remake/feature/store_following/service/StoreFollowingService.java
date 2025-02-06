@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface StoreFollowingService {
 
-    void followStore(Integer storeId);
+    void followStore(Integer storeId, Integer userId);
     Following getFollowingStoreStatus(Integer userId, Integer storeId);
     List<StoreFollowListResponse> getAllFollowedStores(Integer userId);
 }

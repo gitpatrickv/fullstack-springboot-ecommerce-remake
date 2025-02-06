@@ -24,7 +24,8 @@ public class StoreFollowingController {
     @PutMapping("/{storeId}/follow")
     @ResponseStatus(HttpStatus.OK)
     public void followStore(@PathVariable("storeId") Integer storeId){
-        storeFollowingService.followStore(storeId);
+        Integer userId = userService.getUserId();
+        storeFollowingService.followStore(storeId, userId);
     }
     @GetMapping("/{storeId}/follow-status")
     @ResponseStatus(HttpStatus.OK)

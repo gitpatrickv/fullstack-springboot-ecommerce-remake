@@ -6,8 +6,6 @@ import com.ecommerce.ecommerce_remake.feature.store_following.dto.Following;
 import com.ecommerce.ecommerce_remake.feature.store_following.dto.StoreFollowListResponse;
 import com.ecommerce.ecommerce_remake.feature.store_following.model.StoreFollowing;
 import com.ecommerce.ecommerce_remake.feature.store_following.repository.StoreFollowingRepository;
-import com.ecommerce.ecommerce_remake.feature.user.model.User;
-import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,18 +19,16 @@ import java.util.Optional;
 public class StoreFollowingServiceImpl implements StoreFollowingService{
 
     private final StoreFollowingRepository storeFollowingRepository;
-    private final UserService userService;
     private final StoreService storeService;
     @Override
-    public void followStore(Integer storeId) {
-        User user = userService.getCurrentAuthenticatedUser();
-        Optional<StoreFollowing> storeFollowing = this.getStoreFollowing(user.getUserId(), storeId);
+    public void followStore(Integer storeId, Integer userId) {
+        Optional<StoreFollowing> storeFollowing = this.getStoreFollowing(userId, storeId);
 
         if(storeFollowing.isPresent()){
-            storeFollowingRepository.deleteByUser_UserIdAndStore_StoreId(user.getUserId(), storeId);
+            storeFollowingRepository.deleteByUserIdAndStore_StoreId(userId, storeId);
         } else {
             Optional<Store> store = storeService.getStoreById(String.valueOf(storeId));
-            StoreFollowing following = new StoreFollowing(user, store.get());
+            StoreFollowing following = new StoreFollowing(userId, store.get());
             storeFollowingRepository.save(following);
         }
     }
@@ -45,7 +41,7 @@ public class StoreFollowingServiceImpl implements StoreFollowingService{
 
     @Override
     public List<StoreFollowListResponse> getAllFollowedStores(Integer userId) {
-        return storeFollowingRepository.findAllByUser_UserId(userId).stream()
+        return storeFollowingRepository.findAllByUserId(userId).stream()
                 .map(storeFollowing -> {
                     Store store = storeFollowing.getStore();
                     return new StoreFollowListResponse(store.getStoreId(), store.getStoreName(), store.getPicture());
@@ -54,6 +50,6 @@ public class StoreFollowingServiceImpl implements StoreFollowingService{
 
 
     private Optional<StoreFollowing> getStoreFollowing(Integer userId, Integer storeId){
-        return storeFollowingRepository.findByUser_UserIdAndStore_StoreId(userId, storeId);
+        return storeFollowingRepository.findByUserIdAndStore_StoreId(userId, storeId);
     }
 }
