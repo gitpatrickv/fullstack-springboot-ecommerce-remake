@@ -23,8 +23,8 @@ import com.ecommerce.ecommerce_remake.feature.product.repository.ProductReposito
 import com.ecommerce.ecommerce_remake.feature.product_review.model.ProductReview;
 import com.ecommerce.ecommerce_remake.feature.product_review.service.ProductReviewService;
 import com.ecommerce.ecommerce_remake.feature.store.model.Store;
-import com.ecommerce.ecommerce_remake.feature.store_review.model.StoreReview;
-import com.ecommerce.ecommerce_remake.feature.store_review.service.StoreReviewService;
+import com.ecommerce.ecommerce_remake.feature.store_rating.model.StoreRating;
+import com.ecommerce.ecommerce_remake.feature.store_rating.service.StoreRatingService;
 import com.ecommerce.ecommerce_remake.web.exception.OutOfStockException;
 import com.ecommerce.ecommerce_remake.web.exception.ResourceNotFoundException;
 import com.stripe.exception.StripeException;
@@ -53,7 +53,7 @@ public class OrderServiceImpl implements OrderService{
     private final ProductRepository productRepository;
     private final PaymentService paymentService;
     private final ProductReviewService productReviewService;
-    private final StoreReviewService storeReviewService;
+    private final StoreRatingService storeRatingService;
 
     @Override
     public PaymentResponse placeOrder(OrderRequest request, Integer userId, Integer cartId) throws StripeException {
@@ -195,7 +195,7 @@ public class OrderServiceImpl implements OrderService{
     }
 
     private void validateIfUserAlreadyRatedStore(Order order){
-        Optional<StoreReview> storeReview = storeReviewService.findIfUserAlreadyRatedStore(order.getUserId(), order.getStore().getStoreId());
+        Optional<StoreRating> storeReview = storeRatingService.findIfUserAlreadyRatedStore(order.getUserId(), order.getStore().getStoreId());
 
         if(storeReview.isPresent()){
             order.setIsStoreRated(true);

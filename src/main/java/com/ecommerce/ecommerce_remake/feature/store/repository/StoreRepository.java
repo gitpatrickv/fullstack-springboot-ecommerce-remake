@@ -19,7 +19,7 @@ public interface StoreRepository extends JpaRepository<Store, Integer> {
             value = """
                     UPDATE stores s
                     SET s.average_rating = COALESCE((SELECT AVG(sr.rating)
-                    FROM store_reviews sr
+                    FROM store_ratings sr
                     WHERE sr.store_id = s.store_id), 0)
                     WHERE s.store_id = :storeId
                     """)
@@ -29,7 +29,7 @@ public interface StoreRepository extends JpaRepository<Store, Integer> {
             value = """
                     UPDATE stores s
                     SET s.reviews_count = (SELECT COUNT(sr.store_id)
-                    FROM store_reviews sr
+                    FROM store_ratings sr
                     WHERE sr.store_id = s.store_id)
                     WHERE s.store_id = :storeId
                     """)
