@@ -18,13 +18,14 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_DEFAULT;
 public class ProductReviewModel extends Model {
 
     private Integer productReviewId;
-    private Integer productId;
     private Integer rating;
     private String customerReview;
     private String sellerResponse;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime createdDate;
     private String name;
-    private String imageUrl;
+    private String userImageUrl;
+    private String productName;
+    private String productImageUrl;
 
 }

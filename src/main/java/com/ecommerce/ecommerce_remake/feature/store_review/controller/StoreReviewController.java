@@ -15,7 +15,7 @@ public class StoreReviewController {
     private final StoreReviewService storeReviewService;
     @PostMapping("/{storeId}/{orderId}/rate")
     public void rateStore(@RequestBody RateRequest request, @PathVariable("storeId") Integer storeId, @PathVariable("orderId") Integer orderId) {
-        log.info("Received request to Rate Store with ID={}", storeId);
+        log.info("Rate Store - StoreId: {}, OrderId: {} Rating: {} ", storeId, orderId, request.getRating());
 
         if(request.getRating() < 1 || request.getRating() > 5){
             log.error("Rate Store - Invalid rating received: {} for store ID={}", request.getRating(), storeId);

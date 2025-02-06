@@ -10,7 +10,9 @@ import com.ecommerce.ecommerce_remake.feature.order.model.Order;
 import com.ecommerce.ecommerce_remake.feature.order.model.OrderItem;
 import com.ecommerce.ecommerce_remake.feature.order.repository.OrderItemRepository;
 import com.ecommerce.ecommerce_remake.feature.order.repository.OrderRepository;
+import com.ecommerce.ecommerce_remake.feature.product.model.Product;
 import com.ecommerce.ecommerce_remake.feature.product.repository.ProductRepository;
+import com.ecommerce.ecommerce_remake.feature.product.service.ProductService;
 import com.ecommerce.ecommerce_remake.feature.product_review.dto.ProductRatingCount;
 import com.ecommerce.ecommerce_remake.feature.product_review.dto.RateRequest;
 import com.ecommerce.ecommerce_remake.feature.product_review.dto.RatingCount;
@@ -41,26 +43,27 @@ public class ProductReviewServiceImpl implements ProductReviewService {
     private final OrderItemRepository orderItemRepository;
     private final OrderRepository orderRepository;
     private final Pagination pagination;
+    private final ProductService productService;
 
     private EntityToModelMapper<ProductReview, ProductReviewModel> entityToModelMapper = new EntityToModelMapper<>(ProductReviewModel.class);
 
     @Override
     public void rateProduct(RateRequest request, Integer productId, Integer orderId, Integer storeId) {
         User user = userService.getCurrentAuthenticatedUser();
-
+        Product product = productService.getProductById(productId);
         this.validateProductReview(user.getUserId(), productId);
 
         ProductReview productReview = ProductReview.builder()
-                .productId(productId)
                 .storeId(storeId)
                 .rating(request.getRating())
                 .customerReview(request.getCustomerReview())
                 .user(user)
+                .product(product)
                 .build();
-        ProductReview savedReview = productReviewRepository.saveAndFlush(productReview);
+        productReviewRepository.saveAndFlush(productReview);
         this.updateOrderItemStatus(productId, orderId);
-        productRepository.updateProductAverageRating(savedReview.getProductId());
-        productRepository.updateProductReviewsCount(savedReview.getProductId());
+        productRepository.updateProductAverageRating(productId);
+        productRepository.updateProductReviewsCount(productId);
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found."));
@@ -82,13 +85,13 @@ public class ProductReviewServiceImpl implements ProductReviewService {
     public GetAllResponse getProductReviews(String productId, Integer rating, Pageable pageable) {
         Integer id = Integer.parseInt(productId);
         Page<ProductReview> productReviews = productReviewRepository.getProductReviews(id, rating, pageable);
-        return this.getReviews(productReviews);
+        return this.getReviews(productReviews, false);
     }
 
     @Override
     public GetAllResponse getProductReviewsByStore(Integer storeId, Pageable pageable) {
         Page<ProductReview> productReviews = productReviewRepository.findAllByStoreId(storeId, pageable);
-        return this.getReviews(productReviews);
+        return this.getReviews(productReviews, true);
     }
 
     @Override
@@ -96,18 +99,23 @@ public class ProductReviewServiceImpl implements ProductReviewService {
         return productReviewRepository.findIfReviewAlreadyExistForUser(userId, productId);
     }
 
-    private GetAllResponse getReviews(Page<ProductReview> productReviews) {
+    private GetAllResponse getReviews(Page<ProductReview> productReviews, boolean isProductInfoNeeded) {
         PageResponse pageResponse = pagination.getPagination(productReviews);
-        List<ProductReviewModel> productReviewModels = this.getProductReviewModelList(productReviews);
+        List<ProductReviewModel> productReviewModels = this.getProductReviewModelList(productReviews, isProductInfoNeeded);
         return new GetAllResponse(productReviewModels, pageResponse);
     }
 
-    private List<ProductReviewModel> getProductReviewModelList(Page<ProductReview> productReviews) {
+    private List<ProductReviewModel> getProductReviewModelList(Page<ProductReview> productReviews, boolean isProductInfoNeeded) {
         return productReviews.stream()
                 .map(productReview -> {
+                    Product product = productReview.getProduct();
                     ProductReviewModel productReviewModel = entityToModelMapper.map(productReview);
                     productReviewModel.setName(productReview.getUser().getName());
-                    productReviewModel.setImageUrl(productReview.getUser().getPicture());
+                    productReviewModel.setUserImageUrl(productReview.getUser().getPicture());
+                    if(isProductInfoNeeded) {
+                        productReviewModel.setProductName(product.getProductName());
+                        productReviewModel.setProductImageUrl(product.getProductImages().get(0).getProductImage());
+                    }
                     return productReviewModel;
                 })
                 .toList();
