@@ -25,11 +25,14 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(this.getUserId())
                 .orElseThrow(() -> new UsernameNotFoundException(StrUtil.USER_NOT_FOUND));
     }
-
     @Override
     public Integer getUserId() {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return user.getUserId();
+        return getUserObject().getUserId();
+    }
+
+    @Override
+    public Integer getUserCartId() {
+        return this.getUserObject().getCart().getCartId();
     }
 
     @Override
@@ -43,5 +46,9 @@ public class UserServiceImpl implements UserService {
         User user = this.getCurrentAuthenticatedUser();
         user.setPicture(productImageService.processImages(file));
         userRepository.save(user);
+    }
+
+    private User getUserObject() {
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 }

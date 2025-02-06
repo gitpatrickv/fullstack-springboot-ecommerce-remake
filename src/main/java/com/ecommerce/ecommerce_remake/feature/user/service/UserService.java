@@ -8,6 +8,7 @@ public interface UserService {
 
     User getCurrentAuthenticatedUser();
     Integer getUserId();
+    Integer getUserCartId();
     UserModel getCurrentUserInfo();
     void uploadUserAvatar(MultipartFile file);
 }

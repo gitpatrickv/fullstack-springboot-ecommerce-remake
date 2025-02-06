@@ -67,7 +67,7 @@ public class CartServiceImpl implements CartService{
 
     @Override
     public Cart getCart() {
-        return cartRepository.findByUser_UserId(userService.getUserId())
+        return cartRepository.findById(userService.getUserCartId())
                 .orElseThrow(() -> new ResourceNotFoundException("Cart not found."));
     }
 

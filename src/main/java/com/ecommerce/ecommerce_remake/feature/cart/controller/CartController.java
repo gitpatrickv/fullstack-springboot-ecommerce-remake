@@ -3,6 +3,7 @@ package com.ecommerce.ecommerce_remake.feature.cart.controller;
 import com.ecommerce.ecommerce_remake.feature.cart.dto.AddToCartRequest;
 import com.ecommerce.ecommerce_remake.feature.cart.dto.CartTotalResponse;
 import com.ecommerce.ecommerce_remake.feature.cart.service.CartService;
+import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import com.ecommerce.ecommerce_remake.web.exception.OutOfStockException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.Set;
 @Slf4j
 public class CartController {
     private final CartService cartService;
+    private final UserService userService;
     @PostMapping("/add")
     public ResponseEntity<String> addToCart(@RequestBody @Valid AddToCartRequest request){
         log.info("Received the request to add a new items to the cart");
@@ -48,10 +50,10 @@ public class CartController {
         }
     }
 
-    @GetMapping("/{ids}/{cartId}/total")
+    @GetMapping("/{ids}/total")
     @ResponseStatus(HttpStatus.OK)
-    public CartTotalResponse getCartTotal(@PathVariable("ids") Set<Integer> ids,@PathVariable("cartId") Integer cartId){
-
+    public CartTotalResponse getCartTotal(@PathVariable("ids") Set<Integer> ids){
+        Integer cartId = userService.getUserCartId();
         if(ids.isEmpty()){
             log.warn("getCartTotal: No IDs provided. Unable to compute cart total.");
         }
