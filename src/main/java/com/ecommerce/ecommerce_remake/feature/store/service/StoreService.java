@@ -12,4 +12,5 @@ public interface StoreService {
     StoreModel getUserStore();
     void uploadStoreAvatar(MultipartFile file);
     CountResponse getStoreMetrics(Integer storeId);
+    Store getStore();
 }

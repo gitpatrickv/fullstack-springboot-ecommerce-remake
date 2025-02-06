@@ -22,10 +22,10 @@ public class StoreController {
     public ResponseEntity<StoreModel> getUserStore() {
         StoreModel storeModel = storeService.getUserStore();
         if(storeModel != null){
-            log.info("Get Response: 200 - returning store data {}", storeModel);
+            log.info("GetUserStore - Get Response: 200 - Store data: {}", storeModel);
             return new ResponseEntity<>(storeModel, HttpStatus.OK);
         } else {
-            log.info("Get Response: 200 - Store data not found");
+            log.info("Get Response: 404 - Store data not found");
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
@@ -33,9 +33,7 @@ public class StoreController {
     @PostMapping("/upload")
     @ResponseStatus(HttpStatus.OK)
     public void uploadStoreAvatar(@RequestParam(value = "file") MultipartFile file){
-        log.info("Received the request to upload the store avatar.");
         storeService.uploadStoreAvatar(file);
-        log.info("The request to upload the store's avatar was handled.");
     }
 
     @GetMapping("/{storeId}/store-metrics")

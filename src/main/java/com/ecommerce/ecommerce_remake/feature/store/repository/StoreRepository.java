@@ -34,4 +34,6 @@ public interface StoreRepository extends JpaRepository<Store, Integer> {
                     WHERE s.store_id = :storeId
                     """)
     void updateStoreReviewsCount(@Param("storeId") Integer storeId);
+
+    Optional<Store> findByUser_UserId(Integer userId);
 }

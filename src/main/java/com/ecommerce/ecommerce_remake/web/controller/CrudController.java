@@ -31,7 +31,7 @@ public class CrudController {
         this.serviceFactory = serviceFactory;
     }
 
-    @PostMapping("/{module}")
+    @PostMapping("/{module}/save")
     public ResponseEntity<Model> saveResource(@PathVariable Module module, @Valid @RequestBody String jsonRequest){
         CrudService service = getService(module);
         Response response = service.create(jsonRequest);
@@ -97,7 +97,7 @@ public class CrudController {
         }
     }
 
-    @PutMapping("/{module}")
+    @PutMapping("/{module}/update")
     public ResponseEntity<Model> updateOneResource(@PathVariable Module module, @Valid @RequestBody String jsonRequest){
         CrudService service = getService(module);
         Response response = service.update(jsonRequest);

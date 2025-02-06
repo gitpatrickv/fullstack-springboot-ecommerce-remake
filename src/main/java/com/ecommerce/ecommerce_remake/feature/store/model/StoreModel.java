@@ -27,7 +27,6 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_DEFAULT;
 public class StoreModel extends Model {
 
     @Null(groups = CreateInfo.class)
-    @NotNull(groups = UpdateInfo.class)
     private Integer storeId;
     @UniqueStoreValid
     @NotNull(message = "{store.name.required}")
