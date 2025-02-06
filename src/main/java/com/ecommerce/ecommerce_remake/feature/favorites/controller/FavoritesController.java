@@ -4,6 +4,7 @@ import com.ecommerce.ecommerce_remake.common.dto.response.GetAllResponse;
 import com.ecommerce.ecommerce_remake.feature.cart.dto.IdSetRequest;
 import com.ecommerce.ecommerce_remake.feature.favorites.dto.FavoriteResponse;
 import com.ecommerce.ecommerce_remake.feature.favorites.service.FavoritesService;
+import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,7 @@ import static com.ecommerce.ecommerce_remake.common.util.PageableUtils.createPag
 public class FavoritesController {
 
     private final FavoritesService favoritesService;
+    private final UserService userService;
 
     @PutMapping("/{productId}/favorite-add")
     @ResponseStatus(HttpStatus.OK)
@@ -32,19 +34,19 @@ public class FavoritesController {
         log.info("Received request to add cart items to favorites. IDs: {}", request.getIds());
         favoritesService.addProductsToFavorites(request);
     }
-    @GetMapping("/{productId}/{userId}/favorite-status")
+    @GetMapping("/{productId}/favorite-status")
     @ResponseStatus(HttpStatus.OK)
-    public FavoriteResponse getFavoriteStatus(@PathVariable("productId") String productId,
-                                              @PathVariable("userId") Integer userId){
+    public FavoriteResponse getFavoriteStatus(@PathVariable("productId") String productId){
+        Integer userId = userService.getUserId();
         return favoritesService.getFavoriteStatus(productId, userId);
     }
 
-    @GetMapping("/{userId}/favorites")
+    @GetMapping("/favorites")
     public ResponseEntity<GetAllResponse> getFavorites(@RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
                                                        @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
                                                        @RequestParam(value = "sortBy", defaultValue = "createdDate") String sortBy,
-                                                       @RequestParam(value = "sortDirection", defaultValue = "DESC") String sortDirection,
-                                                       @PathVariable("userId") Integer userId){
+                                                       @RequestParam(value = "sortDirection", defaultValue = "DESC") String sortDirection){
+        Integer userId = userService.getUserId();
         Pageable pageable = createPaginationAndSorting(pageNo, pageSize, sortBy, sortDirection);
         GetAllResponse getAllResponse = favoritesService.getFavorites(userId, pageable);
 

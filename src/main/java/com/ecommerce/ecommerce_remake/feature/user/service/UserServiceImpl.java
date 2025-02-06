@@ -22,9 +22,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getCurrentAuthenticatedUser() {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepository.findByEmail(email)
+        return userRepository.findById(this.getUserId())
                 .orElseThrow(() -> new UsernameNotFoundException(StrUtil.USER_NOT_FOUND));
+    }
+
+    @Override
+    public Integer getUserId() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return user.getUserId();
     }
 
     @Override

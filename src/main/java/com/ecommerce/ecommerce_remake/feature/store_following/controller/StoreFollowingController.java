@@ -3,6 +3,7 @@ package com.ecommerce.ecommerce_remake.feature.store_following.controller;
 import com.ecommerce.ecommerce_remake.feature.store_following.dto.Following;
 import com.ecommerce.ecommerce_remake.feature.store_following.dto.StoreFollowListResponse;
 import com.ecommerce.ecommerce_remake.feature.store_following.service.StoreFollowingService;
+import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,23 +19,25 @@ import java.util.List;
 public class StoreFollowingController {
 
     private final StoreFollowingService storeFollowingService;
+    private final UserService userService;
 
     @PutMapping("/{storeId}/follow")
     @ResponseStatus(HttpStatus.OK)
     public void followStore(@PathVariable("storeId") Integer storeId){
         storeFollowingService.followStore(storeId);
     }
-    @GetMapping("/{userId}/{storeId}/follow-status")
+    @GetMapping("/{storeId}/follow-status")
     @ResponseStatus(HttpStatus.OK)
-    public Following getFollowingStoreStatus(@PathVariable("userId") Integer userId,
-                                             @PathVariable("storeId") Integer storeId){
+    public Following getFollowingStoreStatus(@PathVariable("storeId") Integer storeId){
+        Integer userId = userService.getUserId();
         return storeFollowingService.getFollowingStoreStatus(userId,storeId);
     }
 
-    @GetMapping("/{userId}/followed-stores")
-    public ResponseEntity<List<StoreFollowListResponse>> getAllFollowedStores(@PathVariable Integer userId) {
+    @GetMapping("/followed-stores")
+    public ResponseEntity<List<StoreFollowListResponse>> getAllFollowedStores() {
+        Integer userId = userService.getUserId();
         List<StoreFollowListResponse> followList = storeFollowingService.getAllFollowedStores(userId);
-        log.info("GetAllFollowedStores - GET Response: 200 - Returning {} followed store records", followList.size());
+        log.info("GetAllFollowedStores - GET Response: 200 - UserId: {}, Followed Store: {} ", userId, followList.size());
         return ResponseEntity.ok(followList);
     }
 }

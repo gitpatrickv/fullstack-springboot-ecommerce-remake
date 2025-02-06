@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface UserService {
 
     User getCurrentAuthenticatedUser();
+    Integer getUserId();
     UserModel getCurrentUserInfo();
     void uploadUserAvatar(MultipartFile file);
 }
