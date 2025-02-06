@@ -30,6 +30,7 @@ public class CartServiceImpl implements CartService{
     private final InventoryService inventoryService;
     private final CartItemRepository cartItemRepository;
     private final CartRepository cartRepository;
+    private final UserService userService;
 
     @Override
     public void addToCart(AddToCartRequest request) {
@@ -65,13 +66,13 @@ public class CartServiceImpl implements CartService{
     }
 
     @Override
-    public Cart getCartById(Integer cartId) {
-        return cartRepository.findById(cartId)
+    public Cart getCart() {
+        return cartRepository.findByUser_UserId(userService.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("Cart not found."));
     }
 
     private void addProductsToCart(AddToCartRequest request, Inventory inventory){
-        Cart cart = this.getCartById(request.getCartId());
+        Cart cart = this.getCart();
 
         Optional<CartItem> existingCartItem = cartItemService.findExistingCartItem(inventory.getInventoryId(), cart.getCartId());
 

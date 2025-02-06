@@ -41,9 +41,9 @@ public class OrderItemController {
         return ResponseEntity.ok().body(getAllResponse);
     }
 
-    @PostMapping("/{orderId}/{cartId}/add")
-    public void buyAgain(@PathVariable("orderId") Integer orderId, @PathVariable("cartId") Integer cartId){
+    @PostMapping("/{orderId}/add")
+    public void buyAgain(@PathVariable("orderId") Integer orderId){
         log.info("User initiated a repurchase request.");
-        orderItemService.buyAgain(orderId, cartId);
+        orderItemService.buyAgain(orderId);
     }
 }

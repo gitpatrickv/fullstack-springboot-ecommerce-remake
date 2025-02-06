@@ -33,7 +33,6 @@ public class OrderItemServiceImpl implements OrderItemService{
     private final CartItemRepository cartItemRepository;
     private final Pagination pagination;
     private final CartService cartService;
-
     private EntityToModelMapper<Order, OrderModel> entityToModelMapper = new EntityToModelMapper<>(OrderModel.class);
     @Override
     public GetAllResponse getUserOrders(Pageable pageable, OrderStatus status, Integer userId) {
@@ -49,8 +48,8 @@ public class OrderItemServiceImpl implements OrderItemService{
 
     @Transactional
     @Override
-    public void buyAgain(Integer orderId, Integer cartId) {
-        Cart cart = cartService.getCartById(cartId);
+    public void buyAgain(Integer orderId) {
+        Cart cart = cartService.getCart();
 
         List<OrderItem> orderItems = orderItemRepository.findAllByOrder_OrderId(orderId);
 

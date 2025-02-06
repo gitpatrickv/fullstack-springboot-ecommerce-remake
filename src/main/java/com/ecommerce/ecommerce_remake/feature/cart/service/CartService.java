@@ -11,6 +11,6 @@ public interface CartService {
     void addToCart(AddToCartRequest request);
     void addToCartWithVariation(AddToCartRequest request, String color, String size);
     CartTotalResponse getCartTotal(Set<Integer> ids, Integer cartId);
-    Cart getCartById(Integer cartId);
+    Cart getCart();
 
 }

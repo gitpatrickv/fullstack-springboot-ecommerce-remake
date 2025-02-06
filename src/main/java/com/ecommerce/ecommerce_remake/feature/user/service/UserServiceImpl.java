@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void uploadUserAvatar(MultipartFile file) {
-        User user = getCurrentAuthenticatedUser();
+        User user = this.getCurrentAuthenticatedUser();
         user.setPicture(productImageService.processImages(file));
         userRepository.save(user);
     }
