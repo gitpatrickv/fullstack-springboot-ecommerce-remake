@@ -55,8 +55,8 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     public Store getStore(){
-        Integer userId = userService.getUserId();
-        return storeRepository.findByUser_UserId(userId)
+        Integer storeId = userService.getStoreId();
+        return storeRepository.findById(storeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Store not found."));
     }
 }

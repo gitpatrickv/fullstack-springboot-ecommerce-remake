@@ -70,7 +70,7 @@ helping me easily recall key concepts and techniques.
 
 
 ## Entity Relationship Diagram
-![Image](https://github.com/user-attachments/assets/0a6f9fe3-5260-4957-a388-31981eaec15e)
+![Image](https://github.com/user-attachments/assets/4049dd2a-0d39-4e7a-a7a0-6046e25c72e6)
 
 ## License
 This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file for more details.

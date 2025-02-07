@@ -42,7 +42,7 @@ public class User extends AuditEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "user")
     private Store store;
 
     @OneToOne(mappedBy = "user")

@@ -56,7 +56,7 @@ public class CrudController {
         Pageable pageable = createPaginationAndSorting(pageNo, pageSize, sortBy, sortDirection);
         CrudService service = getService(module);
         Response response = service.retrieveAll(pageable);
-        log.info("CrudService.retrieve() response code={}", response.getResponseCode());
+        log.info("CrudService.retrieveAll() response code={}", response.getResponseCode());
         if (response.getResponseCode().equals(ResponseCode.RESP_SUCCESS)) {
             GetAllResponse getAllResponse;
             try {

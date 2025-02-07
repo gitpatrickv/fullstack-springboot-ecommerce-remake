@@ -21,7 +21,7 @@ public class ProductReviewModel extends Model {
     private Integer rating;
     private String customerReview;
     private String sellerResponse;
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime createdDate;
     private String name;
     private String userImageUrl;

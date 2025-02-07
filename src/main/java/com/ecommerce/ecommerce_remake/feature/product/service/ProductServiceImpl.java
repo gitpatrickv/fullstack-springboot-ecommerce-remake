@@ -15,8 +15,7 @@ import com.ecommerce.ecommerce_remake.feature.product.model.ProductModel;
 import com.ecommerce.ecommerce_remake.feature.product.repository.ProductRepository;
 import com.ecommerce.ecommerce_remake.feature.product_image.service.ProductImageService;
 import com.ecommerce.ecommerce_remake.feature.store.model.Store;
-import com.ecommerce.ecommerce_remake.feature.user.model.User;
-import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
+import com.ecommerce.ecommerce_remake.feature.store.service.StoreService;
 import com.ecommerce.ecommerce_remake.web.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -34,10 +33,10 @@ import java.util.Set;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
-    private final UserService userService;
     private final InventoryService inventoryService;
     private final ProductImageService productImageService;
     private final Pagination pagination;
+    private final StoreService storeService;
 
     private EntityToModelMapper<Product, ProductInfoResponse> entityToModelMapper = new EntityToModelMapper<>(ProductInfoResponse.class);
 
@@ -45,8 +44,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void saveProduct(ProductModel model, MultipartFile[] files) {
 
-        User user = userService.getCurrentAuthenticatedUser();
-        Store store = user.getStore();
+        Store store = storeService.getStore();
 
         Product product = Product.builder()
                 .productName(model.getProductName())

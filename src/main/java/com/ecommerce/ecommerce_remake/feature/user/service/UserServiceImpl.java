@@ -36,6 +36,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Integer getStoreId() {
+        User user = this.getUserObject();
+        return user.getStore() != null ? user.getStore().getStoreId() : null;
+    }
+
+    @Override
     public UserModel getCurrentUserInfo() {
         User user = this.getCurrentAuthenticatedUser();
         return entityToModelMapper.map(user);
@@ -49,6 +55,9 @@ public class UserServiceImpl implements UserService {
     }
 
     private User getUserObject() {
-        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return (User) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
     }
 }

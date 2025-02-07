@@ -16,6 +16,7 @@ import com.ecommerce.ecommerce_remake.feature.product.service.ProductService;
 import com.ecommerce.ecommerce_remake.feature.product_review.dto.ProductRatingCount;
 import com.ecommerce.ecommerce_remake.feature.product_review.dto.RateRequest;
 import com.ecommerce.ecommerce_remake.feature.product_review.dto.RatingCount;
+import com.ecommerce.ecommerce_remake.feature.product_review.dto.ReplyRequest;
 import com.ecommerce.ecommerce_remake.feature.product_review.model.ProductReview;
 import com.ecommerce.ecommerce_remake.feature.product_review.model.ProductReviewModel;
 import com.ecommerce.ecommerce_remake.feature.product_review.repository.ProductReviewRepository;
@@ -95,8 +96,10 @@ public class ProductReviewServiceImpl implements ProductReviewService {
     }
 
     @Override
-    public Optional<ProductReview> findReviewByUserAndProduct(Integer userId, Integer productId) {
-        return productReviewRepository.findIfReviewAlreadyExistForUser(userId, productId);
+    public void replyToReview(ReplyRequest request) {
+        ProductReview productReview = this.getProductReviewById(request.getProductReviewId());
+        productReview.setSellerResponse(request.getReply());
+        productReviewRepository.save(productReview);
     }
 
     private GetAllResponse getReviews(Page<ProductReview> productReviews, boolean isProductInfoNeeded) {
@@ -149,6 +152,11 @@ public class ProductReviewServiceImpl implements ProductReviewService {
         return ratingCount;
     }
 
+    @Override
+    public Optional<ProductReview> findReviewByUserAndProduct(Integer userId, Integer productId) {
+        return productReviewRepository.findIfReviewAlreadyExistForUser(userId, productId);
+    }
+
     private void validateProductReview(Integer userId, Integer productId){
         Optional<ProductReview> productReview = this.findReviewByUserAndProduct(userId, productId);
         if(productReview.isPresent()){
@@ -175,5 +183,10 @@ public class ProductReviewServiceImpl implements ProductReviewService {
             order.setOrderStatus(OrderStatus.RATED);
             orderRepository.save(order);
         }
+    }
+
+    private ProductReview getProductReviewById(Integer productReviewId) {
+        return productReviewRepository.findById(productReviewId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product review not found."));
     }
 }

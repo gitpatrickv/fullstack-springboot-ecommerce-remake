@@ -4,6 +4,7 @@ import com.ecommerce.ecommerce_remake.common.dto.response.GetAllResponse;
 import com.ecommerce.ecommerce_remake.feature.order.model.Order;
 import com.ecommerce.ecommerce_remake.feature.product_review.dto.RateRequest;
 import com.ecommerce.ecommerce_remake.feature.product_review.dto.RatingCount;
+import com.ecommerce.ecommerce_remake.feature.product_review.dto.ReplyRequest;
 import com.ecommerce.ecommerce_remake.feature.product_review.model.ProductReview;
 import org.springframework.data.domain.Pageable;
 
@@ -17,4 +18,5 @@ public interface ProductReviewService {
     RatingCount getProductRatingStarCount(String productId);
     GetAllResponse getProductReviews(String productId, Integer rating, Pageable pageable);
     GetAllResponse getProductReviewsByStore(Integer storeId, Pageable pageable);
+    void replyToReview(ReplyRequest request);
 }
