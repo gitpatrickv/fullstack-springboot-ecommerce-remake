@@ -93,7 +93,7 @@ public class ProductServiceImpl implements ProductService {
         return this.getAllProductsWithPagination(products);
     }
 
-    @Override //gets all unique product categories used for filtering on the store page
+    @Override //get all unique product categories used for filtering on the store page
     public List<StoreCategory> getUniqueProductCategoriesForStore(String storeId) {
         int id = Integer.parseInt(storeId);
         List<Category> categories = productRepository.findStoreCategories(id);

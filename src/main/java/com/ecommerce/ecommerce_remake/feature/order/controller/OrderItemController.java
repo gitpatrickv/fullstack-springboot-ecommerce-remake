@@ -25,18 +25,18 @@ public class OrderItemController {
                                                     @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
                                                     @RequestParam(value = "sortBy", defaultValue = "lastModified") String sortBy,
                                                     @RequestParam(value = "sortDirection", defaultValue = "DESC") String sortDirection,
-                                                    @RequestParam(value = "storeId", required = false) Integer storeId,
+                                                    @RequestParam(value = "isSellerPage") boolean isSellerPage,
                                                     @RequestParam(value = "status", required = false) OrderStatus status) {
         Pageable pageable = createPaginationAndSorting(pageNo, pageSize, sortBy, sortDirection);
-
+        Integer storeId = userService.getStoreId();
         Integer userId = userService.getUserId();
 
-        GetAllResponse getAllResponse = storeId != null
+        GetAllResponse getAllResponse = isSellerPage
                 ? orderItemService.getStoreOrders(pageable, status, storeId)
                 : orderItemService.getUserOrders(pageable, status, userId);
 
-        log.info("GetOrders - UserId: {}, StoreId: {}, Status: {} - Orders Found: {}",
-                userId, storeId, status != null ? status : "ALL", getAllResponse.getModels().size());
+        log.info("GetOrders - isSellerPage: {} - Status: {} - Orders Found: {}",
+                isSellerPage, status != null ? status : "ALL", getAllResponse.getModels().size());
 
         return ResponseEntity.ok().body(getAllResponse);
     }

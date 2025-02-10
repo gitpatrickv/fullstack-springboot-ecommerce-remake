@@ -1,7 +1,6 @@
 package com.ecommerce.ecommerce_remake.feature.inventory.service;
 
 import com.ecommerce.ecommerce_remake.common.util.StrUtil;
-import com.ecommerce.ecommerce_remake.common.util.mapper.EntityToModelMapper;
 import com.ecommerce.ecommerce_remake.common.util.mapper.ModelToEntityMapper;
 import com.ecommerce.ecommerce_remake.feature.inventory.model.Inventory;
 import com.ecommerce.ecommerce_remake.feature.inventory.model.InventoryModel;
@@ -19,7 +18,6 @@ import java.util.Set;
 public class InventoryServiceImpl implements InventoryService {
 
     private ModelToEntityMapper<InventoryModel, Inventory> modelToEntityMapper = new ModelToEntityMapper<>(Inventory.class);
-    private EntityToModelMapper<Inventory, InventoryModel> entityToModelMapper = new EntityToModelMapper<>(InventoryModel.class);
 
     private final InventoryRepository inventoryRepository;
     @Override

@@ -5,7 +5,6 @@ import com.ecommerce.ecommerce_remake.feature.address.model.Address;
 import com.ecommerce.ecommerce_remake.feature.address.service.AddressService;
 import com.ecommerce.ecommerce_remake.feature.cart.model.CartItem;
 import com.ecommerce.ecommerce_remake.feature.cart.repository.CartItemRepository;
-import com.ecommerce.ecommerce_remake.feature.cart.service.CartServiceImpl;
 import com.ecommerce.ecommerce_remake.feature.inventory.model.Inventory;
 import com.ecommerce.ecommerce_remake.feature.inventory.repository.InventoryRepository;
 import com.ecommerce.ecommerce_remake.feature.order.dto.OrderRequest;
@@ -39,6 +38,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.ecommerce.ecommerce_remake.feature.cart.service.CartServiceImpl.calculateTotalAmount;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -61,7 +62,7 @@ public class OrderServiceImpl implements OrderService{
 
         List<CartItem> cartItemList = cartItemRepository.findByCart_CartIdAndCartItemIdIn(cartId, request.getIds());
 
-        Map<Store, List<CartItem>> cartItemMap = this.groupItemsByStore(cartItemList);
+        Map<Store, List<CartItem>> cartItemMap = groupItemsByStore(cartItemList);
 
         for (Map.Entry<Store, List<CartItem>> cartItem : cartItemMap.entrySet()) {
             List<CartItem> cartItems = cartItem.getValue();
@@ -70,12 +71,10 @@ public class OrderServiceImpl implements OrderService{
             List<OrderItem> orderItems = this.createAndSaveOrderItems(cartItems, savedOrder);
             savedOrder.setOrderItems(orderItems);
         }
-        log.info("Deleting cart items...");
         cartItemRepository.deleteAllByIdInBatch(request.getIds());
-        log.info("Deleted");
-        BigDecimal totalAmount = CartServiceImpl.calculateTotalAmount(cartItemList);
+        log.info("Deleted Cart Items: {}", request.getIds());
 
-        return paymentService.paymentLink(totalAmount.longValue(), request.getPaymentMethod());
+        return paymentService.paymentLink(cartItemList, request.getPaymentMethod());
     }
 
     @Override
@@ -101,7 +100,7 @@ public class OrderServiceImpl implements OrderService{
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found."));
     }
 
-    private Map<Store, List<CartItem>> groupItemsByStore(List<CartItem> cartItemList) {
+    public static Map<Store, List<CartItem>> groupItemsByStore(List<CartItem> cartItemList) {
         return cartItemList.stream()
                 .collect(Collectors.groupingBy(cartItem ->
                         cartItem.getInventory().getProduct().getStore()
@@ -114,7 +113,7 @@ public class OrderServiceImpl implements OrderService{
                 .recipientName(address.getFullName())
                 .contactNumber(address.getContactNumber())
                 .deliveryAddress(String.format("%s %s, %s", address.getStreetAddress(), address.getCity(), address.getPostCode()))
-                .totalAmount(CartServiceImpl.calculateTotalAmount(cartItems))
+                .totalAmount(calculateTotalAmount(cartItems).add(BigDecimal.valueOf(50)))
                 .deliveryCost(50)
                 .isStoreRated(false)
                 .paymentMethod(request.getPaymentMethod())

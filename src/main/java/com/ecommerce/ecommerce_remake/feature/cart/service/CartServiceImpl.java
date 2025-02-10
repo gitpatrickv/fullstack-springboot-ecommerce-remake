@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.ecommerce.ecommerce_remake.feature.order.service.OrderServiceImpl.groupItemsByStore;
+
 @RequiredArgsConstructor
 @Service
 @Transactional
@@ -60,9 +62,11 @@ public class CartServiceImpl implements CartService{
     @Override
     public CartTotalResponse getCartTotal(Set<Integer> ids, Integer cartId) {
         List<CartItem> cartItemList = cartItemRepository.findByCart_CartIdAndCartItemIdIn(cartId, ids);
-        BigDecimal totalAmount = calculateTotalAmount(cartItemList);
-        Integer totalItems = this.calculateTotalProducts(cartItemList);
-        return new CartTotalResponse(totalAmount,totalItems);
+        BigDecimal cartTotal = calculateTotalAmount(cartItemList);
+        int shippingFee = 50 * groupItemsByStore(cartItemList).size();
+        int totalItems = this.calculateTotalProducts(cartItemList);
+        BigDecimal totalAmount = cartTotal.add(BigDecimal.valueOf(shippingFee));
+        return new CartTotalResponse(cartTotal ,totalItems, shippingFee, totalAmount);
     }
 
     @Override

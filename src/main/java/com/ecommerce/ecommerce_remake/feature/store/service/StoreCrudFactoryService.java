@@ -13,6 +13,7 @@ import com.ecommerce.ecommerce_remake.feature.store.model.StoreModel;
 import com.ecommerce.ecommerce_remake.feature.store.repository.StoreRepository;
 import com.ecommerce.ecommerce_remake.feature.user.enums.Role;
 import com.ecommerce.ecommerce_remake.feature.user.model.User;
+import com.ecommerce.ecommerce_remake.feature.user.repository.UserRepository;
 import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class StoreCrudFactoryService extends CrudService {
     private final UserService userService;
     private final Pagination pagination;
     private final StoreService storeService;
+    private final UserRepository userRepository;
 
     private EntityToModelMapper<Store, StoreModel> entityToModelMapper = new EntityToModelMapper<>(StoreModel.class);
 
@@ -51,6 +53,7 @@ public class StoreCrudFactoryService extends CrudService {
         Store savedStore = storeRepository.save(store);
 
         user.setRole(Role.SELLER);
+        userRepository.save(user);
 
         return entityToModelMapper.map(savedStore);
     }

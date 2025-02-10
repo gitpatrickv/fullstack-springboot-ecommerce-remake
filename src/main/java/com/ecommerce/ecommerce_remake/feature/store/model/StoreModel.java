@@ -3,7 +3,6 @@ package com.ecommerce.ecommerce_remake.feature.store.model;
 import com.ecommerce.ecommerce_remake.common.dto.Model;
 import com.ecommerce.ecommerce_remake.common.dto.enums.Status;
 import com.ecommerce.ecommerce_remake.common.marker.CreateInfo;
-import com.ecommerce.ecommerce_remake.common.marker.UpdateInfo;
 import com.ecommerce.ecommerce_remake.validator.UniqueStoreValid;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;

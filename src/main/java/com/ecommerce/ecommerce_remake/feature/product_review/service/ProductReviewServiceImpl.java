@@ -132,21 +132,11 @@ public class ProductReviewServiceImpl implements ProductReviewService {
             long count = productRatingCount.getCount();
 
             switch (productRating) {
-                case 1:
-                    ratingCount.setStar1(count);
-                    break;
-                case 2:
-                    ratingCount.setStar2(count);
-                    break;
-                case 3:
-                    ratingCount.setStar3(count);
-                    break;
-                case 4:
-                    ratingCount.setStar4(count);
-                    break;
-                case 5:
-                    ratingCount.setStar5(count);
-                    break;
+                case 1 -> ratingCount.setStar1(count);
+                case 2 -> ratingCount.setStar2(count);
+                case 3 -> ratingCount.setStar3(count);
+                case 4 -> ratingCount.setStar4(count);
+                case 5 -> ratingCount.setStar5(count);
             }
         });
         return ratingCount;
