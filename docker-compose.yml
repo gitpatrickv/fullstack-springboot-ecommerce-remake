@@ -11,6 +11,7 @@ services:
       - ecommerce:/var/lib/mysql
     networks:
       - ecommerce-network
+
   ecommerce-api:
     container_name: ecommerce-remake
     image: gitpatrickv/ecommerce-remake:latest
@@ -23,6 +24,20 @@ services:
       - ecommerce-network
     depends_on:
       - ecommerce
+
+  flyway:
+    image: flyway/flyway
+    container_name: ecommerce-flyway
+    environment:
+      - FLYWAY_URL=jdbc:mysql://ecommerce:3306/ecommerce-db
+      - FLYWAY_USER=root
+      - FLYWAY_PASSWORD=password
+    volumes:
+      - ./db/migrations:/flyway/sql
+    depends_on:
+      - ecommerce
+    networks:
+      - ecommerce-network
 
 volumes:
   ecommerce:
