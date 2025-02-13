@@ -1,5 +1,6 @@
 # Ecommerce
-
+### Demo Video
+https://www.youtube.com/watch?v=RQwdC8FykaU
 ### Sample Screenshots
 - **Home Page**
 ![Image](https://github.com/user-attachments/assets/e288b351-ac31-4298-8e68-1be5aa211619)
@@ -7,6 +8,10 @@
 
 - **Store Page**
 ![Image](https://github.com/user-attachments/assets/18259c98-124f-4bb7-8a72-190463ad20bf)
+
+
+- **Product Detail Page**
+![Image](https://github.com/user-attachments/assets/611aaab8-4ee8-400e-af4b-abcb24014e38)
 
 ## Table of Contents
 - [Project Status](#project-status)
@@ -21,7 +26,11 @@ This project is a work in progress!
 More features are being added.
 
 ## Project Overview
-This is a personal project focused on creating an online shopping platform similar to Shopee.
+This personal project focuses on creating an online shopping platform similar to Shopee.
+The goal is to enhance my skills in both backend and frontend development, explore different techniques (such as the Factory Pattern)
+and refactor [my first full-stack project](https://github.com/gitpatrickv/Fullstack-Ecommerce-Backend-Springboot), which has messy and unstructured code.
+Additionally, this project serves as a reference for when I use different backend or frontend frameworks, 
+helping me easily recall key concepts and techniques.
 
 ## Tech Stack
 
@@ -62,7 +71,7 @@ This is a personal project focused on creating an online shopping platform simil
 
 
 ## Entity Relationship Diagram
-![Image](https://github.com/user-attachments/assets/0a6f9fe3-5260-4957-a388-31981eaec15e)
+![Image](https://github.com/user-attachments/assets/4049dd2a-0d39-4e7a-a7a0-6046e25c72e6)
 
 ## License
 This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file for more details.

@@ -4,7 +4,6 @@ import com.ecommerce.ecommerce_remake.common.dto.AuditEntity;
 import com.ecommerce.ecommerce_remake.feature.order.enums.OrderStatus;
 import com.ecommerce.ecommerce_remake.feature.order.enums.PaymentMethod;
 import com.ecommerce.ecommerce_remake.feature.store.model.Store;
-import com.ecommerce.ecommerce_remake.feature.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,6 +22,7 @@ public class Order extends AuditEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer orderId;
+    private Integer userId;
     private Integer itemQuantity;
     private String recipientName;
     private String contactNumber;
@@ -39,10 +39,6 @@ public class Order extends AuditEntity {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems = new ArrayList<>();
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
 
     @ManyToOne
     @JoinColumn(name = "store_id")

@@ -8,7 +8,7 @@ import com.stripe.exception.StripeException;
 
 public interface OrderService {
 
-    PaymentResponse placeOrder(OrderRequest request) throws StripeException;
+    PaymentResponse placeOrder(OrderRequest request, Integer userId, Integer cartId) throws StripeException;
     void updateOrderStatus(Integer orderId, OrderStatus status);
     Order getOrderById(Integer orderId);
 }

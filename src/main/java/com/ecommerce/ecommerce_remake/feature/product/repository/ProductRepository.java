@@ -131,4 +131,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                     """)
     void updateProductReviewsCount(@Param("productId") Integer productId);
 
+    @Query("SELECT COUNT(p) FROM Product p WHERE p.store.storeId = :storeId")
+    Integer getStoreProductCount(@Param("storeId") Integer storeId);
+
 }

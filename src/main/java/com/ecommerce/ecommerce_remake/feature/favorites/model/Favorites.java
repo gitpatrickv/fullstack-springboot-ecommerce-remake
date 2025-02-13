@@ -18,17 +18,15 @@ public class Favorites extends AuditEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer favoriteId;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    private Integer userId;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
 
-    public Favorites(User user, Product product) {
-        this.user = user;
+
+    public Favorites(Integer userId, Product product) {
+        this.userId = userId;
         this.product = product;
     }
 }

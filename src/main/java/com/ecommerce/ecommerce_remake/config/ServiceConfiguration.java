@@ -10,6 +10,7 @@ import com.ecommerce.ecommerce_remake.feature.product.service.ProductCrudFactory
 import com.ecommerce.ecommerce_remake.feature.store.repository.StoreRepository;
 import com.ecommerce.ecommerce_remake.feature.store.service.StoreCrudFactoryService;
 import com.ecommerce.ecommerce_remake.feature.store.service.StoreService;
+import com.ecommerce.ecommerce_remake.feature.user.repository.UserRepository;
 import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import jakarta.validation.Validator;
 import org.springframework.context.ApplicationContext;
@@ -33,11 +34,12 @@ public class ServiceConfiguration {
 
     @Bean (name = "storeService")
     public StoreCrudFactoryService getStoreCrudService(StoreRepository repository,
-                                            Validator validator,
-                                            UserService userService,
-                                            Pagination pagination,
-                                            StoreService storeService){
-        return new StoreCrudFactoryService(repository, validator, userService, pagination, storeService);
+                                                       Validator validator,
+                                                       UserService userService,
+                                                       Pagination pagination,
+                                                       StoreService storeService,
+                                                       UserRepository userRepository){
+        return new StoreCrudFactoryService(repository, validator, userService, pagination, storeService, userRepository);
     }
 
     @Bean (name = "productService")

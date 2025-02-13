@@ -3,6 +3,7 @@ package com.ecommerce.ecommerce_remake.feature.cart.controller;
 import com.ecommerce.ecommerce_remake.feature.cart.dto.AddToCartRequest;
 import com.ecommerce.ecommerce_remake.feature.cart.dto.CartTotalResponse;
 import com.ecommerce.ecommerce_remake.feature.cart.service.CartService;
+import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import com.ecommerce.ecommerce_remake.web.exception.OutOfStockException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +20,13 @@ import java.util.Set;
 @Slf4j
 public class CartController {
     private final CartService cartService;
+    private final UserService userService;
     @PostMapping("/add")
     public ResponseEntity<String> addToCart(@RequestBody @Valid AddToCartRequest request){
         log.info("Received the request to add a new items to the cart");
         try {
             cartService.addToCart(request);
-            log.info("Add To Cart - Product added successfully - CartID={}, ProductID={}, Quantity={}", request.getCartId(), request.getProductId(), request.getQuantity());
+            log.info("Add To Cart - Product added successfully - ProductID={}, Quantity={}", request.getProductId(), request.getQuantity());
             return ResponseEntity.ok().body("Item has been added to your Shopping Cart!");
         } catch(OutOfStockException ex) {
             log.warn("Add To Cart - failed to add product with ID={} to the cart", request.getProductId());
@@ -39,8 +41,7 @@ public class CartController {
         log.info("Received the request to add a new items to the cart");
         try {
             cartService.addToCartWithVariation(request, color, size);
-            log.info("Add To Cart - CartID={}, Product with ID={}, Quantity={} and variation (Color: {}, Size: {}) successfully added to the cart.",
-                   request.getCartId(), request.getProductId(), request.getQuantity(), color, size);
+            log.info("Add To Cart - Product with ID={}, Quantity={} and variation (Color: {}, Size: {}) successfully added to the cart.", request.getProductId(), request.getQuantity(), color, size);
             return ResponseEntity.ok().body("Item has been added to your Shopping Cart!");
         } catch(OutOfStockException ex) {
             log.warn("Add To Cart - Failed to add product with ID={} (Color: {}, Size: {}) to the cart",
@@ -49,10 +50,10 @@ public class CartController {
         }
     }
 
-    @GetMapping("/{ids}/{cartId}/total")
+    @GetMapping("/{ids}/total")
     @ResponseStatus(HttpStatus.OK)
-    public CartTotalResponse getCartTotal(@PathVariable("ids") Set<Integer> ids,@PathVariable("cartId") Integer cartId){
-
+    public CartTotalResponse getCartTotal(@PathVariable("ids") Set<Integer> ids){
+        Integer cartId = userService.getUserCartId();
         if(ids.isEmpty()){
             log.warn("getCartTotal: No IDs provided. Unable to compute cart total.");
         }

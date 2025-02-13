@@ -31,7 +31,7 @@ public class CrudController {
         this.serviceFactory = serviceFactory;
     }
 
-    @PostMapping("/{module}")
+    @PostMapping("/{module}/save")
     public ResponseEntity<Model> saveResource(@PathVariable Module module, @Valid @RequestBody String jsonRequest){
         CrudService service = getService(module);
         Response response = service.create(jsonRequest);
@@ -56,7 +56,7 @@ public class CrudController {
         Pageable pageable = createPaginationAndSorting(pageNo, pageSize, sortBy, sortDirection);
         CrudService service = getService(module);
         Response response = service.retrieveAll(pageable);
-        log.info("CrudService.retrieve() response code={}", response.getResponseCode());
+        log.info("CrudService.retrieveAll() response code={}", response.getResponseCode());
         if (response.getResponseCode().equals(ResponseCode.RESP_SUCCESS)) {
             GetAllResponse getAllResponse;
             try {
@@ -97,7 +97,7 @@ public class CrudController {
         }
     }
 
-    @PutMapping("/{module}")
+    @PutMapping("/{module}/update")
     public ResponseEntity<Model> updateOneResource(@PathVariable Module module, @Valid @RequestBody String jsonRequest){
         CrudService service = getService(module);
         Response response = service.update(jsonRequest);

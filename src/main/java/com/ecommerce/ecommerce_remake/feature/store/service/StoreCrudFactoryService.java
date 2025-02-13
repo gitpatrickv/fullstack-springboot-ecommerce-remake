@@ -8,12 +8,12 @@ import com.ecommerce.ecommerce_remake.common.dto.response.PageResponse;
 import com.ecommerce.ecommerce_remake.common.service.CrudService;
 import com.ecommerce.ecommerce_remake.common.util.Pagination;
 import com.ecommerce.ecommerce_remake.common.util.mapper.EntityToModelMapper;
-import com.ecommerce.ecommerce_remake.common.util.mapper.ModelToEntityMapper;
 import com.ecommerce.ecommerce_remake.feature.store.model.Store;
 import com.ecommerce.ecommerce_remake.feature.store.model.StoreModel;
 import com.ecommerce.ecommerce_remake.feature.store.repository.StoreRepository;
 import com.ecommerce.ecommerce_remake.feature.user.enums.Role;
 import com.ecommerce.ecommerce_remake.feature.user.model.User;
+import com.ecommerce.ecommerce_remake.feature.user.repository.UserRepository;
 import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 @RequiredArgsConstructor
@@ -31,20 +32,28 @@ public class StoreCrudFactoryService extends CrudService {
     private final UserService userService;
     private final Pagination pagination;
     private final StoreService storeService;
+    private final UserRepository userRepository;
 
-    private ModelToEntityMapper<StoreModel, Store> modelToEntityMapper = new ModelToEntityMapper<>(Store.class);
     private EntityToModelMapper<Store, StoreModel> entityToModelMapper = new EntityToModelMapper<>(StoreModel.class);
 
     @Transactional
     @Override
     protected <T extends Model> Model save(T model) {
+        StoreModel storeModel = (StoreModel) model;
         User user = userService.getCurrentAuthenticatedUser();
-        Store store = modelToEntityMapper.map((StoreModel)model);
-        store.setStatus(Status.ACTIVE);
-        store.setUser(user);
+        Store store = Store.builder()
+                .storeName(storeModel.getStoreName())
+                .contactNumber(storeModel.getContactNumber())
+                .averageRating(BigDecimal.ZERO)
+                .reviewsCount(0)
+                .status(Status.ACTIVE)
+                .user(user)
+                .build();
+
         Store savedStore = storeRepository.save(store);
 
         user.setRole(Role.SELLER);
+        userRepository.save(user);
 
         return entityToModelMapper.map(savedStore);
     }
@@ -67,15 +76,11 @@ public class StoreCrudFactoryService extends CrudService {
     @Override
     protected  <T extends Model> Model updateOne(T model) {
         StoreModel storeModel = (StoreModel) model;
-        return storeService.getStoreById(storeModel.getStoreId().toString())
-                .map(store -> {
-                    Optional.ofNullable(storeModel.getStoreName())
-                            .ifPresent(store::setStoreName);
-                    Optional.ofNullable(storeModel.getContactNumber())
-                            .ifPresent(store::setContactNumber);
-                    Store savedStore = storeRepository.save(store);
-                    return entityToModelMapper.map(savedStore);
-                }).orElse(null);
+        Store store = storeService.getStore();
+        store.setStoreName(storeModel.getStoreName() != null ? storeModel.getStoreName() : store.getStoreName());
+        store.setContactNumber(storeModel.getContactNumber() != null ? storeModel.getContactNumber() : store.getContactNumber());
+        Store savedStore = storeRepository.save(store);
+        return entityToModelMapper.map(savedStore);
     }
 
     @Override //TODO: Not yet implemented on the frontend

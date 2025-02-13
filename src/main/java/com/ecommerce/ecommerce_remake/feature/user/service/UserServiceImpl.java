@@ -22,9 +22,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getCurrentAuthenticatedUser() {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepository.findByEmail(email)
+        return userRepository.findById(this.getUserId())
                 .orElseThrow(() -> new UsernameNotFoundException(StrUtil.USER_NOT_FOUND));
+    }
+    @Override
+    public Integer getUserId() {
+        return getUserObject().getUserId();
+    }
+
+    @Override
+    public Integer getUserCartId() {
+        return this.getUserObject().getCart().getCartId();
+    }
+
+    @Override
+    public Integer getStoreId() {
+        User user = this.getUserObject();
+        return user.getStore() != null ? user.getStore().getStoreId() : null;
     }
 
     @Override
@@ -35,8 +49,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void uploadUserAvatar(MultipartFile file) {
-        User user = getCurrentAuthenticatedUser();
+        User user = this.getCurrentAuthenticatedUser();
         user.setPicture(productImageService.processImages(file));
         userRepository.save(user);
+    }
+
+    private User getUserObject() {
+        return (User) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
     }
 }

@@ -29,6 +29,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_DEFAULT;
 public class UserModel extends Model {
     @Null(groups = CreateInfo.class)
     @NotNull(groups = UpdateInfo.class)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Integer userId;
 
     @UniqueEmailValid
@@ -51,5 +52,5 @@ public class UserModel extends Model {
     @NotNull
     @Enumerated(EnumType.STRING)
     private Gender gender;
-    private Integer cartId;
+
 }

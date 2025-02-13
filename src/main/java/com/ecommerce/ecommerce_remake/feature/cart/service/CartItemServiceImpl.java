@@ -8,7 +8,6 @@ import com.ecommerce.ecommerce_remake.feature.cart.model.CartItem;
 import com.ecommerce.ecommerce_remake.feature.cart.model.CartItemModel;
 import com.ecommerce.ecommerce_remake.feature.cart.repository.CartItemRepository;
 import com.ecommerce.ecommerce_remake.feature.product.model.Product;
-import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import com.ecommerce.ecommerce_remake.web.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +23,6 @@ import java.util.*;
 public class CartItemServiceImpl implements CartItemService{
 
     private final CartItemRepository cartItemRepository;
-    private final UserService userService;
 
     private EntityToModelMapper<CartItem, CartItemModel> entityToModelMapper = new EntityToModelMapper<>(CartItemModel.class);
 
@@ -84,7 +82,7 @@ public class CartItemServiceImpl implements CartItemService{
         }
         return cartItemMap;
     }
-
+    // converts the Map to a List because i prefer working with lists over maps for easier frontend iteration and access.
     private List<CartItemsResponse> fetchAllCartItems(Map<StoreInfo, List<CartItemModel>> cartItemMap){
         return cartItemMap
                 .entrySet()

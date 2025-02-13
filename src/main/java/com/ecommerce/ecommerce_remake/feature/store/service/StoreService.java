@@ -1,5 +1,6 @@
 package com.ecommerce.ecommerce_remake.feature.store.service;
 
+import com.ecommerce.ecommerce_remake.feature.store.dto.CountResponse;
 import com.ecommerce.ecommerce_remake.feature.store.model.Store;
 import com.ecommerce.ecommerce_remake.feature.store.model.StoreModel;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,4 +11,6 @@ public interface StoreService {
     Optional<Store> getStoreById(String id);
     StoreModel getUserStore();
     void uploadStoreAvatar(MultipartFile file);
+    CountResponse getStoreMetrics(Integer storeId);
+    Store getStore();
 }

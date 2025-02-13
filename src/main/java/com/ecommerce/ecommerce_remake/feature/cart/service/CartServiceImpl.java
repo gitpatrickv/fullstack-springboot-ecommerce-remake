@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.ecommerce.ecommerce_remake.feature.order.service.OrderServiceImpl.groupItemsByStore;
+
 @RequiredArgsConstructor
 @Service
 @Transactional
@@ -30,6 +32,7 @@ public class CartServiceImpl implements CartService{
     private final InventoryService inventoryService;
     private final CartItemRepository cartItemRepository;
     private final CartRepository cartRepository;
+    private final UserService userService;
 
     @Override
     public void addToCart(AddToCartRequest request) {
@@ -59,19 +62,21 @@ public class CartServiceImpl implements CartService{
     @Override
     public CartTotalResponse getCartTotal(Set<Integer> ids, Integer cartId) {
         List<CartItem> cartItemList = cartItemRepository.findByCart_CartIdAndCartItemIdIn(cartId, ids);
-        BigDecimal totalAmount = calculateTotalAmount(cartItemList);
-        Integer totalItems = this.calculateTotalProducts(cartItemList);
-        return new CartTotalResponse(totalAmount,totalItems);
+        BigDecimal cartTotal = calculateTotalAmount(cartItemList);
+        int shippingFee = 50 * groupItemsByStore(cartItemList).size();
+        int totalItems = this.calculateTotalProducts(cartItemList);
+        BigDecimal totalAmount = cartTotal.add(BigDecimal.valueOf(shippingFee));
+        return new CartTotalResponse(cartTotal ,totalItems, shippingFee, totalAmount);
     }
 
     @Override
-    public Cart getCartById(Integer cartId) {
-        return cartRepository.findById(cartId)
+    public Cart getCart() {
+        return cartRepository.findById(userService.getUserCartId())
                 .orElseThrow(() -> new ResourceNotFoundException("Cart not found."));
     }
 
     private void addProductsToCart(AddToCartRequest request, Inventory inventory){
-        Cart cart = this.getCartById(request.getCartId());
+        Cart cart = this.getCart();
 
         Optional<CartItem> existingCartItem = cartItemService.findExistingCartItem(inventory.getInventoryId(), cart.getCartId());
 

@@ -3,6 +3,7 @@ package com.ecommerce.ecommerce_remake.feature.cart.controller;
 import com.ecommerce.ecommerce_remake.feature.cart.dto.CartItemsResponse;
 import com.ecommerce.ecommerce_remake.feature.cart.dto.IdSetRequest;
 import com.ecommerce.ecommerce_remake.feature.cart.service.CartItemService;
+import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import com.ecommerce.ecommerce_remake.web.exception.InvalidQuantityException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,11 +19,12 @@ import java.util.List;
 @Slf4j
 public class CartItemController {
     private final CartItemService cartItemService;
+    private final UserService userService;
 
-    @GetMapping("/{cartId}/cart-items")
-    @ResponseStatus(HttpStatus.OK)
-    public List<CartItemsResponse> getAllCartItems(@PathVariable("cartId") Integer cartId){
-        log.info("fetching cart items for CartId={}", cartId);
+    @GetMapping("/cart-items")
+    public List<CartItemsResponse> getAllCartItems(){
+        Integer cartId = userService.getUserCartId();
+        log.info("GetAllCartItems - CartId : {}", cartId);
         return cartItemService.getAllCartItems(cartId);
     }
 
@@ -30,7 +32,7 @@ public class CartItemController {
     @ResponseStatus(HttpStatus.OK)
     public void updateQuantity(@PathVariable("cartItemId") Integer cartItemId,
                                @PathVariable("newQuantity") Integer newQuantity) {
-        log.info("Received request to update quantity for CartItemId={} to new Quantity={} ", cartItemId, newQuantity);
+        log.info("Update Quantity for CartItemId={} to new Quantity={} ", cartItemId, newQuantity);
         if (newQuantity <= 0) {
             log.warn("Attempted to set negative product quantity for cart item with id: {}.", cartItemId);
             throw new InvalidQuantityException();

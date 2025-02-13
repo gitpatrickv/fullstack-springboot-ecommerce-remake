@@ -1,13 +1,11 @@
-package com.ecommerce.ecommerce_remake.feature.store_review.service;
+package com.ecommerce.ecommerce_remake.feature.store_rating.service;
 
 import com.ecommerce.ecommerce_remake.feature.order.model.Order;
 import com.ecommerce.ecommerce_remake.feature.order.repository.OrderRepository;
 import com.ecommerce.ecommerce_remake.feature.product_review.dto.RateRequest;
 import com.ecommerce.ecommerce_remake.feature.store.repository.StoreRepository;
-import com.ecommerce.ecommerce_remake.feature.store_review.model.StoreReview;
-import com.ecommerce.ecommerce_remake.feature.store_review.repository.StoreReviewRepository;
-import com.ecommerce.ecommerce_remake.feature.user.model.User;
-import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
+import com.ecommerce.ecommerce_remake.feature.store_rating.model.StoreRating;
+import com.ecommerce.ecommerce_remake.feature.store_rating.repository.StoreRatingRepository;
 import com.ecommerce.ecommerce_remake.web.exception.ReviewValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,45 +16,43 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 @Transactional
-public class StoreReviewServiceImpl implements StoreReviewService{
+public class StoreRatingServiceImpl implements StoreRatingService {
 
-    private final UserService userService;
-    private final StoreReviewRepository storeReviewRepository;
+    private final StoreRatingRepository storeRatingRepository;
     private final StoreRepository storeRepository;
     private final OrderRepository orderRepository;
 
     @Override
-    public void rateStore(RateRequest request, Integer storeId, Integer orderId) {
-        User user = userService.getCurrentAuthenticatedUser();
+    public void rateStore(RateRequest request, Integer storeId, Integer orderId, Integer userId) {
 
-        this.validateStoreReview(user.getUserId(), storeId);
+        this.validateStoreReview(userId, storeId);
 
-        StoreReview storeReview = StoreReview.builder()
+        StoreRating storeRating = StoreRating.builder()
                 .rating(request.getRating())
                 .storeId(storeId)
-                .user(user)
+                .userId(userId)
                 .build();
-        StoreReview savedReview = storeReviewRepository.saveAndFlush(storeReview);
+        StoreRating savedReview = storeRatingRepository.saveAndFlush(storeRating);
         storeRepository.updateStoreAverageRating(savedReview.getStoreId());
         storeRepository.updateStoreReviewsCount(savedReview.getStoreId());
 
-        this.updateOrderIfUserAlreadyRatedStore(user.getUserId(), storeId);
+        this.updateOrderIfUserAlreadyRatedStore(userId, storeId);
     }
 
     @Override
-    public Optional<StoreReview> findIfUserAlreadyRatedStore(Integer userId, Integer storeId) {
-        return storeReviewRepository.findIfUserAlreadyRatedStore(userId, storeId);
+    public Optional<StoreRating> findIfUserAlreadyRatedStore(Integer userId, Integer storeId) {
+        return storeRatingRepository.findIfUserAlreadyRatedStore(userId, storeId);
     }
 
     private void validateStoreReview(int userId, int storeId){
-        Optional<StoreReview> storeReview = this.findIfUserAlreadyRatedStore(userId, storeId);
+        Optional<StoreRating> storeReview = this.findIfUserAlreadyRatedStore(userId, storeId);
         if(storeReview.isPresent()){
             throw new ReviewValidationException("You have already submitted a review for this store.");
         }
     }
-
+    //marks all orders from the specified store as rated, including past orders, if the user has rated the store.
     public void updateOrderIfUserAlreadyRatedStore(int userId, int storeId){
-        List<Order> orders = orderRepository.findAllByUser_UserIdAndStore_StoreId(userId, storeId);
+        List<Order> orders = orderRepository.findAllByUserIdAndStore_StoreId(userId, storeId);
         orders.forEach(order -> {
             order.setIsStoreRated(true);
             orderRepository.save(order);

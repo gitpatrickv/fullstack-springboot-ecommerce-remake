@@ -1,11 +1,9 @@
 package com.ecommerce.ecommerce_remake.common.util;
 
-import lombok.NoArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-@NoArgsConstructor
 public final class PageableUtils {
 
     public static Pageable createPaginationAndSorting(Integer pageNo,

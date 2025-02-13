@@ -10,6 +10,8 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CartTotalResponse {
+    private BigDecimal cartTotal;
+    private int totalItems;
+    private int totalShippingFee;
     private BigDecimal totalAmount;
-    private Integer totalItems;
 }

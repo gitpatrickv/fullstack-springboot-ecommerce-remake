@@ -134,6 +134,7 @@ CREATE TABLE IF NOT EXISTS order_items (
 CREATE TABLE IF NOT EXISTS product_reviews (
     `product_review_id` INT AUTO_INCREMENT PRIMARY KEY,
     `product_id` INT NOT NULL,
+    `store_id` INT NOT NULL,
     `user_id` INT NOT NULL,
     `rating` INT NOT NULL CHECK (rating > 0 AND rating <= 5),
     `customer_review` VARCHAR(255) DEFAULT NULL,
@@ -142,13 +143,11 @@ CREATE TABLE IF NOT EXISTS product_reviews (
     `last_modified` TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS store_reviews (
-    `store_review_id` INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS store_ratings (
+    `store_rating_id` INT AUTO_INCREMENT PRIMARY KEY,
     `store_id` INT NOT NULL,
     `user_id` INT NOT NULL,
-    `rating` INT NOT NULL CHECK (rating > 0 AND rating <= 5),
-    `created_date` TIMESTAMP,
-    `last_modified` TIMESTAMP
+    `rating` INT NOT NULL CHECK (rating > 0 AND rating <= 5)
 );
 
 CREATE TABLE IF NOT EXISTS favorites (
