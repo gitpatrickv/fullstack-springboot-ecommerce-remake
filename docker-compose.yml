@@ -12,19 +12,6 @@ services:
     networks:
       - ecommerce-network
 
-  ecommerce-api:
-    container_name: ecommerce-remake
-    image: gitpatrickv/ecommerce-remake:latest
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
-    networks:
-      - ecommerce-network
-    depends_on:
-      - ecommerce
-
   flyway:
     image: flyway/flyway
     container_name: ecommerce-flyway
@@ -38,6 +25,19 @@ services:
       - ecommerce
     networks:
       - ecommerce-network
+
+  ecommerce-api:
+    container_name: ecommerce-remake
+    image: gitpatrickv/ecommerce-remake:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - ecommerce-network
+    depends_on:
+      - ecommerce
 
 volumes:
   ecommerce:
