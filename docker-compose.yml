@@ -11,20 +11,12 @@ services:
       - ecommerce:/var/lib/mysql
     networks:
       - ecommerce-network
-
-  flyway:
-    image: flyway/flyway
-    container_name: ecommerce-flyway
-    environment:
-      - FLYWAY_URL=jdbc:mysql://ecommerce:3306/ecommerce-db
-      - FLYWAY_USER=root
-      - FLYWAY_PASSWORD=password
-    volumes:
-      - ./db/migrations:/flyway/sql
-    depends_on:
-      - ecommerce
-    networks:
-      - ecommerce-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "ecommerce", "--password=password" ]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 5s
 
   ecommerce-api:
     container_name: ecommerce-remake
@@ -37,7 +29,8 @@ services:
     networks:
       - ecommerce-network
     depends_on:
-      - ecommerce
+      ecommerce:
+        condition: service_healthy
 
 volumes:
   ecommerce:
