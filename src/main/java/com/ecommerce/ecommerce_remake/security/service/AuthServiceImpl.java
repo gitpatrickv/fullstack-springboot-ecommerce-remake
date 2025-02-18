@@ -1,7 +1,6 @@
 package com.ecommerce.ecommerce_remake.security.service;
 
 import com.ecommerce.ecommerce_remake.common.dto.enums.Status;
-import com.ecommerce.ecommerce_remake.common.util.mapper.ModelToEntityMapper;
 import com.ecommerce.ecommerce_remake.feature.cart.model.Cart;
 import com.ecommerce.ecommerce_remake.feature.cart.repository.CartRepository;
 import com.ecommerce.ecommerce_remake.feature.user.enums.Role;
@@ -10,12 +9,17 @@ import com.ecommerce.ecommerce_remake.feature.user.model.UserModel;
 import com.ecommerce.ecommerce_remake.feature.user.repository.UserRepository;
 import com.ecommerce.ecommerce_remake.security.dto.request.LoginRequest;
 import com.ecommerce.ecommerce_remake.security.dto.response.LoginResponse;
+import com.ecommerce.ecommerce_remake.web.exception.LoginAttemptException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import static com.ecommerce.ecommerce_remake.security.service.LoginAttemptServiceImpl.*;
 
 @Service
 @RequiredArgsConstructor
@@ -26,15 +30,23 @@ public class AuthServiceImpl implements AuthService{
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final CartRepository cartRepository;
-
-    private ModelToEntityMapper<UserModel, User> modelToEntityMapper = new ModelToEntityMapper<>(User.class);
+    private final LoginAttemptService loginAttemptService;
 
     @Override
     public LoginResponse registerUser(UserModel userModel) {
-        User user = modelToEntityMapper.map(userModel);
-        user.setPassword(passwordEncoder.encode(userModel.getPassword()));
-        user.setRole(Role.USER);
-        user.setStatus(Status.ACTIVE);
+        User user = User.builder()
+                .email(userModel.getEmail())
+                .password(passwordEncoder.encode(userModel.getPassword()))
+                .name(userModel.getName())
+                .gender(userModel.getGender())
+                .role(Role.USER)
+                .status(Status.ACTIVE)
+                .accountNonExpired(true)
+                .accountNonLocked(true)
+                .credentialsNonExpired(true)
+                .enabled(true)
+                .build();
+
         User savedUser = userRepository.save(user);
 
         Cart cart = new Cart();
@@ -49,12 +61,19 @@ public class AuthServiceImpl implements AuthService{
     }
 
     private LoginResponse authenticate(String email, String password){
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(email, password));
-
-        return LoginResponse.builder()
-                .jwtToken(jwtService.generateToken(authentication))
-                .role(authentication.getAuthorities().iterator().next().getAuthority())
-                .build();
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(email, password));
+            loginAttemptService.resetAttempt(email);
+            return LoginResponse.builder()
+                    .jwtToken(jwtService.generateToken(authentication))
+                    .role(authentication.getAuthorities().iterator().next().getAuthority())
+                    .build();
+        } catch (BadCredentialsException ex) {
+            loginAttemptService.handleLoginAttempt(email);
+            throw new BadCredentialsException("Invalid username or password! Please try again.");
+        } catch (LockedException ex) {
+            throw new LoginAttemptException(expirationTime);
+        }
     }
 }

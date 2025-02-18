@@ -6,6 +6,10 @@ CREATE TABLE IF NOT EXISTS users (
     `name` VARCHAR(50) NOT NULL,
     `gender` ENUM('MALE', 'FEMALE') NOT NULL,
     `role` ENUM('USER', 'SELLER', 'ADMIN') NOT NULL,
+    `account_non_expired` BOOLEAN NOT NULL DEFAULT TRUE,
+    `account_non_locked` BOOLEAN NOT NULL DEFAULT TRUE,
+    `credentials_non_expired` BOOLEAN NOT NULL DEFAULT TRUE,
+    `enabled` BOOLEAN NOT NULL DEFAULT TRUE,
     `picture` VARCHAR(255) DEFAULT NULL,
     `created_date` TIMESTAMP,
     `last_modified` TIMESTAMP
@@ -162,6 +166,14 @@ CREATE TABLE IF NOT EXISTS store_following (
     `store_following_id` INT AUTO_INCREMENT PRIMARY KEY,
     `user_id` INT NOT NULL,
     `store_id` INT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS login_attempts (
+     `attempt_id` INT AUTO_INCREMENT PRIMARY KEY,
+     `email` VARCHAR(100) UNIQUE NOT NULL,
+     `attempts` INT NOT NULL,
+     `expiration_time` TIMESTAMP,
+     `is_user_locked` BOOLEAN DEFAULT FALSE
 );
 
 

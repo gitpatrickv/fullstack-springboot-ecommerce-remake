@@ -27,6 +27,8 @@ More features are being added.
 
 ## Project Overview
 This personal project focuses on creating an online shopping platform similar to Shopee.
+The reason for replicating the UI design is to allow me to focus on the logic, as designing the UI on my own would take too much time. 
+Additionally, it helps me think like the developers of Shopee by putting myself in their shoes.
 The goal is to enhance my skills in both backend and frontend development, explore different techniques (such as the Factory Pattern)
 and refactor [my first full-stack project](https://github.com/gitpatrickv/Fullstack-Ecommerce-Backend-Springboot), which has messy and unstructured code.
 Additionally, this project serves as a reference for when I use different backend or frontend frameworks, 
@@ -71,7 +73,7 @@ helping me easily recall key concepts and techniques.
 
 
 ## Entity Relationship Diagram
-![Image](https://github.com/user-attachments/assets/4049dd2a-0d39-4e7a-a7a0-6046e25c72e6)
+![Image](https://github.com/user-attachments/assets/c30671e0-3f0f-4a94-b53b-1fe6e13c1aec)
 
 ## License
 This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file for more details.
