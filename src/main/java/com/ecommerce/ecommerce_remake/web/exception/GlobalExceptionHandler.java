@@ -113,4 +113,10 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), LocalDateTime.now()),
                 HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler (LoginAttemptException.class)
+    protected ResponseEntity<ErrorResponse> handleLoginAttemptException(LoginAttemptException ex) {
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), LocalDateTime.now()),
+                HttpStatus.UNAUTHORIZED);
+    }
 }
