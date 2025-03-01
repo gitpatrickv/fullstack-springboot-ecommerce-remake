@@ -1,6 +1,8 @@
 package com.ecommerce.ecommerce_remake.feature.user.repository;
 
 import com.ecommerce.ecommerce_remake.feature.user.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -14,6 +16,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Integer> {
 
     Optional<User> findByEmail(String email);
+    Page<User> findAll(Pageable pageable);
     @Modifying
     @Query(nativeQuery = true,
             value = """

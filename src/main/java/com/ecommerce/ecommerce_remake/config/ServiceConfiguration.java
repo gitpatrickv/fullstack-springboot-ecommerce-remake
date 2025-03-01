@@ -11,6 +11,7 @@ import com.ecommerce.ecommerce_remake.feature.store.repository.StoreRepository;
 import com.ecommerce.ecommerce_remake.feature.store.service.StoreCrudFactoryService;
 import com.ecommerce.ecommerce_remake.feature.store.service.StoreService;
 import com.ecommerce.ecommerce_remake.feature.user.repository.UserRepository;
+import com.ecommerce.ecommerce_remake.feature.user.service.UserCrudFactoryService;
 import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import jakarta.validation.Validator;
 import org.springframework.context.ApplicationContext;
@@ -56,6 +57,13 @@ public class ServiceConfiguration {
                                                        UserService userService,
                                                        AddressService addressService){
         return new AddressCrudFactoryService(repository, validator, userService, addressService);
+    }
+
+    @Bean (name = "userService")
+    public UserCrudFactoryService getUserService(Validator validator,
+                                                 UserRepository userRepository,
+                                                 Pagination pagination){
+        return new UserCrudFactoryService(validator, userRepository, pagination);
     }
 
 }

@@ -1,7 +1,7 @@
 package com.ecommerce.ecommerce_remake.common.dto.enums;
 
 public enum Module {
-//    user("userService", "user");
+    user("userService", "user"),
     store("storeService", "store"),
     product("productService", "product"),
     address("addressService", "address");
