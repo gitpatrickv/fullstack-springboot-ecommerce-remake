@@ -51,8 +51,9 @@ public class ProductReviewServiceImpl implements ProductReviewService {
     @Override
     public void rateProduct(RateRequest request, Integer productId, Integer orderId, Integer storeId) {
         User user = userService.getCurrentAuthenticatedUser();
-        Product product = productService.getProductById(productId);
         this.validateProductReview(user.getUserId(), productId);
+
+        Product product = productService.getProductById(productId);
 
         ProductReview productReview = ProductReview.builder()
                 .storeId(storeId)

@@ -42,7 +42,7 @@ public class UserModel extends Model {
     private String password;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @NotBlank(message = "{confirm.password.required}")
+    @NotBlank(message = "{password.mismatch}")
     private String confirmPassword;
 
     @NotBlank(message = "{name.required}")
