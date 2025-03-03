@@ -2,43 +2,32 @@ package com.ecommerce.ecommerce_remake.feature.payment.service;
 
 import com.ecommerce.ecommerce_remake.feature.cart.model.CartItem;
 import com.ecommerce.ecommerce_remake.feature.order.dto.PaymentResponse;
-import com.ecommerce.ecommerce_remake.feature.order.enums.PaymentMethod;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
-import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 import static com.ecommerce.ecommerce_remake.feature.cart.service.CartServiceImpl.calculateTotalAmount;
-import static com.ecommerce.ecommerce_remake.feature.order.service.OrderServiceImpl.groupItemsByStore;
-
 @Service
-@RequiredArgsConstructor
-@AllArgsConstructor
 @Transactional
-public class PaymentServiceImpl implements PaymentService{
+@Slf4j
+public class StripePayment implements PaymentService{
 
     @Value("${stripe.api.key}")
     private String stripeSecretKey;
-
     @Override
-    public PaymentResponse paymentLink(List<CartItem> cartItems, PaymentMethod paymentMethod) throws StripeException {
-
-        if(paymentMethod.equals(PaymentMethod.CASH_ON_DELIVERY)){
-            return new PaymentResponse("http://localhost:5173/user/purchase/order/all");
-        }
+    public PaymentResponse processPayment(List<CartItem> cartItems, int shippingFee) throws StripeException {
 
         BigDecimal cartTotal = calculateTotalAmount(cartItems);
-        int shippingFee = 50 * groupItemsByStore(cartItems).size();
         BigDecimal totalAmount = cartTotal.add(BigDecimal.valueOf(shippingFee));
-
+        log.info("Stripe Payment - Order Total Amount {}", totalAmount);
         Stripe.apiKey=stripeSecretKey;
         SessionCreateParams params = SessionCreateParams.builder()
                 .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)

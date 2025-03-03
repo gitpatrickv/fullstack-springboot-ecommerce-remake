@@ -52,7 +52,7 @@ public class OrderServiceImpl implements OrderService{
     private final OrderItemRepository orderItemRepository;
     private final InventoryRepository inventoryRepository;
     private final ProductRepository productRepository;
-    private final PaymentService paymentService;
+    private final Map<String, PaymentService> paymentService;
     private final ProductReviewService productReviewService;
     private final StoreRatingService storeRatingService;
 
@@ -74,7 +74,11 @@ public class OrderServiceImpl implements OrderService{
         cartItemRepository.deleteAllByIdInBatch(request.getIds());
         log.info("Deleted Cart Items: {}", request.getIds());
 
-        return paymentService.paymentLink(cartItemList, request.getPaymentMethod());
+        String beanName = request.getPaymentMethod().getBeanName();
+        log.info("Payment method: {}", beanName);
+
+        int totalShippingFee = 50 * cartItemMap.size();
+        return paymentService.get(beanName).processPayment(cartItemList, totalShippingFee);
     }
 
     @Override
