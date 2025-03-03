@@ -7,7 +7,6 @@ import com.ecommerce.ecommerce_remake.feature.order.service.OrderService;
 import com.ecommerce.ecommerce_remake.feature.user.service.UserService;
 import com.ecommerce.ecommerce_remake.web.exception.OutOfStockException;
 import com.ecommerce.ecommerce_remake.web.exception.ResourceNotFoundException;
-import com.stripe.exception.StripeException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -23,7 +22,7 @@ public class OrderController {
     private final OrderService orderService;
     private final UserService userService;
     @PostMapping
-    public ResponseEntity<?> placeOrder(@RequestBody OrderRequest request) throws StripeException {
+    public ResponseEntity<?> placeOrder(@RequestBody OrderRequest request) {
         Integer cartId = userService.getUserCartId();
         Integer userId = userService.getUserId();
         log.info("PlaceOrder - User ID: {}, Cart Item IDs: {}, Number of Items: {}", userId, request.getIds(), request.getIds().size());

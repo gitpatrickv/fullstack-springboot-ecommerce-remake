@@ -21,7 +21,7 @@ public class CrudServiceFactory {
                 .next()
                 .getBeanName();
 
-        return (CrudService) applicationContext.getBean(beanName);
+        return applicationContext.getBean(beanName, CrudService.class);
     }
 
 }
